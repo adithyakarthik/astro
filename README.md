@@ -28,28 +28,52 @@ This is a **working first version (MVP)**, not a finished commercial product
 | Announce classes with UPI payment link + QR code | `/classes` |
 | Language switcher (English / தமிழ் / हिन्दी) | top-right of the nav bar |
 
-Tech stack: **Next.js** (React) + **TypeScript**, **Prisma** ORM on **SQLite**
-(swap for Postgres when you deploy for real, see Roadmap), astrology math via
-the **astronomia** VSOP87 astronomy library, **qrcode** for payment QR codes,
-email OTP via **Resend** (optional — falls back to on-screen codes locally).
+Tech stack: **Next.js** (React) + **TypeScript**, **Prisma** ORM on **Postgres**,
+astrology math via the **astronomia** VSOP87 astronomy library, **qrcode** for
+payment QR codes, email OTP via **Resend** (optional — falls back to
+on-screen codes if you haven't set it up yet).
 
-## Running it yourself (no coding needed, just following steps)
+## The easiest way to use this: deploy it, no terminal needed
 
-You need [Node.js](https://nodejs.org) installed (get the "LTS" version).
+This is the recommended path if you don't want to touch a terminal at all —
+everything is clicks in a web browser.
+
+1. **Get a free database.** Go to [neon.tech](https://neon.tech), sign up
+   (GitHub login works), create a project, and copy the **connection string**
+   it gives you (starts with `postgresql://...`).
+2. **Deploy to Vercel.** Go to [vercel.com/new](https://vercel.com/new), sign
+   in with GitHub, and import this repository (`adithyakarthik/astro`). When
+   asked, set the branch to `claude/vedic-astrology-platform-design-n1pif1`.
+3. **Add environment variables** in the Vercel project settings before/while
+   deploying:
+   - `DATABASE_URL` — paste the Neon connection string from step 1.
+   - `ADMIN_EMAILS` — your own email address. Whoever logs in with this email
+     becomes an admin.
+   - (Optional) `RESEND_API_KEY` and `RESEND_FROM_EMAIL` if you've set up
+     [resend.com](https://resend.com) for real login emails — otherwise skip
+     these and login codes will show on-screen instead of being emailed.
+4. Click **Deploy**. The database tables are created automatically as part of
+   the deploy (no separate step) — Vercel gives you a live
+   `https://your-app.vercel.app` link a minute or two later. Open it, log in
+   with your admin email, and you're in.
+
+## Running it locally instead (for developers)
+
+You need [Node.js](https://nodejs.org) and a Postgres database (local, or a
+free one from [neon.tech](https://neon.tech)/[supabase.com](https://supabase.com)).
 
 1. Open a terminal in this project folder.
 2. Copy the example environment file and open it:
    ```bash
    cp .env.example .env
    ```
-   Set `ADMIN_EMAILS` to your own email address (comma-separate more than
-   one) — whoever logs in with one of these emails becomes an admin who can
-   manage other users' module access.
+   Set `DATABASE_URL` to your Postgres connection string, and `ADMIN_EMAILS`
+   to your own email address.
 3. Install dependencies (only needed once, or after pulling new code):
    ```bash
    npm install
    ```
-4. Set up the database (only needed once):
+4. Set up the database tables (only needed once, or after schema changes):
    ```bash
    npm run setup
    ```
@@ -116,10 +140,9 @@ a flagged Nadi/Bhakoot dosha.
 
 ## Where your data lives
 
-By default this uses a local SQLite file (`dev.db`) — great for trying things
-out, but it resets if you redeploy on most hosting platforms. Before you rely
-on this for real clients, follow the "Deploying for real" steps in
-`ROADMAP.md` to move to a persistent hosted database.
+Everything is stored in the Postgres database at whatever `DATABASE_URL`
+you configured (Neon, Supabase, Vercel Postgres, or your own server) — it
+persists across deploys and restarts, unlike a local SQLite file would.
 
 ## Project structure (for whoever maintains this later)
 

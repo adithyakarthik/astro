@@ -26,28 +26,24 @@ data behind a public URL.
   enable/disable feature modules per user (subscription-style gating), and a
   full **English/Tamil/Hindi** language switcher across the UI, including the
   kundli chart's rasi/nakshatra/planet names.
+- **Postgres by default** (swapped from the original SQLite prototype) —
+  works out of the box with Neon, Supabase, or Vercel Postgres, persists
+  across deploys, and migrations (`prisma migrate deploy`) now run
+  automatically as part of `npm run build`, so deploying needs zero manual
+  database steps.
 
 ## Phase 2 — Before going live (do this next)
 
-1. **Move to a persistent, hosted database.** SQLite is a single file on
-   disk — fine for local use, but most hosting platforms (Vercel, Netlify)
-   reset the filesystem on every deploy, so you'd lose all client data.
-   - Get a free Postgres database from [Neon](https://neon.tech),
-     [Supabase](https://supabase.com), or Vercel's own Postgres add-on.
-   - In `prisma/schema.prisma`, change `provider = "sqlite"` to
-     `provider = "postgresql"`.
-   - Swap `@prisma/adapter-better-sqlite3` for `@prisma/adapter-pg` in
-     `src/lib/db.ts`, pointing at your new `DATABASE_URL`.
-   - Run `npx prisma migrate deploy` against the new database.
-2. **Set up real OTP email delivery.** Sign up at [resend.com](https://resend.com)
+1. **Set up real OTP email delivery.** Sign up at [resend.com](https://resend.com)
    and set `RESEND_API_KEY` + `RESEND_FROM_EMAIL` — without this, login codes
    only ever appear on-screen (fine for local testing, not for real users).
-3. **Deploy.** Push this repo to GitHub, then import it into
+2. **Deploy.** Push this repo to GitHub, then import it into
    [Vercel](https://vercel.com/new) (free tier is enough to start). Add your
    `DATABASE_URL`, `ADMIN_EMAILS`, `RESEND_API_KEY` and `RESEND_FROM_EMAIL` as
    environment variables in the Vercel project settings. Vercel gives you a
-   live URL and redeploys automatically on every push.
-4. **Add OTP request rate limiting at the infrastructure level** (e.g. Vercel
+   live URL and redeploys automatically on every push — database migrations
+   run automatically too.
+3. **Add OTP request rate limiting at the infrastructure level** (e.g. Vercel
    WAF rules, or a simple IP-based limiter) — the app already enforces a
    45-second cooldown per email address, but there's no protection yet
    against someone hammering the login endpoint with many different emails.
