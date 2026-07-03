@@ -1,8 +1,16 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { hasModule, requireUser } from "@/lib/auth/session";
+import { ModuleLocked } from "@/components/ModuleLocked";
+import { getTranslations } from "@/lib/i18n/server";
 
 export default async function ClientsPage() {
+  const user = await requireUser();
+  if (!hasModule(user, "clients")) return <ModuleLocked moduleKey="clients" />;
+  const { t } = await getTranslations();
+
   const clients = await prisma.client.findMany({
+    where: { userId: user.id },
     orderBy: { createdAt: "desc" },
     include: { _count: { select: { kundlis: true } } },
   });
@@ -10,28 +18,28 @@ export default async function ClientsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">Clients</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("clients.title")}</h1>
         <Link
           href="/clients/new"
           className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
         >
-          + Add client
+          {t("clients.addClient")}
         </Link>
       </div>
 
       {clients.length === 0 ? (
         <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-500">
-          No clients yet. Add your first client to generate their kundli.
+          {t("clients.empty")}
         </p>
       ) : (
         <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
           <table className="w-full text-left text-sm">
             <thead className="bg-zinc-50 text-zinc-500">
               <tr>
-                <th className="px-4 py-3 font-medium">Name</th>
-                <th className="px-4 py-3 font-medium">Phone</th>
-                <th className="px-4 py-3 font-medium">Email</th>
-                <th className="px-4 py-3 font-medium">Kundlis</th>
+                <th className="px-4 py-3 font-medium">{t("clients.tableName")}</th>
+                <th className="px-4 py-3 font-medium">{t("clients.tablePhone")}</th>
+                <th className="px-4 py-3 font-medium">{t("clients.tableEmail")}</th>
+                <th className="px-4 py-3 font-medium">{t("clients.tableKundlis")}</th>
               </tr>
             </thead>
             <tbody>

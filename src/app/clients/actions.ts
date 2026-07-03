@@ -1,17 +1,21 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { computeKundli } from "@/lib/astro/engine";
 import { localBirthToUtc } from "@/lib/astro/birth-utils";
+import { requireModuleAccess, requireUser } from "@/lib/auth/session";
 
 export async function createClient(formData: FormData) {
+  const user = await requireUser();
+  requireModuleAccess(user, "clients");
   const name = String(formData.get("name") ?? "").trim();
   if (!name) throw new Error("Name is required");
 
   const client = await prisma.client.create({
     data: {
+      userId: user.id,
       name,
       phone: String(formData.get("phone") ?? "").trim() || null,
       email: String(formData.get("email") ?? "").trim() || null,
@@ -24,6 +28,11 @@ export async function createClient(formData: FormData) {
 }
 
 export async function createKundli(clientId: string, formData: FormData) {
+  const user = await requireUser();
+  requireModuleAccess(user, "clients");
+  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  if (!client || client.userId !== user.id) notFound();
+
   const name = String(formData.get("name") ?? "").trim();
   const gender = String(formData.get("gender") ?? "").trim() || null;
   const birthDateLocal = String(formData.get("birthDateLocal") ?? "");
@@ -58,6 +67,10 @@ export async function createKundli(clientId: string, formData: FormData) {
 }
 
 export async function deleteClient(clientId: string) {
+  const user = await requireUser();
+  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  if (!client || client.userId !== user.id) notFound();
+
   await prisma.client.delete({ where: { id: clientId } });
   revalidatePath("/clients");
   redirect("/clients");

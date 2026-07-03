@@ -283,3 +283,75 @@ export const TAMIL_MONTH_NAMES = [
   "மாசி",
   "பங்குனி",
 ] as const;
+
+// --- Hindi (Devanagari) chart terminology, for the main chart display when
+// the UI language is set to Hindi ---
+
+export const HINDI_RASI_NAMES = [
+  "मेष",
+  "वृषभ",
+  "मिथुन",
+  "कर्क",
+  "सिंह",
+  "कन्या",
+  "तुला",
+  "वृश्चिक",
+  "धनु",
+  "मकर",
+  "कुम्भ",
+  "मीन",
+] as const;
+
+export const HINDI_NAKSHATRA_NAMES = [
+  "अश्विनी",
+  "भरणी",
+  "कृत्तिका",
+  "रोहिणी",
+  "मृगशिरा",
+  "आर्द्रा",
+  "पुनर्वसु",
+  "पुष्य",
+  "आश्लेषा",
+  "मघा",
+  "पूर्व फाल्गुनी",
+  "उत्तर फाल्गुनी",
+  "हस्त",
+  "चित्रा",
+  "स्वाति",
+  "विशाखा",
+  "अनुराधा",
+  "ज्येष्ठा",
+  "मूल",
+  "पूर्वाषाढ़ा",
+  "उत्तराषाढ़ा",
+  "श्रवण",
+  "धनिष्ठा",
+  "शतभिषा",
+  "पूर्वभाद्रपद",
+  "उत्तरभाद्रपद",
+  "रेवती",
+] as const;
+
+export const HINDI_PLANET_NAMES: Record<PlanetKey, string> = {
+  Sun: "सूर्य",
+  Moon: "चन्द्र",
+  Mars: "मंगल",
+  Mercury: "बुध",
+  Jupiter: "बृहस्पति",
+  Venus: "शुक्र",
+  Saturn: "शनि",
+  Rahu: "राहु",
+  Ketu: "केतु",
+};
+
+export const HINDI_PLANET_SHORT: Record<PlanetKey, string> = {
+  Sun: "सू",
+  Moon: "चं",
+  Mars: "मं",
+  Mercury: "बु",
+  Jupiter: "गु",
+  Venus: "शु",
+  Saturn: "श",
+  Rahu: "रा",
+  Ketu: "के",
+};

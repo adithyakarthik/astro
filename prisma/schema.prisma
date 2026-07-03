@@ -10,8 +10,48 @@ datasource db {
   provider = "sqlite"
 }
 
-model Client {
+model User {
   id        String   @id @default(cuid())
+  email     String   @unique
+  role      String   @default("USER") // "USER" | "ADMIN"
+  // JSON-encoded array of module keys this user's subscription has access
+  // to, e.g. ["clients","matchmaking","muhurta","transits","videos","classes"].
+  enabledModules String @default("[\"clients\",\"matchmaking\",\"muhurta\",\"transits\",\"videos\",\"classes\"]")
+  createdAt DateTime @default(now())
+
+  clients  Client[]
+  videos   VideoContent[]
+  classes  ClassAnnouncement[]
+  sessions Session[]
+}
+
+// One-time passcodes for email login. Not tied to a User row via foreign
+// key because the very first OTP for a brand-new email is requested before
+// any User exists yet (the User is created on first successful verify).
+model OtpCode {
+  id         String    @id @default(cuid())
+  email      String
+  codeHash   String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([email])
+}
+
+model Session {
+  id        String   @id @default(cuid()) // also the value stored in the session cookie
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Client {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   name      String
   phone     String?
   email     String?
@@ -47,7 +87,10 @@ model Kundli {
 }
 
 model VideoContent {
-  id          String   @id @default(cuid())
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   title       String
   description String?
   youtubeUrl  String
@@ -58,7 +101,10 @@ model VideoContent {
 }
 
 model ClassAnnouncement {
-  id          String   @id @default(cuid())
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   title       String
   description String?
   startsAt    DateTime

@@ -21,18 +21,15 @@ data behind a public URL.
 - **Transits (Gochar)**: current planetary sidereal positions, optionally
   shown as house-from-Ascendant and house-from-Moon against any saved
   kundli (`/transits`)
+- **Email + OTP login**, multi-tenant data isolation (each user only ever
+  sees their own clients/kundlis/videos/classes), an **admin console** to
+  enable/disable feature modules per user (subscription-style gating), and a
+  full **English/Tamil/Hindi** language switcher across the UI, including the
+  kundli chart's rasi/nakshatra/planet names.
 
 ## Phase 2 — Before going live (do this next)
 
-1. **Add a login.** Right now anyone with the URL can see and edit every
-   client's birth details — that's a privacy problem the moment this is on
-   the public internet. Add password-protected admin access:
-   - Easiest: [NextAuth.js](https://authjs.dev) with a single hardcoded admin
-     email/password (or Google sign-in restricted to your email).
-   - Wrap every page under `/clients`, `/videos/new`, `/classes/new` etc. in
-     an auth check; leave `/videos` and `/classes` (the public-facing pages
-     for students) open.
-2. **Move to a persistent, hosted database.** SQLite is a single file on
+1. **Move to a persistent, hosted database.** SQLite is a single file on
    disk — fine for local use, but most hosting platforms (Vercel, Netlify)
    reset the filesystem on every deploy, so you'd lose all client data.
    - Get a free Postgres database from [Neon](https://neon.tech),
@@ -42,10 +39,18 @@ data behind a public URL.
    - Swap `@prisma/adapter-better-sqlite3` for `@prisma/adapter-pg` in
      `src/lib/db.ts`, pointing at your new `DATABASE_URL`.
    - Run `npx prisma migrate deploy` against the new database.
+2. **Set up real OTP email delivery.** Sign up at [resend.com](https://resend.com)
+   and set `RESEND_API_KEY` + `RESEND_FROM_EMAIL` — without this, login codes
+   only ever appear on-screen (fine for local testing, not for real users).
 3. **Deploy.** Push this repo to GitHub, then import it into
    [Vercel](https://vercel.com/new) (free tier is enough to start). Add your
-   `DATABASE_URL` as an environment variable in the Vercel project settings.
-   Vercel gives you a live URL and redeploys automatically on every push.
+   `DATABASE_URL`, `ADMIN_EMAILS`, `RESEND_API_KEY` and `RESEND_FROM_EMAIL` as
+   environment variables in the Vercel project settings. Vercel gives you a
+   live URL and redeploys automatically on every push.
+4. **Add OTP request rate limiting at the infrastructure level** (e.g. Vercel
+   WAF rules, or a simple IP-based limiter) — the app already enforces a
+   45-second cooldown per email address, but there's no protection yet
+   against someone hammering the login endpoint with many different emails.
 
 ## Phase 3 — Astrology accuracy & depth
 
@@ -90,7 +95,27 @@ data behind a public URL.
   WhatsApp Business API) a day/hour before class.
 - **Recurring/subscription classes** and **attendance tracking**.
 
-## Notes on what "done" means for Phase 1
+## Phase 6 — Accounts, billing & i18n follow-ups
+
+- **Connect module access to real billing.** Right now an admin manually
+  ticks checkboxes per user at `/admin/users`. To actually run this as a paid
+  SaaS, wire up Razorpay/Stripe subscriptions and have a webhook update each
+  user's `enabledModules` automatically when their plan changes.
+- **Self-serve signup page** with plan selection, instead of every new email
+  landing as a full-access user by default (see `enabledModules` default in
+  `prisma/schema.prisma`) — right now everyone gets every module until an
+  admin restricts them.
+- **More languages** — the translation system (`src/lib/i18n/`) is a plain
+  dictionary keyed by language code, so adding e.g. Telugu or Kannada is just
+  adding another entry to `dictionaries` in `src/lib/i18n/dictionary.ts` plus
+  a matching name table in `src/lib/astro/constants.ts`.
+- **Translate remaining edge-case strings** — the core flows (nav, dashboard,
+  all forms, chart display, admin) are fully translated, but some error
+  messages and a few static labels are still English-only.
+- **Audit logging** for admin actions (who enabled/disabled which module for
+  whom, and when) — useful once more than one admin exists.
+
+## Notes on what "done" means so far
 
 - The astrology engine is internally consistent and uses standard formulas
   (ayanamsa, dasha, navamsa division), verified against expected sidereal
@@ -98,5 +123,7 @@ data behind a public URL.
   planet-by-planet against a paid Swiss-Ephemeris product. Treat results as
   "very likely correct sign/nakshatra/dasha" rather than "certified to the
   second," until Phase 3's Swiss Ephemeris swap.
-- There is no authentication. Do not deploy this publicly with real client
-  data until Phase 2, step 1, is done.
+- Authentication, data isolation, and admin module gating are implemented
+  and tested locally with multiple accounts — but OTP emails only actually
+  send if you configure Resend (Phase 2, step 2); until then, treat this as
+  suitable for your own use and trusted testers, not a public signup page.

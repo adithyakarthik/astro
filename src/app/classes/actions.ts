@@ -1,10 +1,13 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
+import { requireModuleAccess, requireUser } from "@/lib/auth/session";
 
 export async function createClass(formData: FormData) {
+  const user = await requireUser();
+  requireModuleAccess(user, "classes");
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim() || null;
   const startsAtLocal = String(formData.get("startsAt") ?? "");
@@ -20,6 +23,7 @@ export async function createClass(formData: FormData) {
 
   await prisma.classAnnouncement.create({
     data: {
+      userId: user.id,
       title,
       description,
       startsAt: new Date(startsAtLocal),
@@ -36,6 +40,10 @@ export async function createClass(formData: FormData) {
 }
 
 export async function deleteClass(id: string) {
+  const user = await requireUser();
+  const cls = await prisma.classAnnouncement.findUnique({ where: { id } });
+  if (!cls || cls.userId !== user.id) notFound();
+
   await prisma.classAnnouncement.delete({ where: { id } });
   revalidatePath("/classes");
 }

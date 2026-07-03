@@ -3,9 +3,19 @@ import QRCode from "qrcode";
 import { prisma } from "@/lib/db";
 import { buildUpiLink } from "@/lib/upi";
 import { deleteClass } from "./actions";
+import { hasModule, requireUser } from "@/lib/auth/session";
+import { ModuleLocked } from "@/components/ModuleLocked";
+import { getTranslations } from "@/lib/i18n/server";
 
 export default async function ClassesPage() {
-  const classes = await prisma.classAnnouncement.findMany({ orderBy: { startsAt: "asc" } });
+  const user = await requireUser();
+  if (!hasModule(user, "classes")) return <ModuleLocked moduleKey="classes" />;
+  const { t } = await getTranslations();
+
+  const classes = await prisma.classAnnouncement.findMany({
+    where: { userId: user.id },
+    orderBy: { startsAt: "asc" },
+  });
 
   const withPaymentInfo = await Promise.all(
     classes.map(async (c) => {
@@ -25,23 +35,20 @@ export default async function ClassesPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Classes & Payments</h1>
-          <p className="mt-1 text-zinc-600">
-            Announce a class and share its payment link/QR — students pay you directly via GPay, PhonePe or any
-            UPI app, straight to your UPI ID. No payment gateway needed.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("classes.title")}</h1>
+          <p className="mt-1 text-zinc-600">{t("classes.subtitle")}</p>
         </div>
         <Link
           href="/classes/new"
           className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
         >
-          + Announce class
+          {t("classes.announce")}
         </Link>
       </div>
 
       {withPaymentInfo.length === 0 ? (
         <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-500">
-          No classes announced yet.
+          {t("classes.empty")}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -54,7 +61,7 @@ export default async function ClassesPage() {
                   <h3 className="font-medium">{c.title}</h3>
                   <form action={deleteClass.bind(null, c.id)}>
                     <button type="submit" className="text-xs text-red-500 hover:underline">
-                      Remove
+                      {t("common.remove")}
                     </button>
                   </form>
                 </div>
@@ -73,12 +80,9 @@ export default async function ClassesPage() {
                   href={c.upiLink}
                   className="mt-2 inline-block rounded-lg bg-emerald-600 px-3 py-1.5 text-center text-sm font-medium text-white hover:bg-emerald-700"
                 >
-                  Pay via UPI app
+                  {t("classes.payVia")}
                 </a>
-                <p className="mt-1 text-xs text-zinc-400">
-                  Share this page&apos;s link, or the QR code, with students. On a phone it opens their UPI app
-                  directly; on desktop they scan the QR with their phone.
-                </p>
+                <p className="mt-1 text-xs text-zinc-400">{t("classes.shareNote")}</p>
               </div>
             </div>
           ))}

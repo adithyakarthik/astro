@@ -1,11 +1,14 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { extractYoutubeId } from "@/lib/youtube";
+import { requireModuleAccess, requireUser } from "@/lib/auth/session";
 
 export async function createVideo(formData: FormData) {
+  const user = await requireUser();
+  requireModuleAccess(user, "videos");
   const title = String(formData.get("title") ?? "").trim();
   const youtubeUrl = String(formData.get("youtubeUrl") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim() || null;
@@ -17,7 +20,7 @@ export async function createVideo(formData: FormData) {
   }
 
   await prisma.videoContent.create({
-    data: { title, youtubeUrl, youtubeId, description, category },
+    data: { userId: user.id, title, youtubeUrl, youtubeId, description, category },
   });
 
   revalidatePath("/videos");
@@ -25,6 +28,10 @@ export async function createVideo(formData: FormData) {
 }
 
 export async function deleteVideo(id: string) {
+  const user = await requireUser();
+  const video = await prisma.videoContent.findUnique({ where: { id } });
+  if (!video || video.userId !== user.id) notFound();
+
   await prisma.videoContent.delete({ where: { id } });
   revalidatePath("/videos");
 }

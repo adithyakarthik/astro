@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/db";
 import { computeCurrentTransits } from "@/lib/astro/transit";
 import type { ChartData } from "@/lib/astro/engine";
+import { hasModule, requireUser } from "@/lib/auth/session";
+import { ModuleLocked } from "@/components/ModuleLocked";
+import { getTranslations } from "@/lib/i18n/server";
 
 function fmtDeg(deg: number) {
   const d = Math.floor(deg);
@@ -13,10 +16,15 @@ export default async function TransitsPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
+  const user = await requireUser();
+  if (!hasModule(user, "transits")) return <ModuleLocked moduleKey="transits" />;
+  const { t } = await getTranslations();
+
   const params = await searchParams;
   const asOf = params.date ? new Date(`${params.date}T12:00:00Z`) : new Date();
 
   const kundlis = await prisma.kundli.findMany({
+    where: { client: { userId: user.id } },
     include: { client: true },
     orderBy: { createdAt: "desc" },
   });
@@ -38,16 +46,13 @@ export default async function TransitsPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Transits (Gochar)</h1>
-        <p className="mt-1 text-zinc-600">
-          Current sidereal planetary positions, optionally shown relative to a client&apos;s natal Ascendant and
-          Moon sign — the two standard reference points for transit analysis.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("transits.title")}</h1>
+        <p className="mt-1 text-zinc-600">{t("transits.subtitle")}</p>
       </div>
 
       <form method="GET" className="flex flex-wrap items-end gap-4 rounded-xl border border-zinc-200 bg-white p-5">
         <label className="flex flex-col gap-1 text-sm font-medium">
-          Date
+          {t("common.date")}
           <input
             name="date"
             type="date"
@@ -56,9 +61,9 @@ export default async function TransitsPage({
           />
         </label>
         <label className="flex flex-col gap-1 text-sm font-medium">
-          Compare against kundli (optional)
+          {t("transits.compareKundli")}
           <select name="kundliId" defaultValue={params.kundliId ?? ""} className="min-w-64 rounded-lg border border-zinc-300 px-3 py-2 text-sm">
-            <option value="">— none, just show positions —</option>
+            <option value="">{t("transits.noneOption")}</option>
             {kundlis.map((k) => (
               <option key={k.id} value={k.id}>
                 {k.client.name} — {k.name}
@@ -67,24 +72,24 @@ export default async function TransitsPage({
           </select>
         </label>
         <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
-          Show transits
+          {t("transits.show")}
         </button>
       </form>
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
         <h2 className="mb-3 text-lg font-semibold">
-          Positions as of {transits.asOf.toISOString().slice(0, 10)} (UTC)
+          {t("transits.positionsAsOf")} {transits.asOf.toISOString().slice(0, 10)} (UTC)
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="text-zinc-500">
               <tr>
-                <th className="py-1.5 pr-4 font-medium">Graha</th>
-                <th className="py-1.5 pr-4 font-medium">Rasi</th>
-                <th className="py-1.5 pr-4 font-medium">Degree</th>
-                <th className="py-1.5 pr-4 font-medium">Nakshatra</th>
-                {selectedKundli && <th className="py-1.5 pr-4 font-medium">House from Asc.</th>}
-                {selectedKundli && <th className="py-1.5 pr-4 font-medium">House from Moon</th>}
+                <th className="py-1.5 pr-4 font-medium">{t("transits.graha")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("transits.rasi")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("transits.degree")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("transits.nakshatra")}</th>
+                {selectedKundli && <th className="py-1.5 pr-4 font-medium">{t("transits.houseFromAsc")}</th>}
+                {selectedKundli && <th className="py-1.5 pr-4 font-medium">{t("transits.houseFromMoon")}</th>}
               </tr>
             </thead>
             <tbody>
@@ -103,7 +108,7 @@ export default async function TransitsPage({
         </div>
         {selectedKundli && (
           <p className="mt-3 text-xs text-zinc-400">
-            Reference chart: {selectedKundli.client.name} — {selectedKundli.name}.
+            {t("transits.referenceChart")}: {selectedKundli.client.name} — {selectedKundli.name}.
           </p>
         )}
       </div>

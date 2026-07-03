@@ -1,19 +1,26 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { hasModule, requireUser } from "@/lib/auth/session";
+import { ModuleLocked } from "@/components/ModuleLocked";
+import { getTranslations } from "@/lib/i18n/server";
 
 export default async function ClientDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const user = await requireUser();
+  if (!hasModule(user, "clients")) return <ModuleLocked moduleKey="clients" />;
+  const { t } = await getTranslations();
+
   const { id } = await params;
   const client = await prisma.client.findUnique({
     where: { id },
     include: { kundlis: { orderBy: { createdAt: "desc" } } },
   });
 
-  if (!client) notFound();
+  if (!client || client.userId !== user.id) notFound();
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,18 +36,18 @@ export default async function ClientDetailPage({
       </div>
 
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Kundlis</h2>
+        <h2 className="text-lg font-semibold">{t("clients.kundlisHeading")}</h2>
         <Link
           href={`/clients/${client.id}/kundli/new`}
           className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
         >
-          + Add kundli
+          {t("clients.addKundli")}
         </Link>
       </div>
 
       {client.kundlis.length === 0 ? (
         <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-500">
-          No kundlis yet for this client.
+          {t("clients.noKundlis")}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

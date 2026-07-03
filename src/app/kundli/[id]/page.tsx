@@ -10,6 +10,10 @@ import {
   TAMIL_PLANET_SHORT,
   TAMIL_RASI_NAMES,
 } from "@/lib/astro/constants";
+import { localizedChartNames } from "@/lib/astro/localized-names";
+import { hasModule, requireUser } from "@/lib/auth/session";
+import { ModuleLocked } from "@/components/ModuleLocked";
+import { getTranslations } from "@/lib/i18n/server";
 
 function groupBySign(chart: ChartData, key: "rasiIndex" | "navamsaRasiIndex") {
   const map: Record<number, string[]> = {};
@@ -26,20 +30,28 @@ function fmtDeg(deg: number) {
   return `${d}°${m.toString().padStart(2, "0")}'`;
 }
 
-function DashaRow({ d, depth = 0 }: { d: DashaPeriod; depth?: number }) {
+function DashaRow({
+  d,
+  planetNames,
+  depth = 0,
+}: {
+  d: DashaPeriod;
+  planetNames: Record<string, string>;
+  depth?: number;
+}) {
   return (
     <>
       <tr className="border-t border-zinc-100">
         <td className="py-1.5 pr-4 font-medium" style={{ paddingLeft: depth * 16 }}>
           {depth > 0 && <span className="text-zinc-300">↳ </span>}
-          {d.planet}
+          {planetNames[d.planet]}
         </td>
         <td className="py-1.5 pr-4">{new Date(d.startDate).toISOString().slice(0, 10)}</td>
         <td className="py-1.5 pr-4">{new Date(d.endDate).toISOString().slice(0, 10)}</td>
         <td className="py-1.5 pr-4">{d.years.toFixed(2)} yrs</td>
       </tr>
       {d.antardashas.map((a, i) => (
-        <DashaRow key={i} d={a} depth={depth + 1} />
+        <DashaRow key={i} d={a} planetNames={planetNames} depth={depth + 1} />
       ))}
     </>
   );
@@ -50,9 +62,14 @@ export default async function KundliDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const user = await requireUser();
+  if (!hasModule(user, "clients")) return <ModuleLocked moduleKey="clients" />;
+  const { t, lang } = await getTranslations();
+  const names = localizedChartNames(lang);
+
   const { id } = await params;
   const kundli = await prisma.kundli.findUnique({ where: { id }, include: { client: true } });
-  if (!kundli) notFound();
+  if (!kundli || kundli.client.userId !== user.id) notFound();
 
   const chart = JSON.parse(kundli.chartData) as ChartData;
   const rasiGroups = groupBySign(chart, "rasiIndex");
@@ -73,32 +90,41 @@ export default async function KundliDetailPage({
       </div>
 
       <div className="flex flex-wrap gap-8 rounded-xl border border-zinc-200 bg-white p-6">
-        <RasiChartGrid title="Rasi Chart (D1)" ascendantRasiIndex={chart.ascendant.rasiIndex} planetsBySign={rasiGroups} />
         <RasiChartGrid
-          title="Navamsa Chart (D9)"
+          title={t("kundli.rasiChart")}
+          ascendantRasiIndex={chart.ascendant.rasiIndex}
+          planetsBySign={rasiGroups}
+          rasiNames={names.rasi}
+          planetAbbr={names.planetShort}
+          ascendantLabel={names.ascendantLabel}
+        />
+        <RasiChartGrid
+          title={t("kundli.navamsaChart")}
           ascendantRasiIndex={-1}
           planetsBySign={navamsaGroups}
+          rasiNames={names.rasi}
+          planetAbbr={names.planetShort}
         />
       </div>
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <h2 className="mb-3 text-lg font-semibold">Planetary positions (sidereal)</h2>
+        <h2 className="mb-3 text-lg font-semibold">{t("kundli.planetaryPositions")}</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="text-zinc-500">
               <tr>
-                <th className="py-1.5 pr-4 font-medium">Graha</th>
-                <th className="py-1.5 pr-4 font-medium">Rasi</th>
-                <th className="py-1.5 pr-4 font-medium">Degree</th>
-                <th className="py-1.5 pr-4 font-medium">Nakshatra</th>
-                <th className="py-1.5 pr-4 font-medium">Pada</th>
-                <th className="py-1.5 pr-4 font-medium">Navamsa</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.graha")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.rasi")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.degree")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.nakshatra")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.pada")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.navamsa")}</th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-t border-zinc-100">
-                <td className="py-1.5 pr-4 font-medium text-amber-700">Ascendant</td>
-                <td className="py-1.5 pr-4">{chart.ascendant.rasiName}</td>
+                <td className="py-1.5 pr-4 font-medium text-amber-700">{names.ascendantLabel}</td>
+                <td className="py-1.5 pr-4">{names.rasi[chart.ascendant.rasiIndex]}</td>
                 <td className="py-1.5 pr-4">{fmtDeg(chart.ascendant.degreeInSign)}</td>
                 <td className="py-1.5 pr-4 text-zinc-400">—</td>
                 <td className="py-1.5 pr-4 text-zinc-400">—</td>
@@ -106,12 +132,12 @@ export default async function KundliDetailPage({
               </tr>
               {chart.planets.map((p) => (
                 <tr key={p.planet} className="border-t border-zinc-100">
-                  <td className="py-1.5 pr-4 font-medium">{p.planet}</td>
-                  <td className="py-1.5 pr-4">{p.rasiName}</td>
+                  <td className="py-1.5 pr-4 font-medium">{names.planet[p.planet]}</td>
+                  <td className="py-1.5 pr-4">{names.rasi[p.rasiIndex]}</td>
                   <td className="py-1.5 pr-4">{fmtDeg(p.degreeInSign)}</td>
-                  <td className="py-1.5 pr-4">{p.nakshatraName}</td>
+                  <td className="py-1.5 pr-4">{names.nakshatra[p.nakshatraIndex]}</td>
                   <td className="py-1.5 pr-4">{p.pada}</td>
-                  <td className="py-1.5 pr-4">{p.navamsaRasiName}</td>
+                  <td className="py-1.5 pr-4">{names.rasi[p.navamsaRasiIndex]}</td>
                 </tr>
               ))}
             </tbody>
@@ -120,24 +146,24 @@ export default async function KundliDetailPage({
       </div>
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <h2 className="mb-1 text-lg font-semibold">Vimshottari Dasha</h2>
+        <h2 className="mb-1 text-lg font-semibold">{t("kundli.vimshottariDasha")}</h2>
         <p className="mb-3 text-sm text-zinc-500">
-          Moon nakshatra at birth: {chart.moonNakshatra.name}, pada {chart.moonNakshatra.pada}. Mahadashas are
-          expandable to their Antardashas (bhukti).
+          {t("kundli.moonNakshatraAtBirth")}: {names.nakshatra[chart.planets.find((p) => p.planet === "Moon")!.nakshatraIndex]}
+          , {t("kundli.pada")} {chart.moonNakshatra.pada}. {t("kundli.dashaHint")}
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="text-zinc-500">
               <tr>
-                <th className="py-1.5 pr-4 font-medium">Mahadasha / Antardasha</th>
-                <th className="py-1.5 pr-4 font-medium">Start</th>
-                <th className="py-1.5 pr-4 font-medium">End</th>
-                <th className="py-1.5 pr-4 font-medium">Duration</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.mahadashaCol")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.start")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.end")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.duration")}</th>
               </tr>
             </thead>
             <tbody>
               {chart.vimshottariDasha.map((d, i) => (
-                <DashaRow key={i} d={d} />
+                <DashaRow key={i} d={d} planetNames={names.planet} />
               ))}
             </tbody>
           </table>

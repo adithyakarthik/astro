@@ -1,20 +1,23 @@
 # JK Vedansh Astro
 
-A Vedic astrology practice-management app: store client kundlis (birth charts),
-compute them in standard Vedic formats (Rasi/D1, Navamsa/D9, Nakshatra,
-Vimshottari Dasha), check marriage compatibility, look up Muhurta/Panchang,
-track planetary transits, publish YouTube videos, and announce classes with a
-UPI payment link/QR so students can pay you directly via GPay, PhonePe, Paytm etc.
+A multi-user Vedic astrology practice-management app: each astrologer signs in
+with just their email (no password), and sees only their own clients, kundlis,
+videos and classes. Store client kundlis (birth charts), compute them in
+standard Vedic formats (Rasi/D1, Navamsa/D9, Nakshatra, Vimshottari Dasha),
+check marriage compatibility, look up Muhurta/Panchang, track planetary
+transits, publish YouTube videos, and announce classes with a UPI payment
+link/QR so students can pay directly via GPay, PhonePe, Paytm etc. The whole
+interface works in **English, Tamil, or Hindi**.
 
-This is a **working first version (MVP)**, not a finished commercial product.
-See [`ROADMAP.md`](./ROADMAP.md) for what to build next — most importantly,
-**this app currently has no login/password protection**, so don't put real
-client data on a public URL until you've added authentication (Roadmap Phase 2).
+This is a **working first version (MVP)**, not a finished commercial product
+— see [`ROADMAP.md`](./ROADMAP.md) for what to build next.
 
 ## What's in here
 
 | Feature | Where |
 |---|---|
+| Email + OTP login (no password) | `/login` |
+| Admin console — enable/disable feature modules per user (subscription-style access control) | `/admin/users` |
 | Add clients + their kundli birth details | `/clients` |
 | Auto-computed Rasi (D1) & Navamsa (D9) charts, Nakshatra, Vimshottari Dasha + Antardasha (Dasa-Bukthi) | `/kundli/[id]` |
 | Tamil Jathakam ("Jamakkol" style) — same chart in Tamil terminology | `/kundli/[id]` (bottom section) |
@@ -23,32 +26,76 @@ client data on a public URL until you've added authentication (Roadmap Phase 2).
 | Transits (Gochar) — current planetary positions vs. a natal chart | `/transits` |
 | Publish YouTube videos | `/videos` |
 | Announce classes with UPI payment link + QR code | `/classes` |
+| Language switcher (English / தமிழ் / हिन्दी) | top-right of the nav bar |
 
 Tech stack: **Next.js** (React) + **TypeScript**, **Prisma** ORM on **SQLite**
 (swap for Postgres when you deploy for real, see Roadmap), astrology math via
-the **astronomia** VSOP87 astronomy library, **qrcode** for payment QR codes.
+the **astronomia** VSOP87 astronomy library, **qrcode** for payment QR codes,
+email OTP via **Resend** (optional — falls back to on-screen codes locally).
 
 ## Running it yourself (no coding needed, just following steps)
 
 You need [Node.js](https://nodejs.org) installed (get the "LTS" version).
 
 1. Open a terminal in this project folder.
-2. Install dependencies (only needed once, or after pulling new code):
+2. Copy the example environment file and open it:
+   ```bash
+   cp .env.example .env
+   ```
+   Set `ADMIN_EMAILS` to your own email address (comma-separate more than
+   one) — whoever logs in with one of these emails becomes an admin who can
+   manage other users' module access.
+3. Install dependencies (only needed once, or after pulling new code):
    ```bash
    npm install
    ```
-3. Set up the database (only needed once):
+4. Set up the database (only needed once):
    ```bash
    npm run setup
    ```
-4. Start the app:
+5. Start the app:
    ```bash
    npm run dev
    ```
-5. Open **http://localhost:3000** in your browser.
+6. Open **http://localhost:3000** — you'll land on the login page.
 
-That's it — add a client, generate a kundli, publish a video, announce a
-class, and you'll see everything working end to end.
+## Signing in
+
+1. Enter your email and click **Send login code**.
+2. Since no email provider is configured yet, the app shows the 6-digit code
+   directly on the next screen ("dev mode"). Enter it to sign in.
+3. To send real emails instead, sign up at [resend.com](https://resend.com)
+   (free tier available), get an API key, and set `RESEND_API_KEY` and
+   `RESEND_FROM_EMAIL` in `.env`.
+
+Each account only ever sees the clients/kundlis/videos/classes it created
+itself — this is a real multi-tenant app, not a shared single-user tool.
+
+## Managing users & subscriptions (admin console)
+
+If your email is listed in `ADMIN_EMAILS`, you'll see an **Admin** link in the
+nav. At `/admin/users` you can:
+- See every user who has signed in.
+- Enable or disable each feature module (Clients & Kundlis, Match Making,
+  Muhurta, Transits, Videos, Classes) per user — this is how you'd gate
+  features by subscription plan (e.g. a "Basic" plan only gets Clients &
+  Kundlis, a "Pro" plan gets everything).
+- Promote another user to Admin.
+
+A user with a module disabled sees a friendly "isn't in your plan" message
+instead of that page's content, and it disappears from their nav.
+
+This is manual/admin-driven gating, not tied to an actual payment/subscription
+system yet — see `ROADMAP.md` for connecting it to real billing.
+
+## Language
+
+Everyone can switch the interface language (English / தமிழ் / हिन्दी) from the
+dropdown next to their email in the top nav — it's saved as a cookie, so it
+persists across visits, and it's per-browser, not per-account. The kundli
+chart page also shows rasi/nakshatra/planet names in whichever language is
+selected, plus a bonus "Tamil Jathakam" section that's always in Tamil
+regardless of the UI language setting.
 
 ## How accurate are the charts?
 
@@ -79,17 +126,30 @@ on this for real clients, follow the "Deploying for real" steps in
 ```
 src/
   app/                  Pages (Next.js App Router) — one folder per URL
+    login/              Email + OTP sign-in flow
+    admin/users/        Admin console (module access per user)
     clients/            Client list, add client, add kundli
     kundli/[id]/        Kundli chart display
+    matchmaking/        Ashtakoot Guna Milan compatibility
+    muhurta/            Panchang + Tamil calendar lookup
+    transits/           Current planetary transits
     videos/             Video gallery + publish form
     classes/            Class announcements + UPI payment links
-  components/           Reusable UI (chart grid)
+  components/           Reusable UI (chart grid, module-locked message, language switcher)
   lib/
+    auth/                Session/OTP/email/module-access logic
     astro/engine.ts      The astrology calculation engine
-    astro/constants.ts   Sign/nakshatra/dasha reference data
+    astro/constants.ts   Sign/nakshatra/dasha reference data (English/Tamil/Hindi)
+    astro/localized-names.ts  Picks chart terminology by UI language
+    astro/panchang.ts     Panchang (tithi/nakshatra/yoga/karana/Rahu Kalam etc.)
+    astro/tamil-calendar.ts  Tamil solar calendar
+    astro/matching.ts     Ashtakoot Guna Milan engine
+    astro/transit.ts      Transit (Gochar) engine
     astro/birth-utils.ts Local time -> UTC conversion helper
+    i18n/                 Translation dictionary + language cookie helpers
     upi.ts               UPI deep-link builder
     youtube.ts            YouTube URL -> video ID parser
     db.ts                 Database connection
-prisma/schema.prisma     Database structure (Client, Kundli, Video, Class)
+  proxy.ts                Redirects signed-out users to /login
+prisma/schema.prisma     Database structure (User, Session, OtpCode, Client, Kundli, Video, Class)
 ```
