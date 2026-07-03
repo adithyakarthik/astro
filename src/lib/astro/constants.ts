@@ -179,3 +179,107 @@ export const KARANA_FIXED_NAMES = ["Kimstughna", "Shakuni", "Chatushpada", "Naga
 export const RAHU_KALAM_PART_BY_WEEKDAY = [8, 2, 7, 5, 6, 4, 3];
 export const YAMAGANDAM_PART_BY_WEEKDAY = [5, 4, 3, 2, 1, 7, 6];
 export const GULIKA_KALAM_PART_BY_WEEKDAY = [7, 6, 5, 4, 3, 2, 1];
+
+// --- Jamakkol / Tamil jathakam presentation ---
+// Traditional Tamil Nadu astrology ("Jamakkol") uses the same underlying
+// sidereal (Lahiri) calculations as the rest of this app, presented with
+// Tamil terminology and, conventionally, the South Indian fixed-grid chart
+// style already used by RasiChartGrid.
+
+export const TAMIL_RASI_NAMES = [
+  "மேஷம்",
+  "ரிஷபம்",
+  "மிதுனம்",
+  "கடகம்",
+  "சிம்மம்",
+  "கன்னி",
+  "துலாம்",
+  "விருச்சிகம்",
+  "தனுசு",
+  "மகரம்",
+  "கும்பம்",
+  "மீனம்",
+] as const;
+
+export const TAMIL_NAKSHATRA_NAMES = [
+  "அசுவினி",
+  "பரணி",
+  "கார்த்திகை",
+  "ரோகிணி",
+  "மிருகசீரிடம்",
+  "திருவாதிரை",
+  "புனர்பூசம்",
+  "பூசம்",
+  "ஆயில்யம்",
+  "மகம்",
+  "பூரம்",
+  "உத்திரம்",
+  "அஸ்தம்",
+  "சித்திரை",
+  "சுவாதி",
+  "விசாகம்",
+  "அனுஷம்",
+  "கேட்டை",
+  "மூலம்",
+  "பூராடம்",
+  "உத்திராடம்",
+  "திருவோணம்",
+  "அவிட்டம்",
+  "சதயம்",
+  "பூரட்டாதி",
+  "உத்திரட்டாதி",
+  "ரேவதி",
+] as const;
+
+export const TAMIL_PLANET_NAMES: Record<PlanetKey, string> = {
+  Sun: "சூரியன்",
+  Moon: "சந்திரன்",
+  Mars: "செவ்வாய்",
+  Mercury: "புதன்",
+  Jupiter: "குரு",
+  Venus: "சுக்கிரன்",
+  Saturn: "சனி",
+  Rahu: "ராகு",
+  Ketu: "கேது",
+};
+
+// Short 1-2 syllable forms for cramped chart grid cells.
+export const TAMIL_PLANET_SHORT: Record<PlanetKey, string> = {
+  Sun: "சூ",
+  Moon: "சந்",
+  Mars: "செ",
+  Mercury: "பு",
+  Jupiter: "கு",
+  Venus: "சுக்",
+  Saturn: "சனி",
+  Rahu: "ரா",
+  Ketu: "கே",
+};
+
+export const TAMIL_WEEKDAY_NAMES = [
+  "ஞாயிறு",
+  "திங்கள்",
+  "செவ்வாய்",
+  "புதன்",
+  "வியாழன்",
+  "வெள்ளி",
+  "சனி",
+] as const;
+
+// Tamil solar months, in the order the Sun's sidereal (Lahiri) longitude
+// passes through the corresponding rashi — Chithirai starts when the Sun
+// enters Mesha (Aries), and so on. Index matches RASI_NAMES/TAMIL_RASI_NAMES.
+export const TAMIL_MONTH_NAMES = [
+  "சித்திரை",
+  "வைகாசி",
+  "ஆனி",
+  "ஆடி",
+  "ஆவணி",
+  "புரட்டாசி",
+  "ஐப்பசி",
+  "கார்த்திகை",
+  "மார்கழி",
+  "தை",
+  "மாசி",
+  "பங்குனி",
+] as const;

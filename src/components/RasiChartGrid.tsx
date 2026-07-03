@@ -14,6 +14,8 @@ const PLANET_ABBR: Record<string, string> = {
 
 // Fixed South-Indian style layout: sign position on screen never changes,
 // only which sign carries the Ascendant (marked "Asc") changes per chart.
+// This is also the conventional layout for a Tamil Nadu ("Jamakkol" style)
+// jathakam chart.
 // prettier-ignore
 const GRID_LAYOUT: (number | null)[][] = [
   [11, 0, 1, 2],
@@ -26,10 +28,19 @@ export function RasiChartGrid({
   title,
   ascendantRasiIndex,
   planetsBySign,
+  rasiNames = RASI_NAMES,
+  planetAbbr = PLANET_ABBR,
+  ascendantLabel = "Asc",
 }: {
   title: string;
   ascendantRasiIndex: number;
   planetsBySign: Record<number, string[]>;
+  /** Sign names to display, in RASI_NAMES order (Aries..Pisces). Defaults to English. */
+  rasiNames?: readonly string[];
+  /** Planet key -> short label shown in the grid cell. Defaults to English 2-letter abbreviations. */
+  planetAbbr?: Record<string, string>;
+  /** Label for the Ascendant marker (e.g. "Asc" or "லக்னம்"). */
+  ascendantLabel?: string;
 }) {
   return (
     <div className="w-full max-w-sm">
@@ -48,14 +59,16 @@ export function RasiChartGrid({
                 isAsc ? "ring-2 ring-inset ring-amber-500" : ""
               }`}
             >
-              <span className="text-[10px] text-zinc-400">{RASI_NAMES[rasiIndex]}</span>
+              <span className="text-[10px] text-zinc-400">{rasiNames[rasiIndex]}</span>
               <div className="flex flex-wrap gap-1">
                 {isAsc && (
-                  <span className="rounded bg-amber-100 px-1 font-semibold text-amber-700">Asc</span>
+                  <span className="rounded bg-amber-100 px-1 font-semibold text-amber-700">
+                    {ascendantLabel}
+                  </span>
                 )}
                 {planets.map((p) => (
                   <span key={p} className="rounded bg-zinc-100 px-1 font-medium text-zinc-700">
-                    {PLANET_ABBR[p] ?? p}
+                    {planetAbbr[p] ?? p}
                   </span>
                 ))}
               </div>

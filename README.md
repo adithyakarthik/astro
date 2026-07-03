@@ -16,9 +16,10 @@ client data on a public URL until you've added authentication (Roadmap Phase 2).
 | Feature | Where |
 |---|---|
 | Add clients + their kundli birth details | `/clients` |
-| Auto-computed Rasi (D1) & Navamsa (D9) charts, Nakshatra, Vimshottari Dasha | `/kundli/[id]` |
+| Auto-computed Rasi (D1) & Navamsa (D9) charts, Nakshatra, Vimshottari Dasha + Antardasha (Dasa-Bukthi) | `/kundli/[id]` |
+| Tamil Jathakam ("Jamakkol" style) — same chart in Tamil terminology | `/kundli/[id]` (bottom section) |
 | Match Making — Ashtakoot Guna Milan (36-point) compatibility | `/matchmaking` |
-| Muhurta / Panchang — tithi, nakshatra, yoga, karana, Rahu Kalam, etc. | `/muhurta` |
+| Muhurta / Panchang — tithi, nakshatra, yoga, karana, Rahu Kalam, etc. + Tamil calendar (month/day/weekday) | `/muhurta` |
 | Transits (Gochar) — current planetary positions vs. a natal chart | `/transits` |
 | Publish YouTube videos | `/videos` |
 | Announce classes with UPI payment link + QR code | `/classes` |

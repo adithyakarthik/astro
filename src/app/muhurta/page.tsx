@@ -1,4 +1,5 @@
 import { computePanchang } from "@/lib/astro/panchang";
+import { computeTamilCalendarDate } from "@/lib/astro/tamil-calendar";
 import { COMMON_TIMEZONES } from "@/lib/astro/birth-utils";
 
 function fmtTime(date: Date, tzOffsetMinutes: number) {
@@ -21,11 +22,9 @@ export default async function MuhurtaPage({
   const tzOffsetMinutes = Number(params.tz ?? 330);
 
   const [year, month, day] = date.split("-").map(Number);
-  const panchang = computePanchang({
-    dateUtcNoon: new Date(Date.UTC(year, month - 1, day, 12, 0, 0)),
-    latitude,
-    longitude,
-  });
+  const dateAtNoonUtc = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+  const panchang = computePanchang({ dateUtcNoon: dateAtNoonUtc, latitude, longitude });
+  const tamilDate = computeTamilCalendarDate(dateAtNoonUtc);
 
   const windowRow = (label: string, w: { start: Date; end: Date }, tone: string) => (
     <tr className="border-t border-zinc-100">
@@ -128,6 +127,33 @@ export default async function MuhurtaPage({
           <p className="mt-3 text-xs text-zinc-400">
             Rahu Kalam/Yamagandam/Gulika Kalam are traditionally avoided for starting new ventures; Abhijit
             Muhurta (midday) is traditionally considered favourable on most days.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-6 lg:col-span-2">
+          <h2 className="mb-3 text-lg font-semibold">தமிழ் நாள்காட்டி — Tamil Calendar (Jamakkol style)</h2>
+          <table className="w-full max-w-md text-left text-sm">
+            <tbody>
+              <tr className="border-t border-zinc-200">
+                <td className="py-1.5 pr-4 font-medium">தமிழ் மாதம் (Tamil month)</td>
+                <td className="py-1.5 pr-4">{tamilDate.monthName}</td>
+              </tr>
+              <tr className="border-t border-zinc-200">
+                <td className="py-1.5 pr-4 font-medium">தேதி (Day of month)</td>
+                <td className="py-1.5 pr-4">{tamilDate.day}</td>
+              </tr>
+              <tr className="border-t border-zinc-200">
+                <td className="py-1.5 pr-4 font-medium">கிழமை (Weekday)</td>
+                <td className="py-1.5 pr-4">{tamilDate.weekdayName}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p className="mt-3 text-xs text-zinc-500">
+            The Tamil month is determined by the Sun&apos;s sidereal position (reliable). The day-of-month is
+            approximate — it can be off by a day right at a month boundary, since exact traditional reckoning
+            also depends on the time of day the month changed relative to sunrise. The 60-year Tamil year name
+            is intentionally not shown, since it has known regional variations that need care to get right —
+            see ROADMAP.md.
           </p>
         </div>
       </div>

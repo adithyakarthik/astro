@@ -169,6 +169,8 @@ export interface DashaPeriod {
   startDate: string; // ISO
   endDate: string; // ISO
   years: number;
+  /** Antardashas (bhukti) within this period. Empty for antardasha-level entries themselves (no pratyantardasha yet). */
+  antardashas: DashaPeriod[];
 }
 
 export interface ChartData {
@@ -217,6 +219,50 @@ function toPlacement(planet: PlanetKey, siderealLongitude: number): GrahaPlaceme
   };
 }
 
+const MS_PER_YEAR = 365.25 * 24 * 60 * 60 * 1000;
+
+/**
+ * Antardashas (bhukti) within one mahadasha, following the standard rule:
+ * the sub-period sequence starts with the mahadasha's own lord and cycles
+ * through DASHA_SEQUENCE, each lasting (mahadasha_years * lord_years / 120).
+ *
+ * `fullStartMs` is when the *full, untruncated* mahadasha nominally began
+ * (which for the birth mahadasha is *before* birth), while `visibleStartMs`
+ * is where the returned periods should actually begin (birth, for the first
+ * mahadasha) — so the antardasha active at birth shows its correct
+ * remaining balance instead of its full duration.
+ */
+function computeAntardashas(
+  mahaLord: PlanetKey,
+  mahaYears: number,
+  fullStartMs: number,
+  visibleStartMs: number
+): DashaPeriod[] {
+  const startIdx = DASHA_SEQUENCE.indexOf(mahaLord);
+  const results: DashaPeriod[] = [];
+  let cursorMs = fullStartMs;
+
+  for (let i = 0; i < DASHA_SEQUENCE.length; i++) {
+    const lord = DASHA_SEQUENCE[(startIdx + i) % DASHA_SEQUENCE.length];
+    const fullYears = (mahaYears * DASHA_YEARS[lord]) / 120;
+    const fullStart = cursorMs;
+    const fullEnd = cursorMs + fullYears * MS_PER_YEAR;
+    cursorMs = fullEnd;
+
+    if (fullEnd <= visibleStartMs) continue; // entirely elapsed before the visible window
+
+    const clippedStartMs = Math.max(fullStart, visibleStartMs);
+    results.push({
+      planet: lord,
+      startDate: new Date(clippedStartMs).toISOString(),
+      endDate: new Date(fullEnd).toISOString(),
+      years: (fullEnd - clippedStartMs) / MS_PER_YEAR,
+      antardashas: [],
+    });
+  }
+  return results;
+}
+
 function computeVimshottariDasha(
   birthUtc: Date,
   moonSiderealLongitude: number
@@ -232,22 +278,27 @@ function computeVimshottariDasha(
 
   const periods: DashaPeriod[] = [];
 
-  // First (birth) mahadasha runs only its remaining balance.
-  const firstYears = DASHA_YEARS[startLord] * fractionRemaining;
-  let cursorMs = birthUtc.getTime();
-  const msPerYear = 365.25 * 24 * 60 * 60 * 1000;
+  const birthMs = birthUtc.getTime();
+  // The birth mahadasha's *full* span started before birth; back-compute that.
+  const firstMahaFullYears = DASHA_YEARS[startLord];
+  const firstMahaFullStartMs = birthMs - firstMahaFullYears * fractionElapsed * MS_PER_YEAR;
+  const firstYears = firstMahaFullYears * fractionRemaining;
+
+  let cursorMs = birthMs;
 
   for (let i = 0; i < DASHA_SEQUENCE.length; i++) {
     const planet = DASHA_SEQUENCE[(startIndex + i) % DASHA_SEQUENCE.length];
     const years = i === 0 ? firstYears : DASHA_YEARS[planet];
     const startDate = new Date(cursorMs);
-    cursorMs += years * msPerYear;
+    const mahaFullStartMs = i === 0 ? firstMahaFullStartMs : cursorMs;
+    cursorMs += years * MS_PER_YEAR;
     const endDate = new Date(cursorMs);
     periods.push({
       planet,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
       years,
+      antardashas: computeAntardashas(planet, DASHA_YEARS[planet], mahaFullStartMs, startDate.getTime()),
     });
   }
   return periods;
