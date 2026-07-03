@@ -59,6 +59,36 @@ export default async function Home() {
           + Announce a class
         </Link>
       </div>
+
+      <div>
+        <h2 className="text-lg font-semibold">Astrology tools</h2>
+        <p className="mt-1 text-sm text-zinc-500">
+          Beyond the birth chart itself — the other everyday tools of a Vedic astrology practice.
+        </p>
+        <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <Link
+            href="/matchmaking"
+            className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-zinc-300 hover:shadow"
+          >
+            <div className="font-medium text-zinc-800">Match Making</div>
+            <div className="text-sm text-zinc-500">Ashtakoot Guna Milan (36-point) compatibility scoring</div>
+          </Link>
+          <Link
+            href="/muhurta"
+            className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-zinc-300 hover:shadow"
+          >
+            <div className="font-medium text-zinc-800">Muhurta / Panchang</div>
+            <div className="text-sm text-zinc-500">Tithi, nakshatra, yoga, karana, Rahu Kalam & more for any date</div>
+          </Link>
+          <Link
+            href="/transits"
+            className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-zinc-300 hover:shadow"
+          >
+            <div className="font-medium text-zinc-800">Transits (Gochar)</div>
+            <div className="text-sm text-zinc-500">Current planetary positions against any client&apos;s chart</div>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

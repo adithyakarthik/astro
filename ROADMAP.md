@@ -12,6 +12,15 @@ data behind a public URL.
 - Client/kundli management pages
 - YouTube video publishing (paste a link, it embeds)
 - Class announcements with a UPI payment deep-link + QR code
+- **Match Making**: Ashtakoot Guna Milan (36-point) compatibility scoring
+  between any two saved kundlis, with a per-koot breakdown and Nadi/Bhakoot
+  dosha flags (`/matchmaking`)
+- **Muhurta / Panchang**: tithi, nakshatra, yoga, karana, sunrise/sunset,
+  Rahu Kalam, Yamagandam, Gulika Kalam, and Abhijit Muhurta for any date and
+  place (`/muhurta`)
+- **Transits (Gochar)**: current planetary sidereal positions, optionally
+  shown as house-from-Ascendant and house-from-Moon against any saved
+  kundli (`/transits`)
 
 ## Phase 2 — Before going live (do this next)
 
@@ -49,13 +58,13 @@ data behind a public URL.
   (Saptamsha), D10 (Dashamsha — career), D12 (Dwadashamsha), D30 (Trimshamsha),
   D60 (Shashtiamsha). Same math pattern as the existing D9 calculation in
   `engine.ts`, different division rule per chart.
-- **Ashtakavarga** (strength-scoring system) and **transit (Gochar) analysis**
-  — showing where current planetary transits fall against the natal chart.
+- **Ashtakavarga** (strength-scoring system) — not yet built.
 - **Antardasha/Pratyantardasha** (dasha sub-periods) — currently only
   Mahadasha (main periods) is computed; astrologers usually want the
   sub-periods too.
-- **Kundli matching (Ashtakoot Milan)** for marriage compatibility between two
-  charts — a very commonly requested feature.
+- **Dashakoot / Manglik (Kuja) dosha check** in the matchmaking tool — beyond
+  the current 8-koot score, a full professional match report typically also
+  checks Mangal Dosha for both charts.
 
 ## Phase 4 — Client & video experience
 

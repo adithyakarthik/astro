@@ -48,7 +48,7 @@ const D2R = Math.PI / 180;
 const R2D = 180 / Math.PI;
 const AU_LIGHT_DAYS = 0.0057755183; // days of light travel time per AU
 
-function norm360(deg: number): number {
+export function norm360(deg: number): number {
   return ((deg % 360) + 360) % 360;
 }
 
@@ -75,12 +75,12 @@ export function lahiriAyanamsa(jd: number): number {
   return norm360(AYANAMSA_AT_J2000_DEG + PRECESSION_DEG_PER_CENTURY * T);
 }
 
-function sunTropicalLongitudeDeg(jd: number): number {
+export function sunTropicalLongitudeDeg(jd: number): number {
   const T = base.J2000Century(jd);
   return norm360(solar.apparentLongitude(T) * R2D);
 }
 
-function moonTropicalLongitudeDeg(jd: number): number {
+export function moonTropicalLongitudeDeg(jd: number): number {
   return norm360(moonposition.position(jd).lon * R2D);
 }
 

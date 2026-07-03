@@ -99,3 +99,83 @@ export const DASHA_YEARS: Record<PlanetKey, number> = {
 export function nakshatraLord(nakshatraIndex: number): PlanetKey {
   return DASHA_SEQUENCE[nakshatraIndex % 9];
 }
+
+export const WEEKDAY_NAMES = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+] as const;
+
+// The 15 base tithi names, used for both Shukla (waxing) and Krishna
+// (waning) paksha except the 15th, which is Purnima (full moon) in Shukla
+// and Amavasya (new moon) in Krishna.
+export const TITHI_BASE_NAMES = [
+  "Pratipada",
+  "Dwitiya",
+  "Tritiya",
+  "Chaturthi",
+  "Panchami",
+  "Shashthi",
+  "Saptami",
+  "Ashtami",
+  "Navami",
+  "Dashami",
+  "Ekadashi",
+  "Dwadashi",
+  "Trayodashi",
+  "Chaturdashi",
+] as const;
+
+export const YOGA_NAMES = [
+  "Vishkambha",
+  "Priti",
+  "Ayushman",
+  "Saubhagya",
+  "Shobhana",
+  "Atiganda",
+  "Sukarma",
+  "Dhriti",
+  "Shoola",
+  "Ganda",
+  "Vriddhi",
+  "Dhruva",
+  "Vyaghata",
+  "Harshana",
+  "Vajra",
+  "Siddhi",
+  "Vyatipata",
+  "Variyana",
+  "Parigha",
+  "Shiva",
+  "Siddha",
+  "Sadhya",
+  "Shubha",
+  "Shukla",
+  "Brahma",
+  "Indra",
+  "Vaidhriti",
+] as const;
+
+// 7 "movable" karanas repeat through most of the lunar month; Kimstughna,
+// Shakuni, Chatushpada and Naga are "fixed" and occur once per month.
+export const KARANA_MOVABLE_NAMES = [
+  "Bava",
+  "Balava",
+  "Kaulava",
+  "Taitila",
+  "Gara",
+  "Vanija",
+  "Vishti",
+] as const;
+export const KARANA_FIXED_NAMES = ["Kimstughna", "Shakuni", "Chatushpada", "Naga"] as const;
+
+/** Rahu Kalam / Yamagandam / Gulika Kalam each divide daylight into 8 equal
+ * parts; which part (1-8, in sunrise->sunset order) is inauspicious depends
+ * on the weekday. Index 0 = Sunday ... 6 = Saturday. */
+export const RAHU_KALAM_PART_BY_WEEKDAY = [8, 2, 7, 5, 6, 4, 3];
+export const YAMAGANDAM_PART_BY_WEEKDAY = [5, 4, 3, 2, 1, 7, 6];
+export const GULIKA_KALAM_PART_BY_WEEKDAY = [7, 6, 5, 4, 3, 2, 1];

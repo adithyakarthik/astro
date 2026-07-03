@@ -14,13 +14,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Jyotish Studio",
+  title: "JK Vedansh Astro",
   description: "Vedic astrology practice management: kundlis, clients, videos and classes.",
 };
 
 const NAV_LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/clients", label: "Clients & Kundlis" },
+  { href: "/matchmaking", label: "Match Making" },
+  { href: "/muhurta", label: "Muhurta" },
+  { href: "/transits", label: "Transits" },
   { href: "/videos", label: "Videos" },
   { href: "/classes", label: "Classes & Payments" },
 ];
@@ -39,7 +42,7 @@ export default function RootLayout({
         <header className="border-b border-zinc-200 bg-white">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
             <Link href="/" className="text-lg font-semibold tracking-tight">
-              🕉️ Jyotish Studio
+              🕉️ JK Vedansh Astro
             </Link>
             <nav className="flex gap-6 text-sm font-medium text-zinc-600">
               {NAV_LINKS.map((link) => (

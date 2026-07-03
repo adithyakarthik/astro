@@ -1,9 +1,10 @@
-# Jyotish Studio
+# JK Vedansh Astro
 
 A Vedic astrology practice-management app: store client kundlis (birth charts),
 compute them in standard Vedic formats (Rasi/D1, Navamsa/D9, Nakshatra,
-Vimshottari Dasha), publish YouTube videos, and announce classes with a UPI
-payment link/QR so students can pay you directly via GPay, PhonePe, Paytm etc.
+Vimshottari Dasha), check marriage compatibility, look up Muhurta/Panchang,
+track planetary transits, publish YouTube videos, and announce classes with a
+UPI payment link/QR so students can pay you directly via GPay, PhonePe, Paytm etc.
 
 This is a **working first version (MVP)**, not a finished commercial product.
 See [`ROADMAP.md`](./ROADMAP.md) for what to build next — most importantly,
@@ -16,6 +17,9 @@ client data on a public URL until you've added authentication (Roadmap Phase 2).
 |---|---|
 | Add clients + their kundli birth details | `/clients` |
 | Auto-computed Rasi (D1) & Navamsa (D9) charts, Nakshatra, Vimshottari Dasha | `/kundli/[id]` |
+| Match Making — Ashtakoot Guna Milan (36-point) compatibility | `/matchmaking` |
+| Muhurta / Panchang — tithi, nakshatra, yoga, karana, Rahu Kalam, etc. | `/muhurta` |
+| Transits (Gochar) — current planetary positions vs. a natal chart | `/transits` |
 | Publish YouTube videos | `/videos` |
 | Announce classes with UPI payment link + QR code | `/classes` |
 
@@ -55,6 +59,12 @@ nakshatra and dasha for the vast majority of charts, but not certified to the
 same precision as paid Swiss Ephemeris-based software. If you're publishing
 charts professionally and need exact-to-the-second precision, see the Swiss
 Ephemeris upgrade path in `ROADMAP.md`.
+
+The **Match Making** tool uses the standard, widely-published simplified
+Ashtakoot rules; a few koots have minor variations across traditional
+Panchang schools. It's a genuinely useful starting point, not a substitute
+for a qualified astrologer's sign-off — especially for a borderline score or
+a flagged Nadi/Bhakoot dosha.
 
 ## Where your data lives
 
