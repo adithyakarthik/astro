@@ -10,7 +10,7 @@
 // have a qualified astrologer verify the result, especially if the score is
 // borderline or Nadi/Bhakoot dosha is flagged.
 
-import { PlanetKey, RASI_NAMES } from "./constants";
+import { NADI_BY_NAKSHATRA, PlanetKey, RASI_NAMES } from "./constants";
 
 export interface MoonPlacement {
   nakshatraIndex: number; // 0-26
@@ -141,13 +141,6 @@ const GANA_SCORE: Record<Gana, Record<Gana, number>> = {
 };
 
 // --- Nadi (8 points, most important dosha): by nakshatra ---
-type Nadi = "Aadi" | "Madhya" | "Antya";
-const NADI_BY_NAKSHATRA: Nadi[] = [
-  "Aadi", "Madhya", "Antya", "Antya", "Madhya", "Aadi", "Aadi", "Madhya", "Antya", // 0-8
-  "Antya", "Madhya", "Aadi", "Aadi", "Madhya", "Antya", "Antya", "Madhya", "Aadi", // 9-17
-  "Aadi", "Madhya", "Antya", "Antya", "Madhya", "Aadi", "Aadi", "Madhya", "Antya", // 18-26
-];
-
 function tithiCountTara(fromNak: number, toNak: number): number {
   return ((toNak - fromNak + 27) % 27) + 1;
 }

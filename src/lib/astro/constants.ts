@@ -355,3 +355,20 @@ export const HINDI_PLANET_SHORT: Record<PlanetKey, string> = {
   Rahu: "रा",
   Ketu: "के",
 };
+
+// --- Shared classical reference tables used by matchmaking, KP, Jaimini ---
+
+export type Nadi = "Aadi" | "Madhya" | "Antya";
+
+/** Each nakshatra's Nadi (used for Ashtakoot Nadi Koota and general Nadi classification). */
+export const NADI_BY_NAKSHATRA: Nadi[] = [
+  "Aadi", "Madhya", "Antya", "Antya", "Madhya", "Aadi", "Aadi", "Madhya", "Antya", // 0-8
+  "Antya", "Madhya", "Aadi", "Aadi", "Madhya", "Antya", "Antya", "Madhya", "Aadi", // 9-17
+  "Aadi", "Madhya", "Antya", "Antya", "Madhya", "Aadi", "Aadi", "Madhya", "Antya", // 18-26
+];
+
+/** Traditional (Rahu/Ketu excluded) rulership of each sign, used for Jaimini Arudha calculations. */
+export const SIGN_LORDS: PlanetKey[] = [
+  "Mars", "Venus", "Mercury", "Moon", "Sun", "Mercury",
+  "Venus", "Mars", "Jupiter", "Saturn", "Saturn", "Jupiter",
+];

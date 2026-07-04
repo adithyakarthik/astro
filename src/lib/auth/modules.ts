@@ -6,6 +6,7 @@ export const MODULE_KEYS = [
   "matchmaking",
   "muhurta",
   "transits",
+  "prashna",
   "videos",
   "classes",
 ] as const;
@@ -17,6 +18,7 @@ export const MODULE_LABELS: Record<ModuleKey, string> = {
   matchmaking: "Match Making",
   muhurta: "Muhurta / Panchang",
   transits: "Transits (Gochar)",
+  prashna: "Prashna (Horary)",
   videos: "Videos",
   classes: "Classes & Payments",
 };

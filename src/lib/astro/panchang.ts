@@ -17,6 +17,7 @@ import {
   KARANA_FIXED_NAMES,
   KARANA_MOVABLE_NAMES,
   NAKSHATRA_NAMES,
+  PlanetKey,
   RAHU_KALAM_PART_BY_WEEKDAY,
   TITHI_BASE_NAMES,
   WEEKDAY_NAMES,
@@ -60,6 +61,42 @@ export interface PanchangResult {
   yamagandam: TimeWindow;
   gulikaKalam: TimeWindow;
   abhijitMuhurta: TimeWindow;
+  /** The 24 planetary-hour (Hora) periods for this day: 12 dividing daylight, 12 dividing the following night. */
+  horas: HoraPeriod[];
+}
+
+export interface HoraPeriod {
+  lord: PlanetKey;
+  start: Date;
+  end: Date;
+  isDayHora: boolean;
+}
+
+// Chaldean order (by traditional orbital speed, slowest to fastest), rotated
+// to start from the Sun — stepping through this fixed 7-cycle one hora at a
+// time reproduces the standard weekday-lord sequence (Sun, Moon, Mars,
+// Mercury, Jupiter, Venus, Saturn, ...) every 24 steps.
+const HORA_CYCLE: PlanetKey[] = ["Sun", "Venus", "Mercury", "Moon", "Saturn", "Jupiter", "Mars"];
+const WEEKDAY_LORD: PlanetKey[] = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"];
+
+function computeHoras(
+  sunrise: Date,
+  sunset: Date,
+  nextSunrise: Date,
+  weekdayIndex: number
+): HoraPeriod[] {
+  const dayWindows = divideDaylight(sunrise, sunset, 12);
+  const nightWindows = divideDaylight(sunset, nextSunrise, 12);
+  const startIdx = HORA_CYCLE.indexOf(WEEKDAY_LORD[weekdayIndex]);
+
+  const periods: HoraPeriod[] = [];
+  dayWindows.forEach((w, i) =>
+    periods.push({ lord: HORA_CYCLE[(startIdx + i) % 7], start: w.start, end: w.end, isDayHora: true })
+  );
+  nightWindows.forEach((w, i) =>
+    periods.push({ lord: HORA_CYCLE[(startIdx + 12 + i) % 7], start: w.start, end: w.end, isDayHora: false })
+  );
+  return periods;
 }
 
 function divideDaylight(sunrise: Date, sunset: Date, parts: number): TimeWindow[] {
@@ -122,6 +159,12 @@ export function computePanchang(input: PanchangInput): PanchangResult {
   const fifteenths = divideDaylight(sunriseDate, sunsetDate, 15);
   const abhijitMuhurta = fifteenths[7]; // 8th of 15
 
+  const nextDayNoon = new Date(input.dateUtcNoon.getTime() + 24 * 60 * 60 * 1000);
+  const nextCal = new julian.Calendar().fromDate(nextDayNoon);
+  const nextSunrise = new Sunrise(nextCal, input.latitude, -input.longitude);
+  const nextSunriseDate: Date = nextSunrise.rise().toDate();
+  const horas = computeHoras(sunriseDate, sunsetDate, nextSunriseDate, weekdayIndex);
+
   return {
     weekday,
     sunrise: sunriseDate,
@@ -130,6 +173,7 @@ export function computePanchang(input: PanchangInput): PanchangResult {
     nakshatra: { name: NAKSHATRA_NAMES[nakshatraIndex], index: nakshatraIndex },
     yoga: { name: YOGA_NAMES[yogaIndex] },
     karana: { name: karanaName },
+    horas,
     rahuKalam,
     yamagandam,
     gulikaKalam,

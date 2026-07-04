@@ -130,6 +130,24 @@ export default async function MuhurtaPage({
           <p className="mt-3 text-xs text-zinc-400">{t("muhurta.windowsNote")}</p>
         </div>
 
+        <div className="rounded-xl border border-zinc-200 bg-white p-6 lg:col-span-2">
+          <h2 className="mb-3 text-lg font-semibold">{t("muhurta.horaHeading")}</h2>
+          <div className="grid grid-cols-2 gap-x-8 sm:grid-cols-4">
+            {panchang.horas.map((h, i) => (
+              <div
+                key={i}
+                className={`flex items-center justify-between border-t border-zinc-100 py-1.5 text-sm ${
+                  i === 0 || i === 12 ? "mt-0" : ""
+                }`}
+              >
+                <span className="text-zinc-500">{fmtTime(h.start, tzOffsetMinutes)}</span>
+                <span className="font-medium">{h.lord}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-zinc-400">{t("muhurta.horaNote")}</p>
+        </div>
+
         <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-6 lg:col-span-2">
           <h2 className="mb-3 text-lg font-semibold">{t("muhurta.tamilCalendarHeading")}</h2>
           <table className="w-full max-w-md text-left text-sm">

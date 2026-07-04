@@ -30,6 +30,7 @@ const NAV_LINKS: { href: string; key: TranslationKey; module?: ModuleKey }[] = [
   { href: "/matchmaking", key: "nav.matchmaking", module: "matchmaking" },
   { href: "/muhurta", key: "nav.muhurta", module: "muhurta" },
   { href: "/transits", key: "nav.transits", module: "transits" },
+  { href: "/prashna", key: "nav.prashna", module: "prashna" },
   { href: "/videos", key: "nav.videos", module: "videos" },
   { href: "/classes", key: "nav.classes", module: "classes" },
 ];

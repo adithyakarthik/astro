@@ -29,6 +29,7 @@ const en = {
     matchmaking: "Match Making",
     muhurta: "Muhurta",
     transits: "Transits",
+    prashna: "Prashna",
     videos: "Videos",
     classes: "Classes & Payments",
     admin: "Admin",
@@ -129,6 +130,24 @@ const en = {
     start: "Start",
     end: "End",
     duration: "Duration",
+    divisionalCharts: "Divisional charts (Vargas)",
+    selectChart: "Chart",
+    divisionalChartsNote:
+      "Each Varga zooms into a specific life area by subdividing every sign further. Ascendant and planet placements are shown for whichever chart you pick above.",
+    kpHeading: "KP (Krishnamurti Paddhati) — Star & sub lords",
+    kpNote:
+      "Sub lord divides each nakshatra into 9 unequal portions (Vimshottari proportions). Cuspal sub-lords (Placidus houses) are not yet computed — this covers planet and ascendant sub-lords only.",
+    starLord: "Star lord",
+    subLord: "Sub lord",
+    jaiminiHeading: "Jaimini — Karakas & Arudha Lagna",
+    jaiminiNote:
+      "Chara Karakas rank the classical 7 grahas by degree within their sign. Arudha Lagna (AL) is the sign of perceived material life. Chara Dasha is not yet implemented.",
+    karakaCol: "Karaka",
+    arudhaLagna: "Arudha Lagna (AL)",
+    karakamsha: "Karakamsha (Atmakaraka's Navamsa)",
+    nadiHeading: "Nadi (by nakshatra)",
+    nadiNote:
+      "Aadi / Madhya / Antya classification of each planet's nakshatra, used in matchmaking's Nadi Koota. Deeper Nadi-Jyotish (palm-leaf) readings are a distinct oral/textual tradition not covered by any public formula, so this is classification only, not prediction.",
   },
   videos: {
     title: "Videos",
@@ -184,6 +203,9 @@ const en = {
     abhijitMuhurta: "Abhijit Muhurta (favourable)",
     windowsNote:
       "Rahu Kalam/Yamagandam/Gulika Kalam are traditionally avoided for starting new ventures; Abhijit Muhurta (midday) is traditionally considered favourable on most days.",
+    horaHeading: "Hora (planetary hours)",
+    horaNote:
+      "24 unequal periods (12 across daylight, 12 across the following night), each ruled by a planet in the classical Chaldean order — used to time activities by the ruling planet's nature.",
     tamilCalendarHeading: "தமிழ் நாள்காட்டி — Tamil Calendar (Jamakkol style)",
     tamilMonth: "Tamil month",
     tamilDay: "Day of month",
@@ -222,6 +244,20 @@ const en = {
     houseFromMoon: "House from Moon",
     referenceChart: "Reference chart",
   },
+  prashna: {
+    title: "Prashna (Horary Astrology)",
+    subtitle:
+      "Cast a chart for the exact moment a question is asked, at the questioner's location — the classical way to answer a specific question without a birth chart.",
+    question: "Question (optional, for your own reference)",
+    place: "Current place (city, country)",
+    findLocation: "Find location",
+    castButton: "Cast Prashna chart for right now",
+    resultHeading: "Prashna chart",
+    castAt: "Cast for",
+    interpretiveNote:
+      "Traditional guidance: examine the Ascendant and its lord for the general trend, the Moon's nakshatra and its lord for the undercurrent, and the significators of the house relevant to the question. This tool casts the chart only — interpretation is left to you.",
+    newQuestion: "Ask another question",
+  },
   admin: {
     title: "Admin — Users & Module Access",
     subtitle:
@@ -259,6 +295,7 @@ const ta: Dictionary = {
     matchmaking: "பொருத்தம் பார்த்தல்",
     muhurta: "முகூர்த்தம்",
     transits: "கோச்சாரம்",
+    prashna: "பிரச்ன ஜோதிடம்",
     videos: "வீடியோக்கள்",
     classes: "வகுப்புகள் & பணம்",
     admin: "நிர்வாகம்",
@@ -359,6 +396,24 @@ const ta: Dictionary = {
     start: "தொடக்கம்",
     end: "முடிவு",
     duration: "காலம்",
+    divisionalCharts: "வர்க்க சக்கரங்கள் (Vargas)",
+    selectChart: "சக்கரம்",
+    divisionalChartsNote:
+      "ஒவ்வொரு வர்க்கமும் ஒரு குறிப்பிட்ட வாழ்க்கை அம்சத்தை நுணுக்கமாக ஆராய்கிறது. மேலே தேர்ந்தெடுத்த சக்கரத்திற்கான லக்னம் மற்றும் கிரக நிலைகள் காட்டப்படுகின்றன.",
+    kpHeading: "KP (கிருஷ்ணமூர்த்தி பத்ததி) — நட்சத்திர & உப அதிபதி",
+    kpNote:
+      "உப அதிபதி ஒவ்வொரு நட்சத்திரத்தையும் 9 சம அல்லாத பகுதிகளாக பிரிக்கிறது (விம்சோத்தரி விகிதத்தில்). கிரக மற்றும் லக்ன உப அதிபதிகள் மட்டுமே இங்கு உள்ளன.",
+    starLord: "நட்சத்திர அதிபதி",
+    subLord: "உப அதிபதி",
+    jaiminiHeading: "ஜைமினி — காரகர்கள் & ஆரூட லக்னம்",
+    jaiminiNote:
+      "சார கார காக்கள் 7 கிரகங்களை பாகையின் அடிப்படையில் தரவரிசைப்படுத்துகின்றன. ஆரூட லக்னம் (AL) உணரப்படும் பொருள் வாழ்க்கையின் ராசி. சார தசை இன்னும் செயல்படுத்தப்படவில்லை.",
+    karakaCol: "காரகன்",
+    arudhaLagna: "ஆரூட லக்னம் (AL)",
+    karakamsha: "காரகாம்சம் (ஆத்மகாரகனின் நவாம்சம்)",
+    nadiHeading: "நாடி (நட்சத்திரப்படி)",
+    nadiNote:
+      "ஒவ்வொரு கிரகத்தின் நட்சத்திரத்தின் ஆதி/மத்திய/அந்திய வகைப்பாடு, பொருத்தப் பார்வையில் நாடி கூறுக்கு பயன்படுகிறது. இது வகைப்பாடு மட்டுமே, முன்னறிவிப்பு அல்ல.",
   },
   videos: {
     title: "வீடியோக்கள்",
@@ -412,6 +467,8 @@ const ta: Dictionary = {
     gulikaKalam: "குளிக காலம் (தவிர்க்கவும்)",
     abhijitMuhurta: "அபிஜித் முகூர்த்தம் (நல்லது)",
     windowsNote: "ராகு காலம்/எமகண்டம்/குளிக காலம் புதிய முயற்சிகளுக்கு தவிர்க்கப்படுகிறது; அபிஜித் முகூர்த்தம் (நண்பகல்) பெரும்பாலான நாட்களில் நல்லதாக கருதப்படுகிறது.",
+    horaHeading: "ஹோரை (கிரக நேரம்)",
+    horaNote: "24 சம அல்லாத பகுதிகள் (பகலில் 12, அடுத்த இரவில் 12), ஒவ்வொன்றும் ஒரு கிரகத்தால் ஆளப்படுகிறது — செயல்பாடுகளை திட்டமிட பயன்படுத்தப்படுகிறது.",
     tamilCalendarHeading: "தமிழ் நாள்காட்டி — Jamakkol பாணி",
     tamilMonth: "தமிழ் மாதம்",
     tamilDay: "தேதி",
@@ -447,6 +504,19 @@ const ta: Dictionary = {
     houseFromMoon: "சந்திரனிலிருந்து பாவம்",
     referenceChart: "குறிப்பு சார்ட்",
   },
+  prashna: {
+    title: "பிரச்ன ஜோதிடம்",
+    subtitle: "ஒரு கேள்வி கேட்கப்படும் அந்த நேரத்திற்கே, கேட்பவர் இருக்கும் இடத்திற்கு ஒரு சார்ட் உருவாக்கப்படுகிறது.",
+    question: "கேள்வி (விருப்பம், உங்கள் குறிப்புக்காக)",
+    place: "தற்போதைய இடம் (நகரம், நாடு)",
+    findLocation: "இடத்தைக் கண்டறி",
+    castButton: "இப்போதைக்கான பிரச்ன சார்ட்டை உருவாக்கு",
+    resultHeading: "பிரச்ன சார்ட்",
+    castAt: "உருவாக்கப்பட்ட நேரம்",
+    interpretiveNote:
+      "பாரம்பரிய வழிகாட்டல்: பொது போக்கிற்கு லக்னம் மற்றும் அதன் அதிபதியை, உள்ளடி போக்கிற்கு சந்திரனின் நட்சத்திரத்தையும் அதன் அதிபதியையும், கேள்விக்குரிய பாவத்தின் காரகர்களையும் ஆராயவும். இந்த கருவி சார்ட்டை மட்டுமே உருவாக்குகிறது — விளக்கம் உங்களுக்கே.",
+    newQuestion: "மற்றொரு கேள்வி கேளுங்கள்",
+  },
   admin: {
     title: "நிர்வாகம் — பயனர்கள் & தொகுதி அணுகல்",
     subtitle: "ஒவ்வொரு பயனருக்கும் ஒவ்வொரு அம்சத் தொகுதியையும் இயக்கவும்/முடக்கவும், அவர்களின் சந்தா திட்டத்திற்கு ஏற்ப. நிர்வாக கணக்குகளுக்கு எப்போதும் அனைத்து தொகுதிகளுக்கும் அணுகல் உண்டு.",
@@ -481,6 +551,7 @@ const hi: Dictionary = {
     matchmaking: "गुण मिलान",
     muhurta: "मुहूर्त",
     transits: "गोचर",
+    prashna: "प्रश्न ज्योतिष",
     videos: "वीडियो",
     classes: "कक्षाएँ व भुगतान",
     admin: "एडमिन",
@@ -581,6 +652,24 @@ const hi: Dictionary = {
     start: "शुरुआत",
     end: "अंत",
     duration: "अवधि",
+    divisionalCharts: "विभाजित चार्ट (वर्ग)",
+    selectChart: "चार्ट",
+    divisionalChartsNote:
+      "हर वर्ग जीवन के किसी विशेष क्षेत्र को हर राशि को और उप-विभाजित करके गहराई से दिखाता है। ऊपर चुने गए चार्ट के लिए लग्न व ग्रह स्थितियाँ नीचे दिखाई गई हैं।",
+    kpHeading: "KP (कृष्णमूर्ति पद्धति) — नक्षत्र व उप स्वामी",
+    kpNote:
+      "उप स्वामी हर नक्षत्र को 9 असमान भागों (विंशोत्तरी अनुपात में) में बांटता है। यहाँ केवल ग्रह व लग्न के उप स्वामी शामिल हैं।",
+    starLord: "नक्षत्र स्वामी",
+    subLord: "उप स्वामी",
+    jaiminiHeading: "जैमिनी — कारक व आरूढ़ लग्न",
+    jaiminiNote:
+      "चर कारक 7 शास्त्रीय ग्रहों को उनकी राशि में अंश के अनुसार क्रमबद्ध करते हैं। आरूढ़ लग्न (AL) भौतिक जीवन की अनुभूत राशि है। चर दशा अभी लागू नहीं है।",
+    karakaCol: "कारक",
+    arudhaLagna: "आरूढ़ लग्न (AL)",
+    karakamsha: "कारकांश (आत्मकारक का नवांश)",
+    nadiHeading: "नाड़ी (नक्षत्र अनुसार)",
+    nadiNote:
+      "हर ग्रह के नक्षत्र का आदि/मध्य/अंत्य वर्गीकरण, गुण मिलान की नाड़ी कूट में उपयोग होता है। यह केवल वर्गीकरण है, भविष्यवाणी नहीं।",
   },
   videos: {
     title: "वीडियो",
@@ -633,6 +722,8 @@ const hi: Dictionary = {
     gulikaKalam: "गुलिक काल (टालें)",
     abhijitMuhurta: "अभिजीत मुहूर्त (शुभ)",
     windowsNote: "राहु काल/यमगण्ड/गुलिक काल में नए काम शुरू करने से पारंपरिक रूप से बचा जाता है; अभिजीत मुहूर्त (दोपहर) अधिकांश दिनों में शुभ माना जाता है।",
+    horaHeading: "होरा (ग्रह घंटे)",
+    horaNote: "24 असमान अवधियाँ (दिन में 12, अगली रात में 12), प्रत्येक पर एक ग्रह का शासन — गतिविधियों की समय-योजना के लिए उपयोग होता है।",
     tamilCalendarHeading: "தமிழ் நாள்காட்டி — तमिल कैलेंडर (जमक्कोल शैली)",
     tamilMonth: "तमिल महीना",
     tamilDay: "तारीख़",
@@ -667,6 +758,19 @@ const hi: Dictionary = {
     houseFromAsc: "लग्न से भाव",
     houseFromMoon: "चंद्र से भाव",
     referenceChart: "संदर्भ चार्ट",
+  },
+  prashna: {
+    title: "प्रश्न ज्योतिष",
+    subtitle: "प्रश्न पूछे जाने के ठीक उसी क्षण, प्रश्नकर्ता के स्थान के लिए एक चार्ट बनाया जाता है।",
+    question: "प्रश्न (वैकल्पिक, आपके संदर्भ के लिए)",
+    place: "वर्तमान स्थान (शहर, देश)",
+    findLocation: "स्थान खोजें",
+    castButton: "अभी के लिए प्रश्न चार्ट बनाएं",
+    resultHeading: "प्रश्न चार्ट",
+    castAt: "बनाया गया समय",
+    interpretiveNote:
+      "पारंपरिक मार्गदर्शन: सामान्य रुझान के लिए लग्न व उसके स्वामी को, अंतर्धारा के लिए चंद्र नक्षत्र व उसके स्वामी को, और प्रश्न से संबंधित भाव के कारकों को देखें। यह उपकरण केवल चार्ट बनाता है — व्याख्या आप पर निर्भर है।",
+    newQuestion: "एक और प्रश्न पूछें",
   },
   admin: {
     title: "एडमिन — उपयोगकर्ता व मॉड्यूल पहुँच",

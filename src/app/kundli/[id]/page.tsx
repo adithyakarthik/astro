@@ -12,6 +12,17 @@ import {
 } from "@/lib/astro/constants";
 import { localizedChartNames } from "@/lib/astro/localized-names";
 import { utcToLocalParts, formatOffset } from "@/lib/astro/birth-utils";
+import { NADI_BY_NAKSHATRA } from "@/lib/astro/constants";
+import {
+  VARGA_KEYS,
+  VARGA_LABELS,
+  VARGA_SIGNIFICANCE,
+  computeVargaChart,
+  groupVargaBySign,
+  type VargaKey,
+} from "@/lib/astro/vargas";
+import { computeKpTable } from "@/lib/astro/kp";
+import { computeArudhaLagna, computeCharaKarakas, computeKarakamsha } from "@/lib/astro/jaimini";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
@@ -63,8 +74,10 @@ function DashaRow({
 
 export default async function KundliDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ varga?: string }>;
 }) {
   const user = await requireUser();
   if (!hasModule(user, "clients")) return <ModuleLocked moduleKey="clients" />;
@@ -72,6 +85,7 @@ export default async function KundliDetailPage({
   const names = localizedChartNames(lang);
 
   const { id } = await params;
+  const { varga } = await searchParams;
   const kundli = await prisma.kundli.findUnique({ where: { id }, include: { client: true } });
   if (!kundli || kundli.client.userId !== user.id) notFound();
 
@@ -79,6 +93,16 @@ export default async function KundliDetailPage({
   const rasiGroups = groupBySign(chart, "rasiIndex");
   const navamsaGroups = groupBySign(chart, "navamsaRasiIndex");
   const deleteThisKundli = deleteKundli.bind(null, kundli.id);
+
+  const selectedVarga: VargaKey = (VARGA_KEYS as string[]).includes(varga ?? "") ? (varga as VargaKey) : "D10";
+  const selectedVargaChart = computeVargaChart(selectedVarga, chart);
+  const selectedVargaGroups = groupVargaBySign(selectedVargaChart);
+
+  const kpRows = computeKpTable(chart);
+  const charaKarakas = computeCharaKarakas(chart);
+  const atmakaraka = charaKarakas[0].planet;
+  const arudhaLagnaRasi = computeArudhaLagna(chart);
+  const karakamshaRasi = computeKarakamsha(chart, atmakaraka);
   const local = utcToLocalParts(kundli.birthDate, kundli.timezoneOffsetMinutes);
   const localStr = `${local.year}-${String(local.month).padStart(2, "0")}-${String(local.day).padStart(2, "0")} ${String(
     local.hour
@@ -197,6 +221,134 @@ export default async function KundliDetailPage({
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">{t("kundli.divisionalCharts")}</h2>
+          <form method="GET" className="flex items-center gap-2 print:hidden">
+            <select
+              name="varga"
+              defaultValue={selectedVarga}
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
+            >
+              {VARGA_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {VARGA_LABELS[key]}
+                </option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-50"
+            >
+              {t("kundli.selectChart")}
+            </button>
+          </form>
+        </div>
+        <p className="mb-4 text-sm text-zinc-500">{VARGA_SIGNIFICANCE[selectedVarga]}</p>
+        <RasiChartGrid
+          title={VARGA_LABELS[selectedVarga]}
+          ascendantRasiIndex={selectedVargaChart.ascendantRasiIndex}
+          planetsBySign={selectedVargaGroups}
+          rasiNames={names.rasi}
+          planetAbbr={names.planetShort}
+          ascendantLabel={names.ascendantLabel}
+        />
+        <p className="mt-3 text-xs text-zinc-400">{t("kundli.divisionalChartsNote")}</p>
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <h2 className="mb-3 text-lg font-semibold">{t("kundli.kpHeading")}</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="text-zinc-500">
+              <tr>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.graha")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.rasi")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.degree")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.starLord")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.subLord")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {kpRows.map((row) => (
+                <tr key={row.label} className="border-t border-zinc-100">
+                  <td className="py-1.5 pr-4 font-medium">
+                    {row.label === "Ascendant" ? names.ascendantLabel : names.planet[row.label as keyof typeof names.planet]}
+                  </td>
+                  <td className="py-1.5 pr-4">{names.rasi[row.rasiIndex]}</td>
+                  <td className="py-1.5 pr-4">{fmtDeg(row.degreeInSign)}</td>
+                  <td className="py-1.5 pr-4">{names.planet[row.starLord]}</td>
+                  <td className="py-1.5 pr-4">{names.planet[row.subLord]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-xs text-zinc-400">{t("kundli.kpNote")}</p>
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <h2 className="mb-3 text-lg font-semibold">{t("kundli.jaiminiHeading")}</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full max-w-md text-left text-sm">
+            <thead className="text-zinc-500">
+              <tr>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.karakaCol")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.graha")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.degree")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {charaKarakas.map((k) => (
+                <tr key={k.label} className="border-t border-zinc-100">
+                  <td className="py-1.5 pr-4 font-medium">{k.label}</td>
+                  <td className="py-1.5 pr-4">{names.planet[k.planet]}</td>
+                  <td className="py-1.5 pr-4">{fmtDeg(k.degreeInSign)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <table className="mt-4 w-full max-w-md text-left text-sm">
+          <tbody>
+            <tr className="border-t border-zinc-200">
+              <td className="py-1.5 pr-4 font-medium text-zinc-500">{t("kundli.arudhaLagna")}</td>
+              <td className="py-1.5 pr-4">{names.rasi[arudhaLagnaRasi]}</td>
+            </tr>
+            <tr className="border-t border-zinc-200">
+              <td className="py-1.5 pr-4 font-medium text-zinc-500">{t("kundli.karakamsha")}</td>
+              <td className="py-1.5 pr-4">{names.rasi[karakamshaRasi]}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p className="mt-3 text-xs text-zinc-400">{t("kundli.jaiminiNote")}</p>
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <h2 className="mb-3 text-lg font-semibold">{t("kundli.nadiHeading")}</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full max-w-md text-left text-sm">
+            <thead className="text-zinc-500">
+              <tr>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.graha")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.nakshatra")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.nadiHeading")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chart.planets.map((p) => (
+                <tr key={p.planet} className="border-t border-zinc-100">
+                  <td className="py-1.5 pr-4 font-medium">{names.planet[p.planet]}</td>
+                  <td className="py-1.5 pr-4">{names.nakshatra[p.nakshatraIndex]}</td>
+                  <td className="py-1.5 pr-4">{NADI_BY_NAKSHATRA[p.nakshatraIndex]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-xs text-zinc-400">{t("kundli.nadiNote")}</p>
       </div>
 
       <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-6">
