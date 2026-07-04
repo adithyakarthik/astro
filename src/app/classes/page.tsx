@@ -16,6 +16,7 @@ export default async function ClassesPage() {
   const classes = await prisma.classAnnouncement.findMany({
     where: { userId: user.id },
     orderBy: { startsAt: "asc" },
+    include: { _count: { select: { payments: true } } },
   });
 
   const withPaymentInfo = await Promise.all(
@@ -61,6 +62,9 @@ export default async function ClassesPage() {
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-medium">{c.title}</h3>
                   <div className="flex shrink-0 gap-2 text-xs">
+                    <Link href={`/classes/${c.id}/payments`} className="text-zinc-500 hover:underline">
+                      {t("classes.payments")} ({c._count.payments})
+                    </Link>
                     <Link href={`/classes/${c.id}/edit`} className="text-zinc-500 hover:underline">
                       {t("kundli.edit")}
                     </Link>
@@ -73,8 +77,10 @@ export default async function ClassesPage() {
                   </div>
                 </div>
                 <div className="text-sm text-zinc-600">
-                  {new Date(c.startsAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })} ·{" "}
-                  {c.durationMins} mins
+                  {new Date(c.startsAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                  {c.endsAt
+                    ? ` – ${new Date(c.endsAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}`
+                    : ` · ${c.durationMins} mins`}
                 </div>
                 <div className="text-lg font-semibold text-zinc-900">₹{c.feeInRupees.toFixed(0)}</div>
                 {c.description && <p className="text-sm text-zinc-600">{c.description}</p>}

@@ -19,6 +19,11 @@ model User {
   enabledModules String @default("[\"clients\",\"matchmaking\",\"muhurta\",\"transits\",\"videos\",\"classes\"]")
   createdAt DateTime @default(now())
 
+  // Display/calculation preferences (Settings page).
+  theme        String  @default("light") // "light" | "dark"
+  chartStyle   String  @default("south") // "south" | "north" (Indian chart drawing styles)
+  useTrueNodes Boolean @default(true) // Rahu/Ketu: true (instantaneous) node vs mean node
+
   clients  Client[]
   videos   VideoContent[]
   classes  ClassAnnouncement[]
@@ -108,10 +113,28 @@ model ClassAnnouncement {
   title       String
   description String?
   startsAt    DateTime
+  // Optional explicit end (date + time) for multi-day courses or sessions
+  // that don't fit a single duration. When absent, durationMins is used.
+  endsAt      DateTime?
   durationMins Int     @default(60)
   feeInRupees Float
   upiId       String
   payeeName   String
   meetingLink String?
+  createdAt   DateTime @default(now())
+
+  payments ClassPayment[]
+}
+
+model ClassPayment {
+  id      String            @id @default(cuid())
+  classId String
+  class   ClassAnnouncement @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  studentName String
+  contact     String?
+  amountPaid  Float
+  paidAt      DateTime
+  notes       String?
   createdAt   DateTime @default(now())
 }

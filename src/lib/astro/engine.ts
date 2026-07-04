@@ -123,8 +123,9 @@ function planetTropicalLongitudeDeg(key: PlanetKey, jd: number): number {
   return norm360(lon * R2D);
 }
 
-function rahuTropicalLongitudeDeg(jd: number): number {
-  return norm360(moonposition.trueNode(jd) * R2D);
+function rahuTropicalLongitudeDeg(jd: number, useTrueNode: boolean): number {
+  const nodeRad = useTrueNode ? moonposition.trueNode(jd) : moonposition.node(jd);
+  return norm360(nodeRad * R2D);
 }
 
 /** Ascendant (Lagna), tropical ecliptic longitude in degrees. */
@@ -190,6 +191,8 @@ export interface BirthInput {
   utcDate: Date; // birth instant, already converted to UTC
   latitude: number; // degrees, north positive
   longitude: number; // degrees, east positive
+  /** Rahu/Ketu as the true (instantaneous) lunar node vs the mean node. Defaults to true. */
+  useTrueNodes?: boolean;
 }
 
 function toPlacement(planet: PlanetKey, siderealLongitude: number): GrahaPlacement {
@@ -315,7 +318,7 @@ export function computeKundli(input: BirthInput): ChartData {
   const jupiterSidereal = norm360(planetTropicalLongitudeDeg("Jupiter", jd) - ayanamsa);
   const venusSidereal = norm360(planetTropicalLongitudeDeg("Venus", jd) - ayanamsa);
   const saturnSidereal = norm360(planetTropicalLongitudeDeg("Saturn", jd) - ayanamsa);
-  const rahuSidereal = norm360(rahuTropicalLongitudeDeg(jd) - ayanamsa);
+  const rahuSidereal = norm360(rahuTropicalLongitudeDeg(jd, input.useTrueNodes ?? true) - ayanamsa);
   const ketuSidereal = norm360(rahuSidereal + 180);
 
   const ascendantSidereal = norm360(

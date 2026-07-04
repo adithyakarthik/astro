@@ -24,7 +24,7 @@ export default async function NewClassPage() {
         </label>
         <div className="grid grid-cols-2 gap-4">
           <label className="flex flex-col gap-1 text-sm font-medium">
-            {t("classes.dateTime")} *
+            {t("classes.startsAt")} *
             <input
               name="startsAt"
               type="datetime-local"
@@ -33,15 +33,20 @@ export default async function NewClassPage() {
             />
           </label>
           <label className="flex flex-col gap-1 text-sm font-medium">
-            {t("classes.durationMins")}
-            <input
-              name="durationMins"
-              type="number"
-              defaultValue={60}
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
-            />
+            {t("classes.endsAt")}
+            <input name="endsAt" type="datetime-local" className="rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
           </label>
         </div>
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {t("classes.durationMins")}
+          <input
+            name="durationMins"
+            type="number"
+            defaultValue={60}
+            className="w-32 rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          />
+          <span className="text-xs font-normal text-zinc-400">{t("classes.durationHint")}</span>
+        </label>
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("classes.fee")} *
           <input

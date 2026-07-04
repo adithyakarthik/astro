@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { RasiChartGrid } from "@/components/RasiChartGrid";
+import { NorthIndianChartGrid } from "@/components/NorthIndianChartGrid";
 import type { ChartData, DashaPeriod } from "@/lib/astro/engine";
 import {
   TAMIL_NAKSHATRA_NAMES,
@@ -83,6 +84,7 @@ export default async function KundliDetailPage({
   if (!hasModule(user, "clients")) return <ModuleLocked moduleKey="clients" />;
   const { t, lang } = await getTranslations();
   const names = localizedChartNames(lang);
+  const ChartGrid = user.chartStyle === "north" ? NorthIndianChartGrid : RasiChartGrid;
 
   const { id } = await params;
   const { varga } = await searchParams;
@@ -92,6 +94,7 @@ export default async function KundliDetailPage({
   const chart = JSON.parse(kundli.chartData) as ChartData;
   const rasiGroups = groupBySign(chart, "rasiIndex");
   const navamsaGroups = groupBySign(chart, "navamsaRasiIndex");
+  const navamsaChart = computeVargaChart("D9", chart);
   const deleteThisKundli = deleteKundli.bind(null, kundli.id);
 
   const selectedVarga: VargaKey = (VARGA_KEYS as string[]).includes(varga ?? "") ? (varga as VargaKey) : "D10";
@@ -142,8 +145,8 @@ export default async function KundliDetailPage({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-8 rounded-xl border border-zinc-200 bg-white p-6">
-        <RasiChartGrid
+      <div className="flex flex-wrap gap-8 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+        <ChartGrid
           title={t("kundli.rasiChart")}
           ascendantRasiIndex={chart.ascendant.rasiIndex}
           planetsBySign={rasiGroups}
@@ -151,12 +154,13 @@ export default async function KundliDetailPage({
           planetAbbr={names.planetShort}
           ascendantLabel={names.ascendantLabel}
         />
-        <RasiChartGrid
+        <ChartGrid
           title={t("kundli.navamsaChart")}
-          ascendantRasiIndex={-1}
+          ascendantRasiIndex={navamsaChart.ascendantRasiIndex}
           planetsBySign={navamsaGroups}
           rasiNames={names.rasi}
           planetAbbr={names.planetShort}
+          ascendantLabel={names.ascendantLabel}
         />
       </div>
 
@@ -247,7 +251,7 @@ export default async function KundliDetailPage({
           </form>
         </div>
         <p className="mb-4 text-sm text-zinc-500">{VARGA_SIGNIFICANCE[selectedVarga]}</p>
-        <RasiChartGrid
+        <ChartGrid
           title={VARGA_LABELS[selectedVarga]}
           ascendantRasiIndex={selectedVargaChart.ascendantRasiIndex}
           planetsBySign={selectedVargaGroups}

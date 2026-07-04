@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth/session";
 import { ALL_MODULES, MODULE_LABELS, parseEnabledModules } from "@/lib/auth/modules";
-import { updateUserModules, updateUserRole } from "../actions";
+import { createUser, deleteUser, updateUserModules, updateUserRole } from "../actions";
 import { getTranslations } from "@/lib/i18n/server";
+import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
 
 export default async function AdminUsersPage() {
   const admin = await requireUser();
@@ -22,6 +23,23 @@ export default async function AdminUsersPage() {
         <p className="mt-1 text-zinc-600">{t("admin.subtitle")}</p>
       </div>
 
+      <form action={createUser} className="flex flex-wrap items-end gap-4 rounded-xl border border-zinc-200 bg-white p-5">
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {t("admin.addUserEmail")}
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="astrologer@example.com"
+            className="w-72 rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          />
+        </label>
+        <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+          {t("admin.addUser")}
+        </button>
+        <p className="w-full text-xs text-zinc-400">{t("admin.addUserNote")}</p>
+      </form>
+
       <div className="flex flex-col gap-4">
         {users.map((u) => {
           const enabled = parseEnabledModules(u.enabledModules);
@@ -37,15 +55,25 @@ export default async function AdminUsersPage() {
                     {u._count.videos} videos · {u._count.classes} classes
                   </div>
                 </div>
-                <form action={updateUserRole.bind(null, u.id)} className="flex items-center gap-2">
-                  <select name="role" defaultValue={u.role} className="rounded-lg border border-zinc-300 px-2 py-1 text-xs">
-                    <option value="USER">USER</option>
-                    <option value="ADMIN">ADMIN</option>
-                  </select>
-                  <button type="submit" className="rounded-lg border border-zinc-300 px-2 py-1 text-xs hover:bg-zinc-50">
-                    {t("admin.updateRole")}
-                  </button>
-                </form>
+                <div className="flex items-center gap-2">
+                  <form action={updateUserRole.bind(null, u.id)} className="flex items-center gap-2">
+                    <select name="role" defaultValue={u.role} className="rounded-lg border border-zinc-300 px-2 py-1 text-xs">
+                      <option value="USER">USER</option>
+                      <option value="ADMIN">ADMIN</option>
+                    </select>
+                    <button type="submit" className="rounded-lg border border-zinc-300 px-2 py-1 text-xs hover:bg-zinc-50">
+                      {t("admin.updateRole")}
+                    </button>
+                  </form>
+                  {u.id !== admin.id && (
+                    <ConfirmSubmitForm
+                      action={deleteUser.bind(null, u.id)}
+                      confirmMessage={t("admin.confirmDeleteUser")}
+                      label={t("kundli.delete")}
+                      className="rounded-lg border border-red-200 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+                    />
+                  )}
+                </div>
               </div>
 
               <form action={updateUserModules.bind(null, u.id)} className="mt-3 flex flex-wrap items-center gap-4">

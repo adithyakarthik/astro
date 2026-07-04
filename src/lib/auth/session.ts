@@ -11,6 +11,9 @@ export interface CurrentUser {
   email: string;
   role: "USER" | "ADMIN";
   enabledModules: ModuleKey[];
+  theme: "light" | "dark";
+  chartStyle: "south" | "north";
+  useTrueNodes: boolean;
 }
 
 function adminEmails(): string[] {
@@ -81,6 +84,9 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     email: session.user.email,
     role: isAdmin ? "ADMIN" : "USER",
     enabledModules: parseEnabledModules(session.user.enabledModules),
+    theme: session.user.theme === "dark" ? "dark" : "light",
+    chartStyle: session.user.chartStyle === "north" ? "north" : "south",
+    useTrueNodes: session.user.useTrueNodes,
   };
 }
 

@@ -46,31 +46,35 @@ export default async function RootLayout({
   return (
     <html
       lang={lang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      data-theme={user?.theme ?? "light"}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased ${user?.theme === "dark" ? "dark" : ""}`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
+      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         {user && (
-          <header className="border-b border-zinc-200 bg-white print:hidden">
+          <header className="border-b border-zinc-200 bg-white print:hidden dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
               <Link href="/" className="text-lg font-semibold tracking-tight">
                 🕉️ JK Vedansh Astro
               </Link>
-              <nav className="flex items-center gap-6 text-sm font-medium text-zinc-600">
+              <nav className="flex flex-wrap items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-400">
                 {NAV_LINKS.filter((link) => !link.module || hasModule(user, link.module)).map((link) => (
-                  <Link key={link.href} href={link.href} className="hover:text-zinc-950">
+                  <Link key={link.href} href={link.href} className="hover:text-zinc-950 dark:hover:text-zinc-100">
                     {t(link.key)}
                   </Link>
                 ))}
                 {user.role === "ADMIN" && (
-                  <Link href="/admin/users" className="hover:text-zinc-950">
+                  <Link href="/admin/users" className="hover:text-zinc-950 dark:hover:text-zinc-100">
                     {t("nav.admin")}
                   </Link>
                 )}
+                <Link href="/settings" className="hover:text-zinc-950 dark:hover:text-zinc-100">
+                  {t("nav.settings")}
+                </Link>
                 <LanguageSwitcher currentLang={lang} />
-                <span className="text-zinc-300">|</span>
-                <span className="text-zinc-400">{user.email}</span>
+                <span className="text-zinc-300 dark:text-zinc-700">|</span>
+                <span className="text-zinc-400 dark:text-zinc-500">{user.email}</span>
                 <form action={logoutAction}>
-                  <button type="submit" className="hover:text-zinc-950">
+                  <button type="submit" className="hover:text-zinc-950 dark:hover:text-zinc-100">
                     {t("nav.signOut")}
                   </button>
                 </form>

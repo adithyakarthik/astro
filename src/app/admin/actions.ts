@@ -36,3 +36,24 @@ export async function updateUserRole(targetUserId: string, formData: FormData) {
   await prisma.user.update({ where: { id: targetUserId }, data: { role } });
   revalidatePath("/admin/users");
 }
+
+/** Pre-provisions a user by email so they can log in via OTP immediately, with modules already granted. */
+export async function createUser(formData: FormData) {
+  await requireAdmin();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!email || !email.includes("@")) throw new Error("Enter a valid email address");
+
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) throw new Error("A user with this email already exists");
+
+  await prisma.user.create({ data: { email } });
+  revalidatePath("/admin/users");
+}
+
+export async function deleteUser(targetUserId: string) {
+  const admin = await requireAdmin();
+  if (targetUserId === admin.id) throw new Error("You can't delete your own account.");
+
+  await prisma.user.delete({ where: { id: targetUserId } });
+  revalidatePath("/admin/users");
+}
