@@ -6,6 +6,7 @@ import { deleteClass } from "./actions";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
+import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
 
 export default async function ClassesPage() {
   const user = await requireUser();
@@ -59,11 +60,17 @@ export default async function ClassesPage() {
               <div className="flex flex-1 flex-col gap-1">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-medium">{c.title}</h3>
-                  <form action={deleteClass.bind(null, c.id)}>
-                    <button type="submit" className="text-xs text-red-500 hover:underline">
-                      {t("common.remove")}
-                    </button>
-                  </form>
+                  <div className="flex shrink-0 gap-2 text-xs">
+                    <Link href={`/classes/${c.id}/edit`} className="text-zinc-500 hover:underline">
+                      {t("kundli.edit")}
+                    </Link>
+                    <ConfirmSubmitForm
+                      action={deleteClass.bind(null, c.id)}
+                      confirmMessage={t("kundli.confirmDelete")}
+                      label={t("common.remove")}
+                      className="text-red-500 hover:underline"
+                    />
+                  </div>
                 </div>
                 <div className="text-sm text-zinc-600">
                   {new Date(c.startsAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })} ·{" "}

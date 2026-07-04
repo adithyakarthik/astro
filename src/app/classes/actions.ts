@@ -39,6 +39,43 @@ export async function createClass(formData: FormData) {
   redirect("/classes");
 }
 
+export async function updateClass(id: string, formData: FormData) {
+  const user = await requireUser();
+  requireModuleAccess(user, "classes");
+  const cls = await prisma.classAnnouncement.findUnique({ where: { id } });
+  if (!cls || cls.userId !== user.id) notFound();
+
+  const title = String(formData.get("title") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim() || null;
+  const startsAtLocal = String(formData.get("startsAt") ?? "");
+  const durationMins = Number(formData.get("durationMins") ?? 60);
+  const feeInRupees = Number(formData.get("feeInRupees"));
+  const upiId = String(formData.get("upiId") ?? "").trim();
+  const payeeName = String(formData.get("payeeName") ?? "").trim();
+  const meetingLink = String(formData.get("meetingLink") ?? "").trim() || null;
+
+  if (!title || !startsAtLocal || !upiId || !payeeName || Number.isNaN(feeInRupees)) {
+    throw new Error("Missing required fields");
+  }
+
+  await prisma.classAnnouncement.update({
+    where: { id },
+    data: {
+      title,
+      description,
+      startsAt: new Date(startsAtLocal),
+      durationMins,
+      feeInRupees,
+      upiId,
+      payeeName,
+      meetingLink,
+    },
+  });
+
+  revalidatePath("/classes");
+  redirect("/classes");
+}
+
 export async function deleteClass(id: string) {
   const user = await requireUser();
   const cls = await prisma.classAnnouncement.findUnique({ where: { id } });

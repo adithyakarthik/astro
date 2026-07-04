@@ -27,6 +27,31 @@ export async function createVideo(formData: FormData) {
   redirect("/videos");
 }
 
+export async function updateVideo(id: string, formData: FormData) {
+  const user = await requireUser();
+  requireModuleAccess(user, "videos");
+  const video = await prisma.videoContent.findUnique({ where: { id } });
+  if (!video || video.userId !== user.id) notFound();
+
+  const title = String(formData.get("title") ?? "").trim();
+  const youtubeUrl = String(formData.get("youtubeUrl") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim() || null;
+  const category = String(formData.get("category") ?? "").trim() || null;
+
+  const youtubeId = extractYoutubeId(youtubeUrl);
+  if (!title || !youtubeId) {
+    throw new Error("Provide a title and a valid YouTube URL");
+  }
+
+  await prisma.videoContent.update({
+    where: { id },
+    data: { title, youtubeUrl, youtubeId, description, category },
+  });
+
+  revalidatePath("/videos");
+  redirect("/videos");
+}
+
 export async function deleteVideo(id: string) {
   const user = await requireUser();
   const video = await prisma.videoContent.findUnique({ where: { id } });

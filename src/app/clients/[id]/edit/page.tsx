@@ -1,12 +1,11 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { createKundli } from "@/app/clients/actions";
+import { updateClient } from "@/app/clients/actions";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
-import { BirthPlaceLookup } from "@/components/BirthPlaceLookup";
 
-export default async function NewKundliPage({
+export default async function EditClientPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -19,65 +18,56 @@ export default async function NewKundliPage({
   const client = await prisma.client.findUnique({ where: { id } });
   if (!client || client.userId !== user.id) notFound();
 
-  const createKundliForClient = createKundli.bind(null, client.id);
+  const updateThisClient = updateClient.bind(null, client.id);
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        {t("kundli.newTitleFor")} {client.name}
-      </h1>
-      <p className="mt-1 text-zinc-600">{t("kundli.newSubtitle")}</p>
+      <h1 className="text-2xl font-semibold tracking-tight">{t("clients.editTitle")}</h1>
 
       <form
-        action={createKundliForClient}
+        action={updateThisClient}
         className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6"
       >
         <label className="flex flex-col gap-1 text-sm font-medium">
-          {t("kundli.chartName")} *
+          {t("clients.fullName")} *
           <input
             name="name"
             required
-            placeholder={client.name}
             defaultValue={client.name}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
-
         <label className="flex flex-col gap-1 text-sm font-medium">
-          {t("kundli.gender")}
-          <select name="gender" className="rounded-lg border border-zinc-300 px-3 py-2 text-sm">
-            <option value="">{t("kundli.genderPreferNot")}</option>
-            <option value="male">{t("kundli.male")}</option>
-            <option value="female">{t("kundli.female")}</option>
-            <option value="other">{t("kundli.other")}</option>
-          </select>
-        </label>
-
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          {t("kundli.birthDateTime")} *
+          {t("common.phone")}
           <input
-            name="birthDateLocal"
-            type="datetime-local"
-            required
+            name="phone"
+            defaultValue={client.phone ?? ""}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
           />
         </label>
-
-        <BirthPlaceLookup
-          labels={{
-            place: t("kundli.birthPlace"),
-            lat: t("common.latitude"),
-            lon: t("common.longitude"),
-            find: t("kundli.findLocation"),
-            tip: t("kundli.coordsTip"),
-          }}
-        />
-
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {t("common.email")}
+          <input
+            name="email"
+            type="email"
+            defaultValue={client.email ?? ""}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {t("common.notes")}
+          <textarea
+            name="notes"
+            rows={3}
+            defaultValue={client.notes ?? ""}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          />
+        </label>
         <button
           type="submit"
           className="mt-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
         >
-          {t("kundli.generate")}
+          {t("kundli.save")}
         </button>
       </form>
     </div>

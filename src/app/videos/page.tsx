@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { deleteVideo } from "./actions";
+import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
@@ -50,11 +51,17 @@ export default async function VideosPage() {
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-medium">{video.title}</h3>
-                  <form action={deleteVideo.bind(null, video.id)}>
-                    <button type="submit" className="text-xs text-red-500 hover:underline">
-                      {t("common.remove")}
-                    </button>
-                  </form>
+                  <div className="flex shrink-0 gap-2 text-xs">
+                    <Link href={`/videos/${video.id}/edit`} className="text-zinc-500 hover:underline">
+                      {t("kundli.edit")}
+                    </Link>
+                    <ConfirmSubmitForm
+                      action={deleteVideo.bind(null, video.id)}
+                      confirmMessage={t("kundli.confirmDelete")}
+                      label={t("common.remove")}
+                      className="text-red-500 hover:underline"
+                    />
+                  </div>
                 </div>
                 {video.category && (
                   <span className="mt-1 inline-block rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">

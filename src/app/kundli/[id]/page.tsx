@@ -11,9 +11,13 @@ import {
   TAMIL_RASI_NAMES,
 } from "@/lib/astro/constants";
 import { localizedChartNames } from "@/lib/astro/localized-names";
+import { utcToLocalParts, formatOffset } from "@/lib/astro/birth-utils";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
+import { deleteKundli } from "@/app/clients/actions";
+import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
+import { PrintButton } from "@/components/PrintButton";
 
 function groupBySign(chart: ChartData, key: "rasiIndex" | "navamsaRasiIndex") {
   const map: Record<number, string[]> = {};
@@ -74,19 +78,44 @@ export default async function KundliDetailPage({
   const chart = JSON.parse(kundli.chartData) as ChartData;
   const rasiGroups = groupBySign(chart, "rasiIndex");
   const navamsaGroups = groupBySign(chart, "navamsaRasiIndex");
+  const deleteThisKundli = deleteKundli.bind(null, kundli.id);
+  const local = utcToLocalParts(kundli.birthDate, kundli.timezoneOffsetMinutes);
+  const localStr = `${local.year}-${String(local.month).padStart(2, "0")}-${String(local.day).padStart(2, "0")} ${String(
+    local.hour
+  ).padStart(2, "0")}:${String(local.minute).padStart(2, "0")}`;
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <Link href={`/clients/${kundli.clientId}`} className="text-sm text-zinc-500 hover:underline">
-          ← {kundli.client.name}
-        </Link>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">{kundli.name}</h1>
-        <p className="text-zinc-600">
-          Born {new Date(kundli.birthDate).toUTCString().replace(" GMT", " UTC")} · {kundli.birthPlace} (
-          {kundli.latitude.toFixed(4)}, {kundli.longitude.toFixed(4)}) · Ayanamsa used:{" "}
-          {fmtDeg(chart.ayanamsaUsed)} (Lahiri, approximate)
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Link href={`/clients/${kundli.clientId}`} className="text-sm text-zinc-500 hover:underline print:hidden">
+            ← {kundli.client.name}
+          </Link>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight">{kundli.name}</h1>
+          <p className="text-zinc-600">
+            Born {localStr} ({formatOffset(kundli.timezoneOffsetMinutes)}) · {kundli.birthPlace} (
+            {kundli.latitude.toFixed(4)}, {kundli.longitude.toFixed(4)}) · Ayanamsa used:{" "}
+            {fmtDeg(chart.ayanamsaUsed)} (Lahiri, approximate)
+          </p>
+        </div>
+        <div className="flex shrink-0 gap-2 print:hidden">
+          <PrintButton
+            label={t("kundli.print")}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50"
+          />
+          <Link
+            href={`/kundli/${kundli.id}/edit`}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50"
+          >
+            {t("kundli.edit")}
+          </Link>
+          <ConfirmSubmitForm
+            action={deleteThisKundli}
+            confirmMessage={t("kundli.confirmDelete")}
+            label={t("kundli.delete")}
+            className="rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+          />
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-8 rounded-xl border border-zinc-200 bg-white p-6">

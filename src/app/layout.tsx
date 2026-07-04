@@ -49,7 +49,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
         {user && (
-          <header className="border-b border-zinc-200 bg-white">
+          <header className="border-b border-zinc-200 bg-white print:hidden">
             <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
               <Link href="/" className="text-lg font-semibold tracking-tight">
                 🕉️ JK Vedansh Astro
