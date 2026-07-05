@@ -229,6 +229,10 @@ const en = {
     noVideosInFolder: "No videos assigned to this folder yet.",
     videosCountLabel: "videos",
     clientsGrantedLabel: "clients granted",
+    directAccessHeading: "Direct access (independent of folder)",
+    directAccessSubtitle: "Grant specific clients access to this exact video, regardless of any folder it's in. Either a folder grant or a direct grant is enough to see it.",
+    directAccessBadge: "Restricted",
+    publicBadge: "Public",
   },
   classes: {
     title: "Classes & Payments",
@@ -604,6 +608,10 @@ const ta: Dictionary = {
     noVideosInFolder: "இந்த கோப்புறைக்கு இன்னும் வீடியோக்கள் இல்லை.",
     videosCountLabel: "வீடியோக்கள்",
     clientsGrantedLabel: "வாடிக்கையாளர்களுக்கு அணுகல்",
+    directAccessHeading: "நேரடி அணுகல் (கோப்புறையில் இருந்து தனியாக)",
+    directAccessSubtitle: "இந்த குறிப்பிட்ட வீடியோவிற்கு, அது எந்த கோப்புறையில் இருந்தாலும், குறிப்பிட்ட வாடிக்கையாளர்களுக்கு அணுகலை வழங்கவும். கோப்புறை அணுகல் அல்லது நேரடி அணுகல் — ஏதேனும் ஒன்று போதும்.",
+    directAccessBadge: "கட்டுப்படுத்தப்பட்டது",
+    publicBadge: "பொது",
   },
   classes: {
     title: "வகுப்புகள் & பணம் செலுத்துதல்",
@@ -969,6 +977,10 @@ const hi: Dictionary = {
     noVideosInFolder: "अभी तक इस फ़ोल्डर में कोई वीडियो नहीं है।",
     videosCountLabel: "वीडियो",
     clientsGrantedLabel: "ग्राहकों को पहुँच",
+    directAccessHeading: "प्रत्यक्ष पहुँच (फ़ोल्डर से स्वतंत्र)",
+    directAccessSubtitle: "इस विशेष वीडियो तक पहुँच विशिष्ट ग्राहकों को दें, चाहे यह किसी भी फ़ोल्डर में हो। फ़ोल्डर पहुँच या प्रत्यक्ष पहुँच — कोई भी एक पर्याप्त है।",
+    directAccessBadge: "प्रतिबंधित",
+    publicBadge: "सार्वजनिक",
   },
   classes: {
     title: "कक्षाएँ व भुगतान",

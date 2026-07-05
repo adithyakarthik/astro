@@ -78,6 +78,7 @@ model Client {
   kundlis           Kundli[]
   portalSessions    ClientPortalSession[]
   videoFolderAccess VideoFolderAccess[]
+  videoAccess       VideoAccess[]
 }
 
 model ClientPortalSession {
@@ -120,11 +121,13 @@ model VideoContent {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Optional folder for access-controlled grouping. Videos without a folder
-  // are visible to every one of this astrologer's portal clients (unchanged,
-  // backwards-compatible default); folder videos are gated by VideoFolderAccess.
+  // Optional folder for access-controlled grouping. A video is "public" (visible
+  // to every one of this astrologer's portal clients) only when it has NO folder
+  // AND no direct per-video grants below — assigning either one restricts it to
+  // whichever clients are granted, via folder access, direct video access, or both.
   folderId String?
   folder   VideoFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  access   VideoAccess[]
 
   title       String
   description String?
@@ -133,6 +136,21 @@ model VideoContent {
   category    String? // e.g. "Kundli Basics", "Dasha", "Remedies"
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
+}
+
+// Per-video, per-client access grant — independent of (and additive with) any
+// folder the video belongs to, for restricting a single video without needing
+// a folder at all.
+model VideoAccess {
+  id       String       @id @default(cuid())
+  videoId  String
+  video    VideoContent @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  clientId String
+  client   Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([videoId, clientId])
 }
 
 // A folder groups published videos and lets the astrologer restrict viewing

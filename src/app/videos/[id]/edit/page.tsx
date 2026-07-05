@@ -16,9 +16,14 @@ export default async function EditVideoPage({
   const { t } = await getTranslations();
 
   const { id } = await params;
-  const video = await prisma.videoContent.findUnique({ where: { id } });
+  const video = await prisma.videoContent.findUnique({ where: { id }, include: { access: true } });
   if (!video || video.userId !== user.id) notFound();
   const folders = await prisma.videoFolder.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" } });
+  const eligibleClients = await prisma.client.findMany({
+    where: { userId: user.id, portalAccessEnabled: true },
+    orderBy: { name: "asc" },
+  });
+  const grantedClientIds = new Set(video.access.map((a) => a.clientId));
 
   const updateThisVideo = updateVideo.bind(null, video.id);
 
@@ -80,6 +85,24 @@ export default async function EditVideoPage({
             ))}
           </select>
         </label>
+
+        <div className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-700">
+          <p className="text-sm font-medium">{t("videos.directAccessHeading")}</p>
+          <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{t("videos.directAccessSubtitle")}</p>
+          {eligibleClients.length === 0 ? (
+            <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">{t("videos.noEligibleClients")}</p>
+          ) : (
+            <div className="mt-2 flex flex-col gap-1.5">
+              {eligibleClients.map((client) => (
+                <label key={client.id} className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" name={`client-${client.id}`} defaultChecked={grantedClientIds.has(client.id)} />
+                  {client.name}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+
         <button
           type="submit"
           className="mt-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"

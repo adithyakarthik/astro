@@ -16,6 +16,7 @@ export default async function VideosPage() {
     prisma.videoContent.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
+      include: { _count: { select: { access: true } } },
     }),
     prisma.videoFolder.findMany({
       where: { userId: user.id },
@@ -121,6 +122,16 @@ export default async function VideosPage() {
                   {video.folderId && (
                     <span className="inline-block rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-400">
                       {folderNameById.get(video.folderId) ?? video.folderId}
+                    </span>
+                  )}
+                  {video._count.access > 0 && (
+                    <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700 dark:bg-amber-950/50 dark:text-amber-400">
+                      {t("videos.directAccessBadge")} ({video._count.access})
+                    </span>
+                  )}
+                  {!video.folderId && video._count.access === 0 && (
+                    <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700 dark:bg-green-950/50 dark:text-green-400">
+                      {t("videos.publicBadge")}
                     </span>
                   )}
                 </div>

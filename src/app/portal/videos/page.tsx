@@ -6,10 +6,17 @@ export default async function PortalVideosPage() {
   const client = await requirePortalClient();
   const { t } = await getTranslations();
 
+  // A video is public only when it has no folder AND no direct per-video
+  // grants at all; otherwise it's visible only via a folder grant or a
+  // direct grant for this specific client (either mechanism is sufficient).
   const videos = await prisma.videoContent.findMany({
     where: {
       userId: client.userId,
-      OR: [{ folderId: null }, { folder: { access: { some: { clientId: client.id } } } }],
+      OR: [
+        { folderId: null, access: { none: {} } },
+        { folder: { access: { some: { clientId: client.id } } } },
+        { access: { some: { clientId: client.id } } },
+      ],
     },
     orderBy: { createdAt: "desc" },
   });

@@ -11,6 +11,19 @@ function readFolderId(formData: FormData): string | null {
   return raw || null;
 }
 
+/** Syncs per-video, per-client direct access grants from `client-<id>` checkboxes. */
+async function syncVideoAccess(videoId: string, userId: string, formData: FormData) {
+  const clients = await prisma.client.findMany({ where: { userId, portalAccessEnabled: true }, select: { id: true } });
+  const grantedClientIds = clients.filter((c) => formData.get(`client-${c.id}`) === "on").map((c) => c.id);
+
+  await prisma.$transaction([
+    prisma.videoAccess.deleteMany({ where: { videoId } }),
+    prisma.videoAccess.createMany({
+      data: grantedClientIds.map((clientId) => ({ videoId, clientId })),
+    }),
+  ]);
+}
+
 export async function createVideo(formData: FormData) {
   const user = await requireUser();
   requireModuleAccess(user, "videos");
@@ -29,9 +42,10 @@ export async function createVideo(formData: FormData) {
     if (!folder || folder.userId !== user.id) throw new Error("Invalid folder");
   }
 
-  await prisma.videoContent.create({
+  const created = await prisma.videoContent.create({
     data: { userId: user.id, title, youtubeUrl, youtubeId, description, category, folderId },
   });
+  await syncVideoAccess(created.id, user.id, formData);
 
   revalidatePath("/videos");
   redirect("/videos");
@@ -62,6 +76,7 @@ export async function updateVideo(id: string, formData: FormData) {
     where: { id },
     data: { title, youtubeUrl, youtubeId, description, category, folderId },
   });
+  await syncVideoAccess(id, user.id, formData);
 
   revalidatePath("/videos");
   redirect("/videos");
