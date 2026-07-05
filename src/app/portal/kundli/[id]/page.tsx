@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requirePortalClient } from "@/lib/auth/portal-session";
 import type { ChartData, DashaPeriod } from "@/lib/astro/engine";
+import { computeVargaChart } from "@/lib/astro/vargas";
 import { RasiChartGrid } from "@/components/RasiChartGrid";
 import { PrintButton } from "@/components/PrintButton";
 import { utcToLocalParts, formatOffset } from "@/lib/astro/birth-utils";
@@ -67,6 +68,7 @@ export default async function PortalKundliPage({
   const chart = JSON.parse(kundli.chartData) as ChartData;
   const rasiGroups = groupBySign(chart, "rasiIndex");
   const navamsaGroups = groupBySign(chart, "navamsaRasiIndex");
+  const navamsaChart = computeVargaChart("D9", chart);
   const local = utcToLocalParts(kundli.birthDate, kundli.timezoneOffsetMinutes);
   const localStr = `${local.year}-${String(local.month).padStart(2, "0")}-${String(local.day).padStart(2, "0")} ${String(
     local.hour
@@ -103,10 +105,11 @@ export default async function PortalKundliPage({
         />
         <RasiChartGrid
           title={t("kundli.navamsaChart")}
-          ascendantRasiIndex={-1}
+          ascendantRasiIndex={navamsaChart.ascendantRasiIndex}
           planetsBySign={navamsaGroups}
           rasiNames={names.rasi}
           planetAbbr={names.planetShort}
+          ascendantLabel={names.ascendantLabel}
         />
       </div>
 

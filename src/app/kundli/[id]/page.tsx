@@ -207,8 +207,23 @@ export default async function KundliDetailPage({
     </>
   );
 
+  const referenceRasiChart = (
+    <div className="flex flex-wrap gap-8 rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800/40">
+      <ChartGrid
+        title={t("kundli.rasiChart")}
+        ascendantRasiIndex={chart.ascendant.rasiIndex}
+        planetsBySign={rasiGroups}
+        rasiNames={names.rasi}
+        planetAbbr={names.planetShort}
+        ascendantLabel={names.ascendantLabel}
+      />
+    </div>
+  );
+
   const divisionalTab = (
-    <div className="rounded-xl border border-indigo-200 bg-white p-6 dark:bg-zinc-900 dark:border-indigo-900">
+    <>
+      {referenceRasiChart}
+      <div className="rounded-xl border border-indigo-200 bg-white p-6 dark:bg-zinc-900 dark:border-indigo-900">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-indigo-800 dark:text-indigo-400">{t("kundli.divisionalCharts")}</h2>
         <form method="GET" className="flex items-center gap-2 print:hidden">
@@ -241,11 +256,14 @@ export default async function KundliDetailPage({
         ascendantLabel={names.ascendantLabel}
       />
       <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.divisionalChartsNote")}</p>
-    </div>
+      </div>
+    </>
   );
 
   const kpTab = (
-    <div className="rounded-xl border border-blue-200 bg-white p-6 dark:bg-zinc-900 dark:border-blue-900">
+    <>
+      {referenceRasiChart}
+      <div className="rounded-xl border border-blue-200 bg-white p-6 dark:bg-zinc-900 dark:border-blue-900">
       <h2 className="mb-3 text-lg font-semibold text-blue-800 dark:text-blue-400">{t("kundli.kpHeading")}</h2>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
@@ -274,11 +292,14 @@ export default async function KundliDetailPage({
         </table>
       </div>
       <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.kpNote")}</p>
-    </div>
+      </div>
+    </>
   );
 
   const jaiminiTab = (
-    <div className="rounded-xl border border-violet-200 bg-white p-6 dark:bg-zinc-900 dark:border-violet-900">
+    <>
+      {referenceRasiChart}
+      <div className="rounded-xl border border-violet-200 bg-white p-6 dark:bg-zinc-900 dark:border-violet-900">
       <h2 className="mb-3 text-lg font-semibold text-violet-800 dark:text-violet-400">{t("kundli.jaiminiHeading")}</h2>
       <div className="overflow-x-auto">
         <table className="w-full max-w-md text-left text-sm">
@@ -313,11 +334,14 @@ export default async function KundliDetailPage({
         </tbody>
       </table>
       <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.jaiminiNote")}</p>
-    </div>
+      </div>
+    </>
   );
 
   const nadiTab = (
-    <div className="rounded-xl border border-teal-200 bg-white p-6 dark:bg-zinc-900 dark:border-teal-900">
+    <>
+      {referenceRasiChart}
+      <div className="rounded-xl border border-teal-200 bg-white p-6 dark:bg-zinc-900 dark:border-teal-900">
       <h2 className="mb-3 text-lg font-semibold text-teal-800 dark:text-teal-400">{t("kundli.nadiHeading")}</h2>
       <div className="overflow-x-auto">
         <table className="w-full max-w-md text-left text-sm">
@@ -340,7 +364,8 @@ export default async function KundliDetailPage({
         </table>
       </div>
       <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.nadiNote")}</p>
-    </div>
+      </div>
+    </>
   );
 
   const jamakkolTab = (
