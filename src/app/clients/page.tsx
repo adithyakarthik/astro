@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
+import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
+import { recomputeMyKundlis } from "./actions";
 
 export default async function ClientsPage() {
   const user = await requireUser();
@@ -25,6 +27,19 @@ export default async function ClientsPage() {
         >
           {t("clients.addClient")}
         </Link>
+      </div>
+
+      <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 dark:border-amber-900 dark:bg-amber-950/20">
+        <h2 className="font-semibold text-amber-800 dark:text-amber-400">{t("clients.recomputeHeading")}</h2>
+        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{t("clients.recomputeSubtitle")}</p>
+        <div className="mt-3">
+          <ConfirmSubmitForm
+            action={recomputeMyKundlis}
+            confirmMessage={t("clients.recomputeConfirm")}
+            label={t("clients.recomputeButton")}
+            className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
+          />
+        </div>
       </div>
 
       {clients.length === 0 ? (

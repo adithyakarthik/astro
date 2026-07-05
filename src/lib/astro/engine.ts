@@ -128,7 +128,21 @@ function rahuTropicalLongitudeDeg(jd: number, useTrueNode: boolean): number {
   return norm360(nodeRad * R2D);
 }
 
-/** Ascendant (Lagna), tropical ecliptic longitude in degrees. */
+/**
+ * Ascendant (Lagna), tropical ecliptic longitude in degrees.
+ *
+ * Derivation: a point at ecliptic longitude λ (β=0) has equatorial unit
+ * vector (cos λ, sin λ cos ε, sin λ sin ε). It's on the horizon exactly when
+ * that vector is perpendicular to the zenith vector
+ * (cos φ cos RAMC, cos φ sin RAMC, sin φ), which reduces to
+ * cos λ cos(RAMC) + sin λ (cos ε sin RAMC + tan φ sin ε) = 0 — a line
+ * through the origin in (cos λ, sin λ) with two opposite solutions 180°
+ * apart (the ecliptic crosses the horizon at both the rising and setting
+ * points). Physical test case (equator, RAMC=0, i.e. the vernal equinox
+ * culminating) pins down which root is the riding one: λ = atan2(cos RAMC,
+ * -(sin ε tan φ + cos ε sin RAMC)) gives 90° (Cancer 0°), the correct
+ * ascendant; the other root is the descendant.
+ */
 function ascendantTropicalLongitudeDeg(
   jd: number,
   latitudeDeg: number,
@@ -147,8 +161,8 @@ function ascendantTropicalLongitudeDeg(
   const lat = latitudeDeg * D2R;
   const obl = oblDeg * D2R;
 
-  const y = -Math.cos(ramc);
-  const x = Math.sin(obl) * Math.tan(lat) + Math.cos(obl) * Math.sin(ramc);
+  const y = Math.cos(ramc);
+  const x = -(Math.sin(obl) * Math.tan(lat) + Math.cos(obl) * Math.sin(ramc));
   return norm360(Math.atan2(y, x) * R2D);
 }
 

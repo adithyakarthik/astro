@@ -89,6 +89,10 @@ const en = {
   clients: {
     title: "Clients",
     addClient: "+ Add client",
+    recomputeHeading: "Recompute charts",
+    recomputeSubtitle: "Recalculates every kundli you own from its stored birth date/time/place — use this after an engine update (e.g. an Ascendant calculation fix) to bring already-saved charts up to date.",
+    recomputeButton: "Recompute all my kundli charts",
+    recomputeConfirm: "Recompute every kundli chart you own? This may take a moment for a large number of clients.",
     empty: "No clients yet. Add your first client to generate their kundli.",
     tableName: "Name",
     tablePhone: "Phone",
@@ -386,6 +390,8 @@ const en = {
     created: "Created",
     back: "← Back to Admin",
     empty: "No kundlis have been created yet.",
+    recomputeAllSubtitle: "Recalculates every kundli across every astrologer account from its stored birth date/time/place — use this after an engine update (e.g. an Ascendant calculation fix) to bring already-saved charts up to date system-wide.",
+    recomputeAllButton: "Recompute all charts (every user)",
   },
   predictions: {
     heading: "AI Predictions",
@@ -495,6 +501,10 @@ const ta: Dictionary = {
   clients: {
     title: "வாடிக்கையாளர்கள்",
     addClient: "+ வாடிக்கையாளர் சேர்",
+    recomputeHeading: "ஜாதகங்களை மீண்டும் கணக்கிடு",
+    recomputeSubtitle: "நீங்கள் வைத்திருக்கும் ஒவ்வொரு ஜாதகத்தையும் அதன் சேமிக்கப்பட்ட பிறந்த தேதி/நேரம்/இடத்திலிருந்து மீண்டும் கணக்கிடுகிறது — இயந்திர புதுப்பிப்புக்குப் பிறகு (எ.கா. லக்ன கணக்கீடு திருத்தம்) ஏற்கனவே சேமிக்கப்பட்ட ஜாதகங்களை புதுப்பிக்க இதைப் பயன்படுத்தவும்.",
+    recomputeButton: "எனது அனைத்து ஜாதகங்களையும் மீண்டும் கணக்கிடு",
+    recomputeConfirm: "நீங்கள் வைத்திருக்கும் ஒவ்வொரு ஜாதக அட்டவணையையும் மீண்டும் கணக்கிடவா? பல வாடிக்கையாளர்கள் இருந்தால் இது சிறிது நேரம் ஆகலாம்.",
     empty: "இன்னும் வாடிக்கையாளர்கள் இல்லை. ஜாதகம் உருவாக்க முதல் வாடிக்கையாளரை சேர்க்கவும்.",
     tableName: "பெயர்",
     tablePhone: "தொலைபேசி",
@@ -784,6 +794,8 @@ const ta: Dictionary = {
     created: "உருவாக்கப்பட்டது",
     back: "← நிர்வாகத்திற்குத் திரும்பு",
     empty: "இதுவரை ஜாதகங்கள் எதுவும் உருவாக்கப்படவில்லை.",
+    recomputeAllSubtitle: "ஒவ்வொரு ஜோதிடர் கணக்கிலும் உள்ள ஒவ்வொரு ஜாதகத்தையும் அதன் சேமிக்கப்பட்ட பிறந்த தேதி/நேரம்/இடத்திலிருந்து மீண்டும் கணக்கிடுகிறது — இயந்திர புதுப்பிப்புக்குப் பிறகு (எ.கா. லக்ன கணக்கீடு திருத்தம்) அனைத்து பயனர்களின் ஜாதகங்களையும் புதுப்பிக்க இதைப் பயன்படுத்தவும்.",
+    recomputeAllButton: "அனைத்து ஜாதகங்களையும் மீண்டும் கணக்கிடு (அனைத்து பயனர்களும்)",
   },
   predictions: {
     heading: "AI கணிப்புகள்",
@@ -891,6 +903,10 @@ const hi: Dictionary = {
   clients: {
     title: "ग्राहक",
     addClient: "+ ग्राहक जोड़ें",
+    recomputeHeading: "कुंडलियाँ फिर से गणना करें",
+    recomputeSubtitle: "आपके सभी कुंडलियों को उनके सहेजे गए जन्म तारीख़/समय/स्थान से फिर से गणना करता है — इंजन अपडेट (जैसे लग्न गणना सुधार) के बाद पहले से सहेजे गए चार्ट को अद्यतन करने के लिए इसका उपयोग करें।",
+    recomputeButton: "मेरी सभी कुंडलियाँ फिर से गणना करें",
+    recomputeConfirm: "आपकी हर कुंडली फिर से गणना करें? कई ग्राहकों के लिए इसमें थोड़ा समय लग सकता है।",
     empty: "अभी तक कोई ग्राहक नहीं है। कुंडली बनाने के लिए पहला ग्राहक जोड़ें।",
     tableName: "नाम",
     tablePhone: "फ़ोन",
@@ -1179,6 +1195,8 @@ const hi: Dictionary = {
     created: "बनाई गई",
     back: "← एडमिन पर वापस जाएं",
     empty: "अभी तक कोई कुंडली नहीं बनाई गई है।",
+    recomputeAllSubtitle: "हर ज्योतिषी खाते की हर कुंडली को उसके सहेजे गए जन्म तारीख़/समय/स्थान से फिर से गणना करता है — इंजन अपडेट (जैसे लग्न गणना सुधार) के बाद पूरे सिस्टम में पहले से सहेजे गए चार्ट को अद्यतन करने के लिए इसका उपयोग करें।",
+    recomputeAllButton: "सभी कुंडलियाँ फिर से गणना करें (हर उपयोगकर्ता)",
   },
   predictions: {
     heading: "AI भविष्यवाणियाँ",

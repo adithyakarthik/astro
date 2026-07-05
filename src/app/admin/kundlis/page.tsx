@@ -3,6 +3,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth/session";
 import { getTranslations } from "@/lib/i18n/server";
+import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
+import { recomputeAllKundlisAdmin } from "../actions";
 
 export default async function AdminKundlisPage() {
   const admin = await requireUser();
@@ -22,6 +24,19 @@ export default async function AdminKundlisPage() {
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t("adminKundlis.title")}</h1>
         <p className="mt-1 text-zinc-600 dark:text-zinc-400">{t("adminKundlis.subtitle")}</p>
+      </div>
+
+      <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 dark:border-amber-900 dark:bg-amber-950/20">
+        <h2 className="font-semibold text-amber-800 dark:text-amber-400">{t("clients.recomputeHeading")}</h2>
+        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{t("adminKundlis.recomputeAllSubtitle")}</p>
+        <div className="mt-3">
+          <ConfirmSubmitForm
+            action={recomputeAllKundlisAdmin}
+            confirmMessage={t("clients.recomputeConfirm")}
+            label={t("adminKundlis.recomputeAllButton")}
+            className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
+          />
+        </div>
       </div>
 
       {kundlis.length === 0 ? (

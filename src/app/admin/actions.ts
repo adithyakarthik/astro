@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth/session";
 import { MODULE_KEYS, serializeEnabledModules, TIER_KEYS, type ModuleKey, type TierKey } from "@/lib/auth/modules";
+import { computeKundli } from "@/lib/astro/engine";
 
 async function requireAdmin() {
   const user = await requireUser();
@@ -58,4 +59,27 @@ export async function deleteUser(targetUserId: string) {
 
   await prisma.user.delete({ where: { id: targetUserId } });
   revalidatePath("/admin/users");
+}
+
+/**
+ * Recomputes and re-saves every kundli across every user, from its stored
+ * birth instant/coordinates — needed after an engine fix (e.g. the
+ * Ascendant formula correction) since chartData is cached at save time.
+ * Uses each kundli's owning astrologer's current node-type preference.
+ */
+export async function recomputeAllKundlisAdmin() {
+  await requireAdmin();
+
+  const kundlis = await prisma.kundli.findMany({ include: { client: { include: { user: true } } } });
+  for (const k of kundlis) {
+    const chart = computeKundli({
+      utcDate: k.birthDate,
+      latitude: k.latitude,
+      longitude: k.longitude,
+      useTrueNodes: k.client.user.useTrueNodes,
+    });
+    await prisma.kundli.update({ where: { id: k.id }, data: { chartData: JSON.stringify(chart) } });
+  }
+
+  revalidatePath("/admin/kundlis");
 }

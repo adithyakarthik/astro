@@ -143,6 +143,30 @@ export async function updateKundli(kundliId: string, formData: FormData) {
   redirect(`/kundli/${kundliId}`);
 }
 
+/**
+ * Recomputes and re-saves every kundli owned by the current user from its
+ * stored birth instant/coordinates — needed after an engine fix (e.g. the
+ * Ascendant formula correction) since chartData is cached at save time, not
+ * recalculated on every view.
+ */
+export async function recomputeMyKundlis() {
+  const user = await requireUser();
+  requireModuleAccess(user, "clients");
+
+  const kundlis = await prisma.kundli.findMany({ where: { client: { userId: user.id } } });
+  for (const k of kundlis) {
+    const chart = computeKundli({
+      utcDate: k.birthDate,
+      latitude: k.latitude,
+      longitude: k.longitude,
+      useTrueNodes: user.useTrueNodes,
+    });
+    await prisma.kundli.update({ where: { id: k.id }, data: { chartData: JSON.stringify(chart) } });
+  }
+
+  revalidatePath("/clients");
+}
+
 export async function updateClientPortalAccess(clientId: string, formData: FormData) {
   const user = await requireUser();
   requireModuleAccess(user, "clients");
