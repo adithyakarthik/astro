@@ -2,6 +2,7 @@ import { createVideo } from "../actions";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
+import { ActionForm } from "@/components/ActionForm";
 
 export default async function NewVideoPage() {
   const user = await requireUser();
@@ -13,7 +14,7 @@ export default async function NewVideoPage() {
       <h1 className="text-2xl font-semibold tracking-tight">{t("videos.newTitle")}</h1>
       <p className="mt-1 text-zinc-600">{t("videos.newSubtitle")}</p>
 
-      <form action={createVideo} className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6">
+      <ActionForm action={createVideo} className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6">
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("videos.videoTitle")} *
           <input name="title" required className="rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
@@ -45,7 +46,7 @@ export default async function NewVideoPage() {
         >
           {t("videos.publishButton")}
         </button>
-      </form>
+      </ActionForm>
     </div>
   );
 }

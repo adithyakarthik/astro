@@ -79,6 +79,8 @@ export async function createKundli(clientId: string, formData: FormData) {
     throw new Error("Missing required birth details");
   }
 
+  const notes = String(formData.get("notes") ?? "").trim() || null;
+
   const { utcDate, timezoneOffsetMinutes, chart } = buildChartData(birthDateLocal, latitude, longitude, user.useTrueNodes);
 
   const kundli = await prisma.kundli.create({
@@ -92,6 +94,7 @@ export async function createKundli(clientId: string, formData: FormData) {
       longitude,
       timezoneOffsetMinutes,
       chartData: JSON.stringify(chart),
+      notes,
     },
   });
 
@@ -116,6 +119,8 @@ export async function updateKundli(kundliId: string, formData: FormData) {
     throw new Error("Missing required birth details");
   }
 
+  const notes = String(formData.get("notes") ?? "").trim() || null;
+
   const { utcDate, timezoneOffsetMinutes, chart } = buildChartData(birthDateLocal, latitude, longitude, user.useTrueNodes);
 
   await prisma.kundli.update({
@@ -129,6 +134,7 @@ export async function updateKundli(kundliId: string, formData: FormData) {
       longitude,
       timezoneOffsetMinutes,
       chartData: JSON.stringify(chart),
+      notes,
     },
   });
 

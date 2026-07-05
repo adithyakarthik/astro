@@ -2,6 +2,7 @@ import { createClass } from "../actions";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
+import { ActionForm } from "@/components/ActionForm";
 
 export default async function NewClassPage() {
   const user = await requireUser();
@@ -13,7 +14,7 @@ export default async function NewClassPage() {
       <h1 className="text-2xl font-semibold tracking-tight">{t("classes.newTitle")}</h1>
       <p className="mt-1 text-zinc-600">{t("classes.newSubtitle")}</p>
 
-      <form action={createClass} className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6">
+      <ActionForm action={createClass} className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6">
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("classes.classTitle")} *
           <input name="title" required className="rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
@@ -81,7 +82,7 @@ export default async function NewClassPage() {
         >
           {t("classes.announceButton")}
         </button>
-      </form>
+      </ActionForm>
     </div>
   );
 }

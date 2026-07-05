@@ -73,6 +73,11 @@ export default async function NewKundliPage({
           }}
         />
 
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {t("kundli.notes")}
+          <textarea name="notes" rows={4} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+        </label>
+
         <button
           type="submit"
           className="mt-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"

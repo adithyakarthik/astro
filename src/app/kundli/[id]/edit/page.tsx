@@ -6,6 +6,7 @@ import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
 import { BirthPlaceLookup } from "@/components/BirthPlaceLookup";
+import { ActionForm } from "@/components/ActionForm";
 
 export default async function EditKundliPage({
   params,
@@ -33,7 +34,7 @@ export default async function EditKundliPage({
         {t("kundli.editTitleFor")} {kundli.client.name}
       </h1>
 
-      <form
+      <ActionForm
         action={updateThisKundli}
         className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6"
       >
@@ -85,6 +86,16 @@ export default async function EditKundliPage({
           }}
         />
 
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {t("kundli.notes")}
+          <textarea
+            name="notes"
+            rows={4}
+            defaultValue={kundli.notes ?? ""}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          />
+        </label>
+
         <div className="mt-2 flex gap-2">
           <button
             type="submit"
@@ -93,7 +104,7 @@ export default async function EditKundliPage({
             {t("kundli.save")}
           </button>
         </div>
-      </form>
+      </ActionForm>
     </div>
   );
 }

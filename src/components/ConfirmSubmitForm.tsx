@@ -1,5 +1,7 @@
 "use client";
 
+import { useTransition } from "react";
+
 export function ConfirmSubmitForm({
   action,
   confirmMessage,
@@ -11,13 +13,24 @@ export function ConfirmSubmitForm({
   label: string;
   className?: string;
 }) {
+  const [isPending, startTransition] = useTransition();
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!confirm(confirmMessage)) return;
+    const formData = new FormData(e.currentTarget);
+    startTransition(async () => {
+      await action(formData);
+      // Deletes typically redirect back to an already-visited list/detail
+      // page — a full reload guarantees it reflects the deletion instead of
+      // a stale Router Cache render (same issue the language switcher and
+      // edit forms work around).
+      window.location.reload();
+    });
+  }
+
   return (
-    <form
-      action={action}
-      onSubmit={(e) => {
-        if (!confirm(confirmMessage)) e.preventDefault();
-      }}
-    >
+    <form onSubmit={handleSubmit} aria-busy={isPending}>
       <button type="submit" className={className}>
         {label}
       </button>

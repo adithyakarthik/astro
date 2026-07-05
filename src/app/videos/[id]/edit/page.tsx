@@ -4,6 +4,7 @@ import { updateVideo } from "@/app/videos/actions";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
+import { ActionForm } from "@/components/ActionForm";
 
 export default async function EditVideoPage({
   params,
@@ -24,7 +25,7 @@ export default async function EditVideoPage({
     <div className="mx-auto max-w-lg">
       <h1 className="text-2xl font-semibold tracking-tight">{t("videos.newTitle")}</h1>
 
-      <form
+      <ActionForm
         action={updateThisVideo}
         className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6"
       >
@@ -69,7 +70,7 @@ export default async function EditVideoPage({
         >
           {t("kundli.save")}
         </button>
-      </form>
+      </ActionForm>
     </div>
   );
 }

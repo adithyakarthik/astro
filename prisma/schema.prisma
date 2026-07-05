@@ -87,6 +87,9 @@ model Kundli {
   // Shape: { ascendantDeg, planets: [...], nakshatra, rasiChart, navamsaChart, dasha }
   chartData String
 
+  // Free-text notes about this specific chart/client (analysis, remedies, session notes, etc).
+  notes String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
