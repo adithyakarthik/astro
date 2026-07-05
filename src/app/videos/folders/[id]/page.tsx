@@ -61,7 +61,7 @@ export default async function VideoFolderPage({ params }: { params: Promise<{ id
             <div className="mt-2 flex flex-wrap gap-4">
               {TIER_KEYS.map((tier) => (
                 <label key={tier} className="flex items-center gap-2 text-sm">
-                  <input type="checkbox" name={`tier-${tier}`} defaultChecked={folder.allowedTiers.includes(tier)} />
+                  <input type="checkbox" name={`tier-${tier}`} defaultChecked={(folder.allowedTiers ?? []).includes(tier)} />
                   {TIER_LABELS[tier]}
                 </label>
               ))}

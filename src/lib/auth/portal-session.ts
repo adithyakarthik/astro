@@ -76,7 +76,7 @@ export async function getCurrentPortalClient(): Promise<PortalClient | null> {
   if (!isPortalAccessActive(client)) return null;
   if (!client.email) return null;
 
-  return { id: client.id, name: client.name, email: client.email, userId: client.userId, tier: client.tier };
+  return { id: client.id, name: client.name, email: client.email, userId: client.userId, tier: client.tier ?? "SILVER" };
 }
 
 export async function requirePortalClient(): Promise<PortalClient> {
