@@ -70,7 +70,7 @@ export function localizedChartNames(lang: Language): LocalizedChartNames {
         nakshatra: NAKSHATRA_NAMES,
         planet: ENGLISH_PLANET_NAMES,
         planetShort: ENGLISH_PLANET_SHORT,
-        ascendantLabel: "Ascendant",
+        ascendantLabel: "Lagna",
       };
   }
 }

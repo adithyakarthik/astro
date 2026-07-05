@@ -6,6 +6,22 @@ import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
 import { BirthPlaceLookup } from "@/components/BirthPlaceLookup";
+import { PredictionPanel } from "@/components/PredictionPanel";
+import { generatePredictionAction } from "@/app/predictions/actions";
+import { PREDICTION_TOPICS, type PredictionTopic } from "@/lib/ai/predictions";
+import type { TranslationKey } from "@/lib/i18n/server";
+
+const PREDICTION_TOPIC_KEYS: Record<PredictionTopic, TranslationKey> = {
+  profession: "predictions.topicProfession",
+  health: "predictions.topicHealth",
+  family: "predictions.topicFamily",
+  children: "predictions.topicChildren",
+  wealthMoney: "predictions.topicWealthMoney",
+  foreignTravel: "predictions.topicForeignTravel",
+  parents: "predictions.topicParents",
+  siblings: "predictions.topicSiblings",
+  property: "predictions.topicProperty",
+};
 
 function groupBySign(planets: { planet: string; rasiIndex: number }[]) {
   const map: Record<number, string[]> = {};
@@ -73,6 +89,13 @@ export default async function PrashnaPage({
   const rasiGroups = groupBySign(chart.planets);
   const moonPlacement = chart.planets.find((p) => p.planet === "Moon")!;
 
+  const predictionTopics = PREDICTION_TOPICS.map((topic) => ({
+    value: topic,
+    label: t(PREDICTION_TOPIC_KEYS[topic]),
+  }));
+  const predictionContext = params.question ? `Prashna question: "${params.question}"` : "Prashna (horary) chart, no specific question recorded";
+  const generateForThisPrashna = generatePredictionAction.bind(null, JSON.stringify(chart), predictionContext);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -138,6 +161,21 @@ export default async function PrashnaPage({
           {t("kundli.pada")} {moonPlacement.pada}
         </p>
       </div>
+
+      <PredictionPanel
+        action={generateForThisPrashna}
+        topics={predictionTopics}
+        labels={{
+          heading: t("predictions.heading"),
+          subtitle: t("predictions.subtitle"),
+          generateButton: t("predictions.generateButton"),
+          loading: t("predictions.loading"),
+          predictionHeading: t("predictions.predictionHeading"),
+          reasoningHeading: t("predictions.reasoningHeading"),
+          notConfigured: t("predictions.notConfigured"),
+          genericError: t("predictions.genericError"),
+        }}
+      />
 
       <p className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 text-sm text-zinc-600 dark:text-zinc-400 dark:bg-amber-950/20 dark:border-amber-900">
         {t("prashna.interpretiveNote")}

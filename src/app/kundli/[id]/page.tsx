@@ -26,6 +26,22 @@ import { deleteKundli } from "@/app/clients/actions";
 import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
 import { PrintButton } from "@/components/PrintButton";
 import { CurrentDashaChain, parseLocalDatetimeParam } from "@/components/CurrentDashaChain";
+import { PredictionPanel } from "@/components/PredictionPanel";
+import { generatePredictionAction } from "@/app/predictions/actions";
+import { PREDICTION_TOPICS, type PredictionTopic } from "@/lib/ai/predictions";
+import type { TranslationKey } from "@/lib/i18n/server";
+
+const PREDICTION_TOPIC_KEYS: Record<PredictionTopic, TranslationKey> = {
+  profession: "predictions.topicProfession",
+  health: "predictions.topicHealth",
+  family: "predictions.topicFamily",
+  children: "predictions.topicChildren",
+  wealthMoney: "predictions.topicWealthMoney",
+  foreignTravel: "predictions.topicForeignTravel",
+  parents: "predictions.topicParents",
+  siblings: "predictions.topicSiblings",
+  property: "predictions.topicProperty",
+};
 
 function groupBySign(chart: ChartData, key: "rasiIndex" | "navamsaRasiIndex") {
   const map: Record<number, string[]> = {};
@@ -113,6 +129,12 @@ export default async function KundliDetailPage({
 
   const moonPlacement = chart.planets.find((p) => p.planet === "Moon")!;
   const isOwner = kundli.client.userId === user.id;
+
+  const predictionTopics = PREDICTION_TOPICS.map((topic) => ({
+    value: topic,
+    label: t(PREDICTION_TOPIC_KEYS[topic]),
+  }));
+  const generateForThisKundli = generatePredictionAction.bind(null, JSON.stringify(chart), `Kundli: ${kundli.name}`);
 
   const overviewTab = (
     <>
@@ -538,6 +560,23 @@ export default async function KundliDetailPage({
     </div>
   );
 
+  const predictionsTab = (
+    <PredictionPanel
+      action={generateForThisKundli}
+      topics={predictionTopics}
+      labels={{
+        heading: t("predictions.heading"),
+        subtitle: t("predictions.subtitle"),
+        generateButton: t("predictions.generateButton"),
+        loading: t("predictions.loading"),
+        predictionHeading: t("predictions.predictionHeading"),
+        reasoningHeading: t("predictions.reasoningHeading"),
+        notConfigured: t("predictions.notConfigured"),
+        genericError: t("predictions.genericError"),
+      }}
+    />
+  );
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -595,6 +634,7 @@ export default async function KundliDetailPage({
           { id: "jaimini", label: t("kundli.tabJaimini"), icon: "🪷", content: jaiminiTab },
           { id: "nadi", label: t("kundli.tabNadi"), icon: "🧵", content: nadiTab },
           { id: "jamakkol", label: t("kundli.tabJamakkol"), icon: "🕉️", content: jamakkolTab },
+          { id: "predictions", label: t("predictions.heading"), icon: "🔮", content: predictionsTab },
         ]}
       />
     </div>
