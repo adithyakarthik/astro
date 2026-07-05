@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { createVideo } from "../actions";
 import { hasModule, requireUser } from "@/lib/auth/session";
+import { TIER_KEYS, TIER_LABELS, type TierKey } from "@/lib/auth/modules";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
 import { ActionForm } from "@/components/ActionForm";
@@ -59,6 +60,19 @@ export default async function NewVideoPage() {
         </label>
 
         <div className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-700">
+          <p className="text-sm font-medium">{t("videos.tierAccessHeading")}</p>
+          <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{t("videos.tierAccessSubtitle")}</p>
+          <div className="mt-2 flex flex-wrap gap-4">
+            {TIER_KEYS.map((tier) => (
+              <label key={tier} className="flex items-center gap-2 text-sm">
+                <input type="checkbox" name={`tier-${tier}`} />
+                {TIER_LABELS[tier]}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-700">
           <p className="text-sm font-medium">{t("videos.directAccessHeading")}</p>
           <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{t("videos.directAccessSubtitle")}</p>
           {eligibleClients.length === 0 ? (
@@ -69,6 +83,7 @@ export default async function NewVideoPage() {
                 <label key={client.id} className="flex items-center gap-2 text-sm">
                   <input type="checkbox" name={`client-${client.id}`} />
                   {client.name}
+                  <span className="text-xs text-zinc-400 dark:text-zinc-500">({TIER_LABELS[client.tier as TierKey] ?? client.tier})</span>
                 </label>
               ))}
             </div>

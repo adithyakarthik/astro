@@ -16,6 +16,7 @@ export interface PortalClient {
   name: string;
   email: string;
   userId: string;
+  tier: string;
 }
 
 /** Whether a client's portal access is currently usable (enabled and not past its expiry). */
@@ -75,7 +76,7 @@ export async function getCurrentPortalClient(): Promise<PortalClient | null> {
   if (!isPortalAccessActive(client)) return null;
   if (!client.email) return null;
 
-  return { id: client.id, name: client.name, email: client.email, userId: client.userId };
+  return { id: client.id, name: client.name, email: client.email, userId: client.userId, tier: client.tier };
 }
 
 export async function requirePortalClient(): Promise<PortalClient> {

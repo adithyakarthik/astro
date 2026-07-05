@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { deleteClient, deleteKundli, updateClientPortalAccess } from "@/app/clients/actions";
+import { deleteClient, deleteKundli, updateClientPortalAccess, updateClientTier } from "@/app/clients/actions";
 import { isPortalAccessActive } from "@/lib/auth/portal-session";
 import { hasModule, requireUser } from "@/lib/auth/session";
+import { TIER_KEYS, TIER_LABELS } from "@/lib/auth/modules";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
 import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
@@ -27,6 +28,7 @@ export default async function ClientDetailPage({
 
   const deleteThisClient = deleteClient.bind(null, client.id);
   const updatePortalAccessForClient = updateClientPortalAccess.bind(null, client.id);
+  const updateThisClientTier = updateClientTier.bind(null, client.id);
   const portalActive = isPortalAccessActive(client);
   const expiresAtValue = client.portalAccessExpiresAt ? client.portalAccessExpiresAt.toISOString().slice(0, 10) : "";
 
@@ -57,6 +59,27 @@ export default async function ClientDetailPage({
             className="rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950 dark:text-red-400"
           />
         </div>
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
+        <h2 className="mb-1 text-lg font-semibold">{t("clients.tierHeading")}</h2>
+        <p className="mb-3 text-sm text-zinc-500 dark:text-zinc-400">{t("clients.tierSubtitle")}</p>
+        <form action={updateThisClientTier} className="flex flex-wrap items-end gap-3">
+          <select
+            name="tier"
+            defaultValue={client.tier}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+          >
+            {TIER_KEYS.map((tier) => (
+              <option key={tier} value={tier}>
+                {TIER_LABELS[tier]}
+              </option>
+            ))}
+          </select>
+          <button type="submit" className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700">
+            {t("kundli.save")}
+          </button>
+        </form>
       </div>
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">

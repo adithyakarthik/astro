@@ -4,6 +4,7 @@ import { deleteVideo, createVideoFolder } from "./actions";
 import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
 import { ActionForm } from "@/components/ActionForm";
 import { hasModule, requireUser } from "@/lib/auth/session";
+import { TIER_LABELS, type TierKey } from "@/lib/auth/modules";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
 
@@ -56,6 +57,8 @@ export default async function VideosPage() {
                   <span className="font-medium">{folder.name}</span>
                   <span className="ml-2 text-xs text-zinc-500 dark:text-zinc-400">
                     {folder._count.videos} {t("videos.videosCountLabel")} · {folder._count.access} {t("videos.clientsGrantedLabel")}
+                    {folder.allowedTiers.length > 0 &&
+                      ` · ${folder.allowedTiers.map((tier) => TIER_LABELS[tier as TierKey] ?? tier).join(", ")}`}
                   </span>
                 </div>
                 <Link href={`/videos/folders/${folder.id}`} className="text-xs font-medium text-amber-700 hover:underline dark:text-amber-500">
@@ -124,12 +127,17 @@ export default async function VideosPage() {
                       {folderNameById.get(video.folderId) ?? video.folderId}
                     </span>
                   )}
+                  {video.allowedTiers.map((tier) => (
+                    <span key={tier} className="inline-block rounded-full bg-violet-100 px-2 py-0.5 text-xs text-violet-700 dark:bg-violet-950/50 dark:text-violet-400">
+                      {TIER_LABELS[tier as TierKey] ?? tier}
+                    </span>
+                  ))}
                   {video._count.access > 0 && (
                     <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700 dark:bg-amber-950/50 dark:text-amber-400">
                       {t("videos.directAccessBadge")} ({video._count.access})
                     </span>
                   )}
-                  {!video.folderId && video._count.access === 0 && (
+                  {!video.folderId && video._count.access === 0 && video.allowedTiers.length === 0 && (
                     <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700 dark:bg-green-950/50 dark:text-green-400">
                       {t("videos.publicBadge")}
                     </span>

@@ -75,6 +75,13 @@ model Client {
   portalAccessEnabled   Boolean   @default(false)
   portalAccessExpiresAt DateTime? // null = no expiry while enabled
 
+  // This client's subscription tier ("SILVER" | "GOLD" | "PLATINUM"), set by
+  // the astrologer. Drives bulk video/folder access (grant a whole tier at
+  // once) without needing to check every client individually; explicit
+  // per-client VideoAccess/VideoFolderAccess grants remain available as a
+  // manual override on top of whatever the tier already grants.
+  tier String @default("SILVER")
+
   kundlis           Kundli[]
   portalSessions    ClientPortalSession[]
   videoFolderAccess VideoFolderAccess[]
@@ -122,12 +129,16 @@ model VideoContent {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Optional folder for access-controlled grouping. A video is "public" (visible
-  // to every one of this astrologer's portal clients) only when it has NO folder
-  // AND no direct per-video grants below — assigning either one restricts it to
-  // whichever clients are granted, via folder access, direct video access, or both.
+  // to every one of this astrologer's portal clients) only when it has NO folder,
+  // NO direct per-video grants, AND NO tier restriction below — assigning any of
+  // these restricts it to whichever clients qualify, via folder access, a
+  // matching subscription tier, a direct per-client grant, or any combination.
   folderId String?
   folder   VideoFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
   access   VideoAccess[]
+  // Subscription tiers ("SILVER"/"GOLD"/"PLATINUM") automatically granted
+  // access to this video, independent of (and additive with) folder/direct access.
+  allowedTiers String[] @default([])
 
   title       String
   description String?
@@ -162,6 +173,9 @@ model VideoFolder {
 
   name      String
   createdAt DateTime @default(now())
+  // Subscription tiers ("SILVER"/"GOLD"/"PLATINUM") automatically granted
+  // access to every video in this folder, additive with per-client grants.
+  allowedTiers String[] @default([])
 
   videos VideoContent[]
   access VideoFolderAccess[]

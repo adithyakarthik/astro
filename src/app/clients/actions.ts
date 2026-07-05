@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { computeKundli } from "@/lib/astro/engine";
 import { localBirthToUtcAuto } from "@/lib/astro/birth-utils";
 import { requireModuleAccess, requireUser } from "@/lib/auth/session";
+import { TIER_KEYS, type TierKey } from "@/lib/auth/modules";
 
 export async function createClient(formData: FormData) {
   const user = await requireUser();
@@ -158,6 +159,19 @@ export async function updateClientPortalAccess(clientId: string, formData: FormD
     data: { portalAccessEnabled, portalAccessExpiresAt },
   });
 
+  revalidatePath(`/clients/${clientId}`);
+}
+
+export async function updateClientTier(clientId: string, formData: FormData) {
+  const user = await requireUser();
+  requireModuleAccess(user, "clients");
+  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  if (!client || client.userId !== user.id) notFound();
+
+  const tier = String(formData.get("tier") ?? "SILVER");
+  if (!(TIER_KEYS as readonly string[]).includes(tier)) throw new Error("Invalid tier");
+
+  await prisma.client.update({ where: { id: clientId }, data: { tier: tier as TierKey } });
   revalidatePath(`/clients/${clientId}`);
 }
 

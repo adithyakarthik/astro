@@ -5,10 +5,15 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { extractYoutubeId } from "@/lib/youtube";
 import { requireModuleAccess, requireUser } from "@/lib/auth/session";
+import { TIER_KEYS, type TierKey } from "@/lib/auth/modules";
 
 function readFolderId(formData: FormData): string | null {
   const raw = String(formData.get("folderId") ?? "").trim();
   return raw || null;
+}
+
+function readAllowedTiers(formData: FormData): TierKey[] {
+  return TIER_KEYS.filter((tier) => formData.get(`tier-${tier}`) === "on");
 }
 
 /** Syncs per-video, per-client direct access grants from `client-<id>` checkboxes. */
@@ -43,7 +48,7 @@ export async function createVideo(formData: FormData) {
   }
 
   const created = await prisma.videoContent.create({
-    data: { userId: user.id, title, youtubeUrl, youtubeId, description, category, folderId },
+    data: { userId: user.id, title, youtubeUrl, youtubeId, description, category, folderId, allowedTiers: readAllowedTiers(formData) },
   });
   await syncVideoAccess(created.id, user.id, formData);
 
@@ -74,7 +79,7 @@ export async function updateVideo(id: string, formData: FormData) {
 
   await prisma.videoContent.update({
     where: { id },
-    data: { title, youtubeUrl, youtubeId, description, category, folderId },
+    data: { title, youtubeUrl, youtubeId, description, category, folderId, allowedTiers: readAllowedTiers(formData) },
   });
   await syncVideoAccess(id, user.id, formData);
 
@@ -118,8 +123,10 @@ export async function updateFolderAccess(folderId: string, formData: FormData) {
 
   const clients = await prisma.client.findMany({ where: { userId: user.id }, select: { id: true } });
   const grantedClientIds = clients.filter((c) => formData.get(`client-${c.id}`) === "on").map((c) => c.id);
+  const allowedTiers = readAllowedTiers(formData);
 
   await prisma.$transaction([
+    prisma.videoFolder.update({ where: { id: folderId }, data: { allowedTiers } }),
     prisma.videoFolderAccess.deleteMany({ where: { folderId } }),
     prisma.videoFolderAccess.createMany({
       data: grantedClientIds.map((clientId) => ({ folderId, clientId })),
