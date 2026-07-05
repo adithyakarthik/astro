@@ -64,7 +64,22 @@ model Client {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  kundlis Kundli[]
+  // Client-facing portal access (read-only view of their own kundlis),
+  // granted/revoked by the astrologer — e.g. tied to a payment schedule.
+  // Requires `email` to be set, since portal login is by OTP to that email.
+  portalAccessEnabled   Boolean   @default(false)
+  portalAccessExpiresAt DateTime? // null = no expiry while enabled
+
+  kundlis        Kundli[]
+  portalSessions ClientPortalSession[]
+}
+
+model ClientPortalSession {
+  id        String   @id @default(cuid()) // also the value stored in the portal session cookie
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model Kundli {

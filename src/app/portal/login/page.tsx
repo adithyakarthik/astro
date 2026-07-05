@@ -1,0 +1,56 @@
+import { requestPortalOtp } from "./actions";
+import { getTranslations } from "@/lib/i18n/server";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+
+export default async function PortalLoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const { t, lang } = await getTranslations();
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 dark:bg-zinc-950">
+      <div className="w-full max-w-sm">
+        <div className="mb-2 flex justify-end">
+          <LanguageSwitcher currentLang={lang} />
+        </div>
+        <div className="mb-6 text-center">
+          <div className="text-lg font-semibold tracking-tight dark:text-zinc-100">{t("portal.title")}</div>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("portal.signInSubtitle")}</p>
+        </div>
+
+        {params.error && (
+          <p className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+            {params.error}
+          </p>
+        )}
+
+        <form
+          action={requestPortalOtp}
+          className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
+        >
+          <label className="flex flex-col gap-1 text-sm font-medium dark:text-zinc-200">
+            {t("login.emailLabel")}
+            <input
+              name="email"
+              type="email"
+              required
+              autoFocus
+              placeholder={t("login.emailPlaceholder")}
+              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+            />
+          </label>
+          <button
+            type="submit"
+            className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
+          >
+            {t("login.sendCode")}
+          </button>
+        </form>
+        <p className="mt-4 text-center text-xs text-zinc-400 dark:text-zinc-500">{t("portal.footerNote")}</p>
+      </div>
+    </div>
+  );
+}

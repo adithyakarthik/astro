@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { deleteClient, deleteKundli } from "@/app/clients/actions";
+import { deleteClient, deleteKundli, updateClientPortalAccess } from "@/app/clients/actions";
+import { isPortalAccessActive } from "@/lib/auth/portal-session";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
@@ -25,6 +26,9 @@ export default async function ClientDetailPage({
   if (!client || client.userId !== user.id) notFound();
 
   const deleteThisClient = deleteClient.bind(null, client.id);
+  const updatePortalAccessForClient = updateClientPortalAccess.bind(null, client.id);
+  const portalActive = isPortalAccessActive(client);
+  const expiresAtValue = client.portalAccessExpiresAt ? client.portalAccessExpiresAt.toISOString().slice(0, 10) : "";
 
   return (
     <div className="flex flex-col gap-6">
@@ -53,6 +57,41 @@ export default async function ClientDetailPage({
             className="rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
           />
         </div>
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <h2 className="mb-1 text-lg font-semibold">{t("clients.portalAccess")}</h2>
+        {client.email ? (
+          <>
+            <p className="mb-3 text-sm text-zinc-500">
+              {portalActive ? t("clients.portalActive") : t("clients.portalInactive")}
+            </p>
+            <form action={updatePortalAccessForClient} className="flex flex-wrap items-end gap-4">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <input type="checkbox" name="portalAccessEnabled" defaultChecked={client.portalAccessEnabled} />
+                {t("clients.portalEnable")}
+              </label>
+              <label className="flex flex-col gap-1 text-sm font-medium">
+                {t("clients.portalExpiresAt")}
+                <input
+                  name="portalAccessExpiresAt"
+                  type="date"
+                  defaultValue={expiresAtValue}
+                  className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                />
+              </label>
+              <button
+                type="submit"
+                className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+              >
+                {t("kundli.save")}
+              </button>
+            </form>
+            <p className="mt-3 text-xs text-zinc-400">{t("clients.portalNote")}</p>
+          </>
+        ) : (
+          <p className="text-sm text-zinc-500">{t("clients.portalNeedsEmail")}</p>
+        )}
       </div>
 
       <div className="flex items-center justify-between">

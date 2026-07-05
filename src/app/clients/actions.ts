@@ -142,6 +142,25 @@ export async function updateKundli(kundliId: string, formData: FormData) {
   redirect(`/kundli/${kundliId}`);
 }
 
+export async function updateClientPortalAccess(clientId: string, formData: FormData) {
+  const user = await requireUser();
+  requireModuleAccess(user, "clients");
+  const client = await prisma.client.findUnique({ where: { id: clientId } });
+  if (!client || client.userId !== user.id) notFound();
+  if (!client.email) throw new Error("Add an email address to this client before enabling portal access");
+
+  const portalAccessEnabled = formData.get("portalAccessEnabled") === "on";
+  const expiresLocal = String(formData.get("portalAccessExpiresAt") ?? "").trim();
+  const portalAccessExpiresAt = expiresLocal ? new Date(`${expiresLocal}T23:59:59`) : null;
+
+  await prisma.client.update({
+    where: { id: clientId },
+    data: { portalAccessEnabled, portalAccessExpiresAt },
+  });
+
+  revalidatePath(`/clients/${clientId}`);
+}
+
 export async function deleteClient(clientId: string) {
   const user = await requireUser();
   const client = await prisma.client.findUnique({ where: { id: clientId } });
