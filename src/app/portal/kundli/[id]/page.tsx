@@ -9,6 +9,7 @@ import { PrintButton } from "@/components/PrintButton";
 import { utcToLocalParts, formatOffset } from "@/lib/astro/birth-utils";
 import { getTranslations } from "@/lib/i18n/server";
 import { localizedChartNames } from "@/lib/astro/localized-names";
+import { CurrentDashaChain, parseLocalDatetimeParam } from "@/components/CurrentDashaChain";
 
 function groupBySign(chart: ChartData, key: "rasiIndex" | "navamsaRasiIndex") {
   const map: Record<number, string[]> = {};
@@ -54,14 +55,17 @@ function DashaRow({
 
 export default async function PortalKundliPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ asOf?: string }>;
 }) {
   const portalClient = await requirePortalClient();
   const { t, lang } = await getTranslations();
   const names = localizedChartNames(lang);
 
   const { id } = await params;
+  const { asOf } = await searchParams;
   const kundli = await prisma.kundli.findUnique({ where: { id } });
   if (!kundli || kundli.clientId !== portalClient.id) notFound();
 
@@ -73,6 +77,7 @@ export default async function PortalKundliPage({
   const localStr = `${local.year}-${String(local.month).padStart(2, "0")}-${String(local.day).padStart(2, "0")} ${String(
     local.hour
   ).padStart(2, "0")}:${String(local.minute).padStart(2, "0")}`;
+  const asOfDate = (asOf && parseLocalDatetimeParam(asOf, kundli.timezoneOffsetMinutes)) || new Date();
 
   return (
     <div className="flex flex-col gap-6">
@@ -169,6 +174,32 @@ export default async function PortalKundliPage({
           </table>
         </div>
       </div>
+
+      <CurrentDashaChain
+        chart={chart}
+        asOf={asOfDate}
+        timezoneOffsetMinutes={kundli.timezoneOffsetMinutes}
+        planetNames={names.planet}
+        levelLabels={[
+          t("kundli.dashaLevelMaha"),
+          t("kundli.dashaLevelAntar"),
+          t("kundli.dashaLevelPratyantar"),
+          t("kundli.dashaLevelSookshma"),
+          t("kundli.dashaLevelPrana"),
+          t("kundli.dashaLevelDeha"),
+        ]}
+        labels={{
+          heading: t("kundli.currentDashaHeading"),
+          subtitle: t("kundli.currentDashaSubtitle"),
+          asOf: t("kundli.currentDashaAsOf"),
+          checkButton: t("kundli.currentDashaCheck"),
+          level: t("kundli.currentDashaLevel"),
+          graha: t("kundli.graha"),
+          start: t("kundli.start"),
+          end: t("kundli.end"),
+          note: t("kundli.currentDashaNote"),
+        }}
+      />
 
       <p className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 text-sm text-zinc-600 print:hidden dark:border-amber-900 dark:bg-amber-950/20 dark:text-zinc-400">
         {t("portal.contactNote")}

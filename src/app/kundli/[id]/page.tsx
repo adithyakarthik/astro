@@ -25,6 +25,7 @@ import { getTranslations } from "@/lib/i18n/server";
 import { deleteKundli } from "@/app/clients/actions";
 import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
 import { PrintButton } from "@/components/PrintButton";
+import { CurrentDashaChain, parseLocalDatetimeParam } from "@/components/CurrentDashaChain";
 
 function groupBySign(chart: ChartData, key: "rasiIndex" | "navamsaRasiIndex") {
   const map: Record<number, string[]> = {};
@@ -73,7 +74,7 @@ export default async function KundliDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ varga?: string }>;
+  searchParams: Promise<{ varga?: string; asOf?: string }>;
 }) {
   const user = await requireUser();
   if (!hasModule(user, "clients")) return <ModuleLocked moduleKey="clients" />;
@@ -82,7 +83,7 @@ export default async function KundliDetailPage({
   const ChartGrid = user.chartStyle === "north" ? NorthIndianChartGrid : RasiChartGrid;
 
   const { id } = await params;
-  const { varga } = await searchParams;
+  const { varga, asOf } = await searchParams;
   const kundli = await prisma.kundli.findUnique({
     where: { id },
     include: { client: { include: { user: { select: { email: true } } } } },
@@ -108,6 +109,7 @@ export default async function KundliDetailPage({
   const localStr = `${local.year}-${String(local.month).padStart(2, "0")}-${String(local.day).padStart(2, "0")} ${String(
     local.hour
   ).padStart(2, "0")}:${String(local.minute).padStart(2, "0")}`;
+  const asOfDate = (asOf && parseLocalDatetimeParam(asOf, kundli.timezoneOffsetMinutes)) || new Date();
 
   const moonPlacement = chart.planets.find((p) => p.planet === "Moon")!;
   const isOwner = kundli.client.userId === user.id;
@@ -204,6 +206,32 @@ export default async function KundliDetailPage({
           </table>
         </div>
       </div>
+
+      <CurrentDashaChain
+        chart={chart}
+        asOf={asOfDate}
+        timezoneOffsetMinutes={kundli.timezoneOffsetMinutes}
+        planetNames={names.planet}
+        levelLabels={[
+          t("kundli.dashaLevelMaha"),
+          t("kundli.dashaLevelAntar"),
+          t("kundli.dashaLevelPratyantar"),
+          t("kundli.dashaLevelSookshma"),
+          t("kundli.dashaLevelPrana"),
+          t("kundli.dashaLevelDeha"),
+        ]}
+        labels={{
+          heading: t("kundli.currentDashaHeading"),
+          subtitle: t("kundli.currentDashaSubtitle"),
+          asOf: t("kundli.currentDashaAsOf"),
+          checkButton: t("kundli.currentDashaCheck"),
+          level: t("kundli.currentDashaLevel"),
+          graha: t("kundli.graha"),
+          start: t("kundli.start"),
+          end: t("kundli.end"),
+          note: t("kundli.currentDashaNote"),
+        }}
+      />
     </>
   );
 
@@ -477,6 +505,35 @@ export default async function KundliDetailPage({
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-4">
+        <CurrentDashaChain
+          chart={chart}
+          asOf={asOfDate}
+          timezoneOffsetMinutes={kundli.timezoneOffsetMinutes}
+          planetNames={names.planet}
+          levelLabels={[
+            t("kundli.jamakkolDashaLevelDasa"),
+            t("kundli.jamakkolDashaLevelBukthi"),
+            t("kundli.jamakkolDashaLevelAntaram"),
+            t("kundli.jamakkolDashaLevelSooksham"),
+            t("kundli.jamakkolDashaLevelPranam"),
+            t("kundli.jamakkolDashaLevelDeham"),
+          ]}
+          labels={{
+            heading: t("kundli.currentDashaHeading"),
+            subtitle: t("kundli.currentDashaSubtitle"),
+            asOf: t("kundli.currentDashaAsOf"),
+            checkButton: t("kundli.currentDashaCheck"),
+            level: t("kundli.currentDashaLevel"),
+            graha: t("kundli.graha"),
+            start: t("kundli.start"),
+            end: t("kundli.end"),
+            note: t("kundli.currentDashaNote"),
+          }}
+          accentTextClass="text-amber-800 dark:text-amber-400"
+        />
       </div>
     </div>
   );

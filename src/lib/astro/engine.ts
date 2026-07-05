@@ -174,6 +174,21 @@ export interface DashaPeriod {
   antardashas: DashaPeriod[];
 }
 
+/**
+ * One level of the classical six-fold Vimshottari subdivision:
+ * Mahadasha (Dasa) -> Antardasha (Bhukti) -> Pratyantardasha (Antaram) ->
+ * Sookshma dasha -> Prana dasha -> Deha dasha. Each level narrows to
+ * year -> month -> week -> day -> hour -> minute scale respectively.
+ */
+export interface DashaChainLevel {
+  level: number; // 0 = Mahadasha .. 5 = Deha dasha
+  planet: PlanetKey;
+  startDate: string; // ISO
+  endDate: string; // ISO
+}
+
+export const DASHA_CHAIN_LEVEL_COUNT = 6;
+
 export interface ChartData {
   ayanamsaUsed: number;
   ascendant: {
@@ -305,6 +320,68 @@ function computeVimshottariDasha(
     });
   }
   return periods;
+}
+
+/**
+ * Finds the currently-active period at every level of the classical
+ * six-fold Vimshottari subdivision (Mahadasha/Antardasha/Pratyantardasha/
+ * Sookshma/Prana/Deha) for a single instant, without expanding the full
+ * 9^6 combinatorial tree — at each level we only descend into the one
+ * sub-period that actually contains `atDate`.
+ */
+export function computeDashaChainAt(
+  vimshottariDasha: DashaPeriod[],
+  atDate: Date,
+  levels: number = DASHA_CHAIN_LEVEL_COUNT
+): DashaChainLevel[] {
+  const atMs = atDate.getTime();
+  const maha =
+    vimshottariDasha.find((d) => atMs >= new Date(d.startDate).getTime() && atMs < new Date(d.endDate).getTime()) ??
+    (atMs < new Date(vimshottariDasha[0].startDate).getTime() ? vimshottariDasha[0] : vimshottariDasha[vimshottariDasha.length - 1]);
+
+  const chain: DashaChainLevel[] = [{ level: 0, planet: maha.planet, startDate: maha.startDate, endDate: maha.endDate }];
+  // Sub-periods are computed against the true, continuous timeline, but a
+  // sub-period straddling the birth mahadasha's truncation point (same as
+  // the mahadasha itself) must have its *displayed* start floored there too.
+  const floorMs = new Date(maha.startDate).getTime();
+
+  // The Mahadasha's *full* (untruncated) span is derivable from its own end
+  // date, since endDate is never truncated — only the birth mahadasha's
+  // start is (its remaining balance is what's shown at the top level).
+  let lord = maha.planet;
+  let fullYears = DASHA_YEARS[lord];
+  let fullStartMs = new Date(maha.endDate).getTime() - fullYears * MS_PER_YEAR;
+
+  for (let level = 1; level < levels; level++) {
+    const startIdx = DASHA_SEQUENCE.indexOf(lord);
+    let cursorMs = fullStartMs;
+    let matched: { lord: PlanetKey; startMs: number; endMs: number; years: number } | null = null;
+
+    for (let i = 0; i < DASHA_SEQUENCE.length; i++) {
+      const subLord = DASHA_SEQUENCE[(startIdx + i) % DASHA_SEQUENCE.length];
+      const subYears = (fullYears * DASHA_YEARS[subLord]) / 120;
+      const subStart = cursorMs;
+      const subEnd = cursorMs + subYears * MS_PER_YEAR;
+      cursorMs = subEnd;
+      if (atMs < subEnd || i === DASHA_SEQUENCE.length - 1) {
+        matched = { lord: subLord, startMs: subStart, endMs: subEnd, years: subYears };
+        break;
+      }
+    }
+    if (!matched) break;
+
+    chain.push({
+      level,
+      planet: matched.lord,
+      startDate: new Date(Math.max(matched.startMs, floorMs)).toISOString(),
+      endDate: new Date(matched.endMs).toISOString(),
+    });
+    lord = matched.lord;
+    fullYears = matched.years;
+    fullStartMs = matched.startMs;
+  }
+
+  return chain;
 }
 
 export function computeKundli(input: BirthInput): ChartData {
