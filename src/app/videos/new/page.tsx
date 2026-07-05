@@ -1,3 +1,4 @@
+import { prisma } from "@/lib/db";
 import { createVideo } from "../actions";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
@@ -8,6 +9,7 @@ export default async function NewVideoPage() {
   const user = await requireUser();
   if (!hasModule(user, "videos")) return <ModuleLocked moduleKey="videos" />;
   const { t } = await getTranslations();
+  const folders = await prisma.videoFolder.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" } });
 
   return (
     <div className="mx-auto max-w-lg">
@@ -39,6 +41,17 @@ export default async function NewVideoPage() {
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("videos.description")}
           <textarea name="description" rows={3} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
+        </label>
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {t("videos.folder")}
+          <select name="folderId" defaultValue="" className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+            <option value="">{t("videos.noFolder")}</option>
+            {folders.map((folder) => (
+              <option key={folder.id} value={folder.id}>
+                {folder.name}
+              </option>
+            ))}
+          </select>
         </label>
         <button
           type="submit"

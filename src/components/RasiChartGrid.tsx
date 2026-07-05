@@ -55,14 +55,16 @@ export function RasiChartGrid({
           return (
             <div
               key={rasiIndex}
-              className={`flex min-h-20 flex-col justify-between bg-white p-1.5 text-xs dark:bg-zinc-900 ${
-                isAsc ? "ring-2 ring-inset ring-amber-500" : ""
+              className={`flex min-h-20 flex-col justify-between p-1.5 text-xs ${
+                isAsc
+                  ? "bg-amber-50 ring-[3px] ring-inset ring-amber-500 dark:bg-amber-950/40"
+                  : "bg-white dark:bg-zinc-900"
               }`}
             >
               <span className="text-[10px] text-zinc-400 dark:text-zinc-500">{rasiNames[rasiIndex]}</span>
               <div className="flex flex-wrap gap-1">
                 {isAsc && (
-                  <span className="rounded bg-amber-100 px-1 font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-500">
+                  <span className="rounded bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold text-white shadow-sm">
                     {ascendantLabel}
                   </span>
                 )}

@@ -18,6 +18,7 @@ export default async function EditVideoPage({
   const { id } = await params;
   const video = await prisma.videoContent.findUnique({ where: { id } });
   if (!video || video.userId !== user.id) notFound();
+  const folders = await prisma.videoFolder.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" } });
 
   const updateThisVideo = updateVideo.bind(null, video.id);
 
@@ -63,6 +64,21 @@ export default async function EditVideoPage({
             defaultValue={video.description ?? ""}
             className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
+        </label>
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          {t("videos.folder")}
+          <select
+            name="folderId"
+            defaultValue={video.folderId ?? ""}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+          >
+            <option value="">{t("videos.noFolder")}</option>
+            {folders.map((folder) => (
+              <option key={folder.id} value={folder.id}>
+                {folder.name}
+              </option>
+            ))}
+          </select>
         </label>
         <button
           type="submit"

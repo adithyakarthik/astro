@@ -19,6 +19,12 @@ export default async function PortalLayout({ children }: { children: React.React
             🕉️ {t("portal.title")}
           </Link>
           <nav className="flex items-center gap-4 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+            <Link href="/portal" className="hover:text-zinc-950 dark:hover:text-zinc-100">
+              {t("portal.myKundlis")}
+            </Link>
+            <Link href="/portal/videos" className="hover:text-zinc-950 dark:hover:text-zinc-100">
+              {t("portal.navVideos")}
+            </Link>
             <span className="text-zinc-400 dark:text-zinc-500">{client.name}</span>
             <form action={portalLogoutAction}>
               <button type="submit" className="hover:text-zinc-950 dark:hover:text-zinc-100">

@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth/session";
-import { ALL_MODULES, MODULE_LABELS, parseEnabledModules } from "@/lib/auth/modules";
+import { parseEnabledModules, TIER_LABELS, type TierKey } from "@/lib/auth/modules";
 import { createUser, deleteUser, updateUserModules, updateUserRole } from "../actions";
 import { getTranslations } from "@/lib/i18n/server";
 import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
+import { TierModulesForm } from "@/components/TierModulesForm";
 
 export default async function AdminUsersPage() {
   const admin = await requireUser();
@@ -18,9 +20,14 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("admin.title")}</h1>
-        <p className="mt-1 text-zinc-600 dark:text-zinc-400">{t("admin.subtitle")}</p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("admin.title")}</h1>
+          <p className="mt-1 text-zinc-600 dark:text-zinc-400">{t("admin.subtitle")}</p>
+        </div>
+        <Link href="/admin/kundlis" className="text-sm font-medium text-amber-700 hover:underline dark:text-amber-500">
+          {t("admin.allKundlisLink")}
+        </Link>
       </div>
 
       <form action={createUser} className="flex flex-wrap items-end gap-4 rounded-xl border border-zinc-200 bg-white p-5 dark:bg-zinc-900 dark:border-zinc-800">
@@ -49,6 +56,9 @@ export default async function AdminUsersPage() {
                 <div>
                   <div className="font-medium">
                     {u.email} {u.role === "ADMIN" && <span className="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-500">ADMIN</span>}
+                    <span className="ml-1 rounded bg-zinc-100 px-1.5 py-0.5 text-xs font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                      {TIER_LABELS[u.tier as TierKey] ?? u.tier}
+                    </span>
                   </div>
                   <div className="text-xs text-zinc-500 dark:text-zinc-400">
                     {t("admin.joined")} {new Date(u.createdAt).toISOString().slice(0, 10)} · {u._count.clients} clients ·{" "}
@@ -76,26 +86,13 @@ export default async function AdminUsersPage() {
                 </div>
               </div>
 
-              <form action={updateUserModules.bind(null, u.id)} className="mt-3 flex flex-wrap items-center gap-4">
-                {ALL_MODULES.map((moduleKey) => (
-                  <label key={moduleKey} className="flex items-center gap-1.5 text-sm">
-                    <input
-                      type="checkbox"
-                      name={`module-${moduleKey}`}
-                      defaultChecked={enabled.includes(moduleKey)}
-                      disabled={u.role === "ADMIN"}
-                    />
-                    {MODULE_LABELS[moduleKey]}
-                  </label>
-                ))}
-                <button
-                  type="submit"
-                  disabled={u.role === "ADMIN"}
-                  className="rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700 disabled:opacity-40"
-                >
-                  {t("admin.saveModules")}
-                </button>
-              </form>
+              <TierModulesForm
+                action={updateUserModules.bind(null, u.id)}
+                defaultTier={(u.tier as TierKey) ?? "SILVER"}
+                enabledModules={enabled}
+                disabled={u.role === "ADMIN"}
+                labels={{ tier: t("admin.tier"), save: t("admin.saveModules") }}
+              />
             </div>
           );
         })}

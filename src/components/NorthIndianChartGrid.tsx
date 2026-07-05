@@ -107,7 +107,9 @@ export function NorthIndianChartGrid({
                 <polygon
                   points={poly.map((p) => `${p.x},${p.y}`).join(" ")}
                   fill="currentColor"
-                  className="text-amber-100 dark:text-amber-900/30"
+                  stroke="#d97706"
+                  strokeWidth="0.8"
+                  className="text-amber-200 dark:text-amber-900/50"
                 />
               )}
               <text

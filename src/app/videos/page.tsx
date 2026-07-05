@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { deleteVideo } from "./actions";
+import { deleteVideo, createVideoFolder } from "./actions";
 import { ConfirmSubmitForm } from "@/components/ConfirmSubmitForm";
+import { ActionForm } from "@/components/ActionForm";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
@@ -11,10 +12,18 @@ export default async function VideosPage() {
   if (!hasModule(user, "videos")) return <ModuleLocked moduleKey="videos" />;
   const { t } = await getTranslations();
 
-  const videos = await prisma.videoContent.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-  });
+  const [videos, folders] = await Promise.all([
+    prisma.videoContent.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.videoFolder.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "asc" },
+      include: { _count: { select: { videos: true, access: true } } },
+    }),
+  ]);
+  const folderNameById = new Map(folders.map((f) => [f.id, f.name]));
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,6 +38,46 @@ export default async function VideosPage() {
         >
           {t("videos.publish")}
         </Link>
+      </div>
+
+      <div className="rounded-xl border border-indigo-200 bg-white p-5 dark:bg-zinc-900 dark:border-indigo-900">
+        <h2 className="text-lg font-semibold text-indigo-800 dark:text-indigo-400">{t("videos.foldersHeading")}</h2>
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("videos.foldersSubtitle")}</p>
+
+        {folders.length > 0 && (
+          <div className="mt-4 flex flex-col gap-2">
+            {folders.map((folder) => (
+              <div
+                key={folder.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-700"
+              >
+                <div>
+                  <span className="font-medium">{folder.name}</span>
+                  <span className="ml-2 text-xs text-zinc-500 dark:text-zinc-400">
+                    {folder._count.videos} {t("videos.videosCountLabel")} · {folder._count.access} {t("videos.clientsGrantedLabel")}
+                  </span>
+                </div>
+                <Link href={`/videos/folders/${folder.id}`} className="text-xs font-medium text-amber-700 hover:underline dark:text-amber-500">
+                  {t("videos.manageAccess")}
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <ActionForm action={createVideoFolder} className="mt-4 flex flex-wrap items-end gap-3">
+          <label className="flex flex-col gap-1 text-sm font-medium">
+            {t("videos.newFolderName")}
+            <input
+              name="name"
+              required
+              className="w-56 rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+            />
+          </label>
+          <button type="submit" className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700">
+            {t("videos.createFolder")}
+          </button>
+        </ActionForm>
       </div>
 
       {videos.length === 0 ? (
@@ -63,11 +112,18 @@ export default async function VideosPage() {
                     />
                   </div>
                 </div>
-                {video.category && (
-                  <span className="mt-1 inline-block rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:text-zinc-400 dark:bg-zinc-800">
-                    {video.category}
-                  </span>
-                )}
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {video.category && (
+                    <span className="inline-block rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:text-zinc-400 dark:bg-zinc-800">
+                      {video.category}
+                    </span>
+                  )}
+                  {video.folderId && (
+                    <span className="inline-block rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-400">
+                      {folderNameById.get(video.folderId) ?? video.folderId}
+                    </span>
+                  )}
+                </div>
                 {video.description && <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{video.description}</p>}
               </div>
             </div>

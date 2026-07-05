@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth/session";
-import { MODULE_KEYS, serializeEnabledModules, type ModuleKey } from "@/lib/auth/modules";
+import { MODULE_KEYS, serializeEnabledModules, TIER_KEYS, type ModuleKey, type TierKey } from "@/lib/auth/modules";
 
 async function requireAdmin() {
   const user = await requireUser();
@@ -16,10 +16,12 @@ export async function updateUserModules(targetUserId: string, formData: FormData
   await requireAdmin();
 
   const enabled = MODULE_KEYS.filter((key) => formData.get(`module-${key}`) === "on") as ModuleKey[];
+  const tier = String(formData.get("tier") ?? "SILVER");
+  if (!(TIER_KEYS as readonly string[]).includes(tier)) throw new Error("Invalid tier");
 
   await prisma.user.update({
     where: { id: targetUserId },
-    data: { enabledModules: serializeEnabledModules(enabled) },
+    data: { tier: tier as TierKey, enabledModules: serializeEnabledModules(enabled) },
   });
 
   revalidatePath("/admin/users");

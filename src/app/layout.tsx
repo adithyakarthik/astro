@@ -54,7 +54,7 @@ export default async function RootLayout({
         {user && (
           <header className="relative border-b border-zinc-200 bg-white print:hidden dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-              <Link href="/" className="text-lg font-semibold tracking-tight">
+              <Link href="/" className="shrink-0 whitespace-nowrap text-lg font-semibold tracking-tight">
                 🕉️ JK Vedansh Astro
               </Link>
               <nav className="hidden flex-wrap items-center gap-6 text-sm font-medium text-zinc-600 sm:flex dark:text-zinc-400">

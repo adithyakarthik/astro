@@ -38,3 +38,21 @@ export function parseEnabledModules(json: string): ModuleKey[] {
 export function serializeEnabledModules(modules: ModuleKey[]): string {
   return JSON.stringify(modules);
 }
+
+// Subscription tiers offered to astrologer-Users. Orthogonal to `role`
+// (USER/ADMIN) — a tier is just the default module bundle an admin can
+// quick-apply; the actual access control remains `enabledModules`.
+export const TIER_KEYS = ["SILVER", "GOLD", "PLATINUM"] as const;
+export type TierKey = (typeof TIER_KEYS)[number];
+
+export const TIER_LABELS: Record<TierKey, string> = {
+  SILVER: "Silver",
+  GOLD: "Gold",
+  PLATINUM: "Platinum",
+};
+
+export const TIER_MODULE_PRESETS: Record<TierKey, ModuleKey[]> = {
+  SILVER: ["clients", "muhurta"],
+  GOLD: ["clients", "matchmaking", "muhurta", "transits", "videos"],
+  PLATINUM: [...MODULE_KEYS],
+};
