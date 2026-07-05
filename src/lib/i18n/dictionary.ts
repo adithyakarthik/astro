@@ -83,6 +83,8 @@ const en = {
     videosTitle: "Videos",
     videosSubtitle: "Videos your astrologer has shared with you.",
     noVideos: "No videos have been shared with you yet.",
+    tabOverview: "Overview",
+    tabDasha: "Dasha periods",
   },
   clients: {
     title: "Clients",
@@ -462,6 +464,8 @@ const ta: Dictionary = {
     videosTitle: "வீடியோக்கள்",
     videosSubtitle: "உங்கள் ஜோதிடர் உங்களுடன் பகிர்ந்த வீடியோக்கள்.",
     noVideos: "இதுவரை உங்களுடன் எந்த வீடியோவும் பகிரப்படவில்லை.",
+    tabOverview: "மேலோட்டம்",
+    tabDasha: "தசை காலங்கள்",
   },
   clients: {
     title: "வாடிக்கையாளர்கள்",
@@ -831,6 +835,8 @@ const hi: Dictionary = {
     videosTitle: "वीडियो",
     videosSubtitle: "आपके ज्योतिषी द्वारा आपके साथ साझा किए गए वीडियो।",
     noVideos: "अभी तक आपके साथ कोई वीडियो साझा नहीं किया गया है।",
+    tabOverview: "अवलोकन",
+    tabDasha: "दशा अवधियाँ",
   },
   clients: {
     title: "ग्राहक",

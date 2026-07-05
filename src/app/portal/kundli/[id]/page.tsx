@@ -10,6 +10,7 @@ import { utcToLocalParts, formatOffset } from "@/lib/astro/birth-utils";
 import { getTranslations } from "@/lib/i18n/server";
 import { localizedChartNames } from "@/lib/astro/localized-names";
 import { CurrentDashaChain, parseLocalDatetimeParam } from "@/components/CurrentDashaChain";
+import { Tabs } from "@/components/Tabs";
 
 function groupBySign(chart: ChartData, key: "rasiIndex" | "navamsaRasiIndex") {
   const map: Record<number, string[]> = {};
@@ -79,26 +80,8 @@ export default async function PortalKundliPage({
   ).padStart(2, "0")}:${String(local.minute).padStart(2, "0")}`;
   const asOfDate = (asOf && parseLocalDatetimeParam(asOf, kundli.timezoneOffsetMinutes)) || new Date();
 
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <Link href="/portal" className="text-sm text-zinc-500 hover:underline print:hidden dark:text-zinc-400">
-            ← {t("portal.myKundlis")}
-          </Link>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight dark:text-zinc-100">{kundli.name}</h1>
-          <p className="text-zinc-600 dark:text-zinc-400">
-            {t("portal.bornLabel")} {localStr} ({formatOffset(kundli.timezoneOffsetMinutes)}) · {kundli.birthPlace}
-          </p>
-        </div>
-        <div className="print:hidden">
-          <PrintButton
-            label={t("kundli.print")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
-          />
-        </div>
-      </div>
-
+  const overviewTab = (
+    <>
       <div className="flex flex-wrap gap-8 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
         <RasiChartGrid
           title={t("kundli.rasiChart")}
@@ -152,7 +135,11 @@ export default async function PortalKundliPage({
           </table>
         </div>
       </div>
+    </>
+  );
 
+  const dashaTab = (
+    <>
       <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
         <h2 className="mb-1 text-lg font-semibold dark:text-zinc-100">{t("kundli.vimshottariDasha")}</h2>
         <p className="mb-3 text-sm text-zinc-500 dark:text-zinc-400">{t("kundli.dashaHint")}</p>
@@ -199,6 +186,35 @@ export default async function PortalKundliPage({
           end: t("kundli.end"),
           note: t("kundli.currentDashaNote"),
         }}
+      />
+    </>
+  );
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Link href="/portal" className="text-sm text-zinc-500 hover:underline print:hidden dark:text-zinc-400">
+            ← {t("portal.myKundlis")}
+          </Link>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight dark:text-zinc-100">{kundli.name}</h1>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            {t("portal.bornLabel")} {localStr} ({formatOffset(kundli.timezoneOffsetMinutes)}) · {kundli.birthPlace}
+          </p>
+        </div>
+        <div className="print:hidden">
+          <PrintButton
+            label={t("kundli.print")}
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+          />
+        </div>
+      </div>
+
+      <Tabs
+        tabs={[
+          { id: "overview", label: t("portal.tabOverview"), icon: "🪐", content: overviewTab },
+          { id: "dasha", label: t("portal.tabDasha"), icon: "⏳", content: dashaTab },
+        ]}
       />
 
       <p className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 text-sm text-zinc-600 print:hidden dark:border-amber-900 dark:bg-amber-950/20 dark:text-zinc-400">
