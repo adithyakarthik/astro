@@ -7,11 +7,13 @@ export function SettingsForm({
   defaultTheme,
   defaultChartStyle,
   defaultUseTrueNodes,
+  defaultAyanamsa,
   labels,
 }: {
   defaultTheme: "light" | "dark";
   defaultChartStyle: "south" | "north";
   defaultUseTrueNodes: boolean;
+  defaultAyanamsa: string;
   labels: {
     theme: string;
     themeLight: string;
@@ -22,6 +24,13 @@ export function SettingsForm({
     nodeType: string;
     nodeTrue: string;
     nodeMean: string;
+    ayanamsa: string;
+    ayanamsaLahiri: string;
+    ayanamsaRaman: string;
+    ayanamsaKrishnamurti: string;
+    ayanamsaYukteshwar: string;
+    ayanamsaFaganBradley: string;
+    ayanamsaNote: string;
     save: string;
   };
 }) {
@@ -71,6 +80,22 @@ export function SettingsForm({
           <option value="on">{labels.nodeTrue}</option>
           <option value="off">{labels.nodeMean}</option>
         </select>
+      </label>
+
+      <label className="flex flex-col gap-1 text-sm font-medium">
+        {labels.ayanamsa}
+        <select
+          name="ayanamsa"
+          defaultValue={defaultAyanamsa}
+          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+        >
+          <option value="LAHIRI">{labels.ayanamsaLahiri}</option>
+          <option value="RAMAN">{labels.ayanamsaRaman}</option>
+          <option value="KRISHNAMURTI">{labels.ayanamsaKrishnamurti}</option>
+          <option value="YUKTESHWAR">{labels.ayanamsaYukteshwar}</option>
+          <option value="FAGAN_BRADLEY">{labels.ayanamsaFaganBradley}</option>
+        </select>
+        <span className="mt-0.5 text-xs font-normal text-zinc-400 dark:text-zinc-500">{labels.ayanamsaNote}</span>
       </label>
 
       <button

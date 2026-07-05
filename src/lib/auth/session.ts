@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { parseEnabledModules, type ModuleKey } from "./modules";
+import { AYANAMSA_KEYS, type AyanamsaKey } from "@/lib/astro/constants";
 
 export const SESSION_COOKIE_NAME = "session";
 const SESSION_TTL_DAYS = 30;
@@ -14,6 +15,7 @@ export interface CurrentUser {
   theme: "light" | "dark";
   chartStyle: "south" | "north";
   useTrueNodes: boolean;
+  ayanamsa: AyanamsaKey;
 }
 
 function adminEmails(): string[] {
@@ -87,6 +89,9 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     theme: session.user.theme === "dark" ? "dark" : "light",
     chartStyle: session.user.chartStyle === "north" ? "north" : "south",
     useTrueNodes: session.user.useTrueNodes,
+    ayanamsa: (AYANAMSA_KEYS as readonly string[]).includes(session.user.ayanamsa)
+      ? (session.user.ayanamsa as AyanamsaKey)
+      : "LAHIRI",
   };
 }
 

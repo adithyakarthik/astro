@@ -17,7 +17,7 @@ import {
   groupVargaBySign,
   type VargaKey,
 } from "@/lib/astro/vargas";
-import { computeKpTable } from "@/lib/astro/kp";
+import { computeKpTable, computeKpCuspTable } from "@/lib/astro/kp";
 import { computeArudhaLagna, computeCharaKarakas, computeKarakamsha } from "@/lib/astro/jaimini";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
@@ -117,6 +117,7 @@ export default async function KundliDetailPage({
   const selectedVargaGroups = groupVargaBySign(selectedVargaChart);
 
   const kpRows = computeKpTable(chart);
+  const kpCuspRows = computeKpCuspTable(chart);
   const charaKarakas = computeCharaKarakas(chart);
   const atmakaraka = charaKarakas[0].planet;
   const arudhaLagnaRasi = computeArudhaLagna(chart);
@@ -342,6 +343,39 @@ export default async function KundliDetailPage({
         </table>
       </div>
       <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.kpNote")}</p>
+      </div>
+
+      <div className="rounded-xl border border-blue-200 bg-white p-6 dark:bg-zinc-900 dark:border-blue-900">
+      <h2 className="mb-3 text-lg font-semibold text-blue-800 dark:text-blue-400">{t("kundli.cuspHeading")}</h2>
+      {kpCuspRows ? (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="text-zinc-500 dark:text-zinc-400">
+              <tr>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.cuspCol")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.rasi")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.degree")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.starLord")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.subLord")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {kpCuspRows.map((row) => (
+                <tr key={row.cusp} className="border-t border-zinc-100 dark:border-zinc-800">
+                  <td className="py-1.5 pr-4 font-medium">{row.cusp}</td>
+                  <td className="py-1.5 pr-4">{names.rasi[row.rasiIndex]}</td>
+                  <td className="py-1.5 pr-4">{fmtDeg(row.degreeInSign)}</td>
+                  <td className="py-1.5 pr-4">{names.planet[row.starLord]}</td>
+                  <td className="py-1.5 pr-4">{names.planet[row.subLord]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("kundli.cuspUnavailable")}</p>
+      )}
+      <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.cuspNote")}</p>
       </div>
     </>
   );

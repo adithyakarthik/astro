@@ -27,6 +27,7 @@ model User {
   theme        String  @default("light") // "light" | "dark"
   chartStyle   String  @default("south") // "south" | "north" (Indian chart drawing styles)
   useTrueNodes Boolean @default(true) // Rahu/Ketu: true (instantaneous) node vs mean node
+  ayanamsa     String  @default("LAHIRI") // "LAHIRI" | "RAMAN" | "KRISHNAMURTI" | "YUKTESHWAR" | "FAGAN_BRADLEY"
 
   clients      Client[]
   videos       VideoContent[]
@@ -110,6 +111,10 @@ model Kundli {
   longitude   Float
   timezoneOffsetMinutes Int // minutes east of UTC at birth, e.g. IST = 330
 
+  // Which ayanamsa the cached chartData below was last computed with (the
+  // astrologer's Settings preference at that time) — kept per-kundli so a
+  // later Settings change doesn't silently mismatch already-cached charts;
+  // the recompute actions refresh both together.
   ayanamsa String @default("LAHIRI")
 
   // Computed chart data, cached as JSON so it doesn't need recomputing on every view.

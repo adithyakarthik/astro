@@ -16,6 +16,7 @@ export default async function SettingsPage() {
           defaultTheme={user.theme}
           defaultChartStyle={user.chartStyle}
           defaultUseTrueNodes={user.useTrueNodes}
+          defaultAyanamsa={user.ayanamsa}
           labels={{
             theme: t("settings.theme"),
             themeLight: t("settings.themeLight"),
@@ -26,6 +27,13 @@ export default async function SettingsPage() {
             nodeType: t("settings.nodeType"),
             nodeTrue: t("settings.nodeTrue"),
             nodeMean: t("settings.nodeMean"),
+            ayanamsa: t("settings.ayanamsa"),
+            ayanamsaLahiri: t("settings.ayanamsaLahiri"),
+            ayanamsaRaman: t("settings.ayanamsaRaman"),
+            ayanamsaKrishnamurti: t("settings.ayanamsaKrishnamurti"),
+            ayanamsaYukteshwar: t("settings.ayanamsaYukteshwar"),
+            ayanamsaFaganBradley: t("settings.ayanamsaFaganBradley"),
+            ayanamsaNote: t("settings.ayanamsaNote"),
             save: t("kundli.save"),
           }}
         />

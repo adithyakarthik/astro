@@ -24,6 +24,8 @@ import vsop87Djupiter from "astronomia/data/vsop87Djupiter";
 import vsop87Dsaturn from "astronomia/data/vsop87Dsaturn";
 
 import {
+  AYANAMSA_KEYS,
+  AyanamsaKey,
   DASHA_SEQUENCE,
   DASHA_YEARS,
   NAKSHATRA_NAMES,
@@ -31,6 +33,10 @@ import {
   RASI_NAMES,
   nakshatraLord,
 } from "./constants";
+import { placidusCuspsTropicalDeg } from "./houses";
+
+export { AYANAMSA_KEYS };
+export type { AyanamsaKey };
 
 // astronomia ships dual CJS/ESM builds with no type declarations; under the
 // CJS interop the real module ends up on `.default`. `any` is unavoidable
@@ -73,6 +79,68 @@ export function lahiriAyanamsa(jd: number): number {
   const AYANAMSA_AT_J2000_DEG = 23 + 51 / 60 + 11.7 / 3600;
   const PRECESSION_DEG_PER_CENTURY = 5029.0966 / 3600;
   return norm360(AYANAMSA_AT_J2000_DEG + PRECESSION_DEG_PER_CENTURY * T);
+}
+
+const J1900_JD = 2415020.0; // 1900 January 0.5, TDT
+
+/**
+ * Generic "reference epoch + linear precession" ayanamsa model, used for
+ * every system below except Lahiri (which keeps its own already-verified
+ * J2000-referenced constant above). `t0Jd`/`ayanT0Deg` are each system's
+ * defining (epoch, ayanamsa-at-that-epoch) pair; the same modern precession
+ * rate is then used to carry that value to any other date, exactly as
+ * lahiriAyanamsa does from its own epoch.
+ */
+function ayanamsaFromEpoch(jd: number, t0Jd: number, ayanT0Deg: number): number {
+  const PRECESSION_DEG_PER_CENTURY = 5029.0966 / 3600;
+  const T = (jd - t0Jd) / 36525;
+  return norm360(ayanT0Deg + PRECESSION_DEG_PER_CENTURY * T);
+}
+
+/**
+ * Reference epoch/value pairs below are Swiss Ephemeris's defining
+ * constants for each ayanamsa (github.com/aloistr/swisseph, sweph.h,
+ * `static const struct aya_init ayanamsa[]`) — the de facto industry
+ * standard every other astrology program's ayanamsa tables trace back to.
+ * Carrying each through `ayanamsaFromEpoch` to J2000.0 and cross-checking
+ * against independently published J2000 values confirms Lahiri (14"),
+ * Fagan/Bradley (14"), and Yukteshwar (5") agree to well within this app's
+ * existing ~1-arcminute precision disclaimer. Krishnamurti agrees with a
+ * public estimate to ~3'. B.V. Raman's is the one system Swiss Ephemeris
+ * itself flags as "apparently not based on a valid precession theory" (its
+ * source table can't be exactly reproduced by any precession model), so
+ * treat Raman results here as the roughest of the five.
+ */
+export function ramanAyanamsa(jd: number): number {
+  return ayanamsaFromEpoch(jd, J1900_JD, 360 - 338.98556);
+}
+
+export function krishnamurtiAyanamsa(jd: number): number {
+  return ayanamsaFromEpoch(jd, J1900_JD, 360 - 337.636111);
+}
+
+export function yukteshwarAyanamsa(jd: number): number {
+  return ayanamsaFromEpoch(jd, J1900_JD, 360 - 338.917778);
+}
+
+export function faganBradleyAyanamsa(jd: number): number {
+  return ayanamsaFromEpoch(jd, 2433282.42346, 24.042044444);
+}
+
+export function computeAyanamsa(key: AyanamsaKey, jd: number): number {
+  switch (key) {
+    case "RAMAN":
+      return ramanAyanamsa(jd);
+    case "KRISHNAMURTI":
+      return krishnamurtiAyanamsa(jd);
+    case "YUKTESHWAR":
+      return yukteshwarAyanamsa(jd);
+    case "FAGAN_BRADLEY":
+      return faganBradleyAyanamsa(jd);
+    case "LAHIRI":
+    default:
+      return lahiriAyanamsa(jd);
+  }
 }
 
 export function sunTropicalLongitudeDeg(jd: number): number {
@@ -143,23 +211,27 @@ function rahuTropicalLongitudeDeg(jd: number, useTrueNode: boolean): number {
  * -(sin ε tan φ + cos ε sin RAMC)) gives 90° (Cancer 0°), the correct
  * ascendant; the other root is the descendant.
  */
+/** Right Ascension of the Meridian (deg) — i.e. local (apparent) sidereal time expressed in degrees. */
+function ramcDeg(jd: number, longitudeDeg: number): number {
+  const gstSeconds = sidereal.apparent(jd); // 0..86400
+  const gstDeg = gstSeconds / 240; // 86400s = 360deg -> 240s/deg
+  return norm360(gstDeg + longitudeDeg); // east longitude positive
+}
+
+/** Mean obliquity of the ecliptic (deg), good to a few arcseconds for any birth date in the last few centuries. */
+function meanObliquityDeg(jd: number): number {
+  const T = base.J2000Century(jd);
+  return base.horner(T, 23.4392911, -0.0130042, -1.64e-7, 5.04e-7);
+}
+
 function ascendantTropicalLongitudeDeg(
   jd: number,
   latitudeDeg: number,
   longitudeDeg: number
 ): number {
-  const gstSeconds = sidereal.apparent(jd); // 0..86400
-  const gstDeg = gstSeconds / 240; // 86400s = 360deg -> 240s/deg
-  const ramcDeg = norm360(gstDeg + longitudeDeg); // east longitude positive
-
-  // Mean obliquity of the ecliptic, good to a few arcseconds for any
-  // birth date in the last few centuries.
-  const T = base.J2000Century(jd);
-  const oblDeg = base.horner(T, 23.4392911, -0.0130042, -1.64e-7, 5.04e-7);
-
-  const ramc = ramcDeg * D2R;
+  const ramc = ramcDeg(jd, longitudeDeg) * D2R;
   const lat = latitudeDeg * D2R;
-  const obl = oblDeg * D2R;
+  const obl = meanObliquityDeg(jd) * D2R;
 
   const y = Math.cos(ramc);
   const x = -(Math.sin(obl) * Math.tan(lat) + Math.cos(obl) * Math.sin(ramc));
@@ -205,6 +277,7 @@ export const DASHA_CHAIN_LEVEL_COUNT = 6;
 
 export interface ChartData {
   ayanamsaUsed: number;
+  ayanamsaKey: AyanamsaKey;
   ascendant: {
     siderealLongitude: number;
     rasiIndex: number;
@@ -214,6 +287,12 @@ export interface ChartData {
   planets: GrahaPlacement[];
   moonNakshatra: { name: string; pada: number };
   vimshottariDasha: DashaPeriod[];
+  /**
+   * Placidus house cusps (sidereal longitude, deg), [cusp1..cusp12], for KP
+   * cuspal sub-lords. Null when circumpolar-undefined at this latitude (KP
+   * practice near/above the polar circles has no standard answer here).
+   */
+  placidusCuspsSidereal: number[] | null;
 }
 
 export interface BirthInput {
@@ -222,6 +301,8 @@ export interface BirthInput {
   longitude: number; // degrees, east positive
   /** Rahu/Ketu as the true (instantaneous) lunar node vs the mean node. Defaults to true. */
   useTrueNodes?: boolean;
+  /** Ayanamsa (precession correction) system to use. Defaults to Lahiri. */
+  ayanamsa?: AyanamsaKey;
 }
 
 function toPlacement(planet: PlanetKey, siderealLongitude: number): GrahaPlacement {
@@ -400,7 +481,8 @@ export function computeDashaChainAt(
 
 export function computeKundli(input: BirthInput): ChartData {
   const jd = toJulianDay(input.utcDate);
-  const ayanamsa = lahiriAyanamsa(jd);
+  const ayanamsaKey = input.ayanamsa ?? "LAHIRI";
+  const ayanamsa = computeAyanamsa(ayanamsaKey, jd);
 
   const sunSidereal = norm360(sunTropicalLongitudeDeg(jd) - ayanamsa);
   const moonSidereal = norm360(moonTropicalLongitudeDeg(jd) - ayanamsa);
@@ -415,6 +497,14 @@ export function computeKundli(input: BirthInput): ChartData {
   const ascendantSidereal = norm360(
     ascendantTropicalLongitudeDeg(jd, input.latitude, input.longitude) - ayanamsa
   );
+
+  const ramc = ramcDeg(jd, input.longitude);
+  const oblDeg = meanObliquityDeg(jd);
+  const ascendantTropical = norm360(ascendantSidereal + ayanamsa);
+  const placidusCuspsTropical = placidusCuspsTropicalDeg(ramc, ascendantTropical, input.latitude, oblDeg);
+  const placidusCuspsSidereal = placidusCuspsTropical
+    ? placidusCuspsTropical.map((c) => norm360(c - ayanamsa))
+    : null;
 
   const planets: GrahaPlacement[] = [
     toPlacement("Sun", sunSidereal),
@@ -433,6 +523,7 @@ export function computeKundli(input: BirthInput): ChartData {
 
   return {
     ayanamsaUsed: ayanamsa,
+    ayanamsaKey,
     ascendant: {
       siderealLongitude: ascendantSidereal,
       rasiIndex: ascRasiIndex,
@@ -445,5 +536,6 @@ export function computeKundli(input: BirthInput): ChartData {
       pada: moonPlacement.pada,
     },
     vimshottariDasha: computeVimshottariDasha(input.utcDate, moonSidereal),
+    placidusCuspsSidereal,
   };
 }

@@ -176,9 +176,15 @@ const en = {
       "Each Varga zooms into a specific life area by subdividing every sign further. Ascendant and planet placements are shown for whichever chart you pick above.",
     kpHeading: "KP (Krishnamurti Paddhati) — Star & sub lords",
     kpNote:
-      "Sub lord divides each nakshatra into 9 unequal portions (Vimshottari proportions). Cuspal sub-lords (Placidus houses) are not yet computed — this covers planet and ascendant sub-lords only.",
+      "Sub lord divides each nakshatra into 9 unequal portions (Vimshottari proportions). Planet positions in the zodiac are the same as the Rasi chart — what's different in KP is the house cusps below, computed with the Placidus system rather than whole-sign houses.",
     starLord: "Star lord",
     subLord: "Sub lord",
+    cuspHeading: "House cusps (Placidus)",
+    cuspCol: "Cusp",
+    cuspNote:
+      "Placidus divides each point's own day/night arc into thirds to place cusps 11/12/2/3; cusps 1, 4, 7, 10 (Asc/IC/Desc/MC) are exact. Used for KP cuspal sub-lord analysis.",
+    cuspUnavailable:
+      "House cusps can't be computed for this birth latitude — Placidus is undefined very close to the polar circles.",
     jaiminiHeading: "Jaimini — Karakas & Arudha Lagna",
     jaiminiNote:
       "Chara Karakas rank the classical 7 grahas by degree within their sign. Arudha Lagna (AL) is the sign of perceived material life. Chara Dasha is not yet implemented.",
@@ -365,6 +371,14 @@ const en = {
     nodeType: "Rahu/Ketu calculation",
     nodeTrue: "True node (instantaneous)",
     nodeMean: "Mean node",
+    ayanamsa: "Ayanamsa",
+    ayanamsaLahiri: "Lahiri (Chitrapaksha) — most common in India",
+    ayanamsaRaman: "B.V. Raman",
+    ayanamsaKrishnamurti: "Krishnamurti (KP)",
+    ayanamsaYukteshwar: "Sri Yukteshwar",
+    ayanamsaFaganBradley: "Fagan/Bradley (Western sidereal)",
+    ayanamsaNote:
+      "Changes here don't retroactively change existing charts — use the recompute button on the Clients page after switching.",
     languageNote: "Language is set from the switcher in the top navigation bar.",
   },
   admin: {
@@ -588,9 +602,15 @@ const ta: Dictionary = {
       "ஒவ்வொரு வர்க்கமும் ஒரு குறிப்பிட்ட வாழ்க்கை அம்சத்தை நுணுக்கமாக ஆராய்கிறது. மேலே தேர்ந்தெடுத்த சக்கரத்திற்கான லக்னம் மற்றும் கிரக நிலைகள் காட்டப்படுகின்றன.",
     kpHeading: "KP (கிருஷ்ணமூர்த்தி பத்ததி) — நட்சத்திர & உப அதிபதி",
     kpNote:
-      "உப அதிபதி ஒவ்வொரு நட்சத்திரத்தையும் 9 சம அல்லாத பகுதிகளாக பிரிக்கிறது (விம்சோத்தரி விகிதத்தில்). கிரக மற்றும் லக்ன உப அதிபதிகள் மட்டுமே இங்கு உள்ளன.",
+      "உப அதிபதி ஒவ்வொரு நட்சத்திரத்தையும் 9 சம அல்லாத பகுதிகளாக பிரிக்கிறது (விம்சோத்தரி விகிதத்தில்). ராசி கட்டத்தில் கிரக நிலைகள் அப்படியே உள்ளன — KP-யில் மாறுவது கீழே உள்ள பாவ எல்லைகள் மட்டுமே, அவை Placidus முறையில் கணக்கிடப்படுகின்றன.",
     starLord: "நட்சத்திர அதிபதி",
     subLord: "உப அதிபதி",
+    cuspHeading: "பாவ எல்லைகள் (Placidus)",
+    cuspCol: "பாவம்",
+    cuspNote:
+      "Placidus ஒவ்வொரு புள்ளியின் பகல்/இரவு வளைவை மூன்றாகப் பிரித்து 11/12/2/3 பாவ எல்லைகளை நிர்ணயிக்கிறது; 1, 4, 7, 10 (லக்னம்/IC/அஸ்தமனம்/MC) துல்லியமானவை. KP பாவ உப அதிபதி பகுப்பாய்வுக்குப் பயன்படுகிறது.",
+    cuspUnavailable:
+      "இந்த பிறப்பு அட்சரேகைக்கு பாவ எல்லைகளை கணக்கிட முடியவில்லை — துருவ வட்டங்களுக்கு மிக அருகில் Placidus வரையறுக்கப்படவில்லை.",
     jaiminiHeading: "ஜைமினி — காரகர்கள் & ஆரூட லக்னம்",
     jaiminiNote:
       "சார கார காக்கள் 7 கிரகங்களை பாகையின் அடிப்படையில் தரவரிசைப்படுத்துகின்றன. ஆரூட லக்னம் (AL) உணரப்படும் பொருள் வாழ்க்கையின் ராசி. சார தசை இன்னும் செயல்படுத்தப்படவில்லை.",
@@ -770,6 +790,14 @@ const ta: Dictionary = {
     nodeType: "ராகு/கேது கணக்கீடு",
     nodeTrue: "உண்மையான நோடு (உடனடி)",
     nodeMean: "சராசரி நோடு",
+    ayanamsa: "அயனாம்சம்",
+    ayanamsaLahiri: "லாஹிரி (சித்ரபக்ஷ) — இந்தியாவில் மிகவும் பொதுவானது",
+    ayanamsaRaman: "பி.வி. ராமன்",
+    ayanamsaKrishnamurti: "கிருஷ்ணமூர்த்தி (KP)",
+    ayanamsaYukteshwar: "ஸ்ரீ யுக்தேஸ்வர்",
+    ayanamsaFaganBradley: "Fagan/Bradley (மேற்கத்திய Sidereal)",
+    ayanamsaNote:
+      "இங்கு மாற்றங்கள் ஏற்கனவே உள்ள சக்கரங்களை பின்னோக்கி மாற்றாது — மாற்றிய பிறகு Clients பக்கத்தில் உள்ள மறு-கணக்கீடு பொத்தானைப் பயன்படுத்தவும்.",
     languageNote: "மேல் வழிசெலுத்தல் பட்டியில் உள்ள மொழி மாற்றியில் இருந்து மொழி அமைக்கப்படுகிறது.",
   },
   admin: {
@@ -990,9 +1018,15 @@ const hi: Dictionary = {
       "हर वर्ग जीवन के किसी विशेष क्षेत्र को हर राशि को और उप-विभाजित करके गहराई से दिखाता है। ऊपर चुने गए चार्ट के लिए लग्न व ग्रह स्थितियाँ नीचे दिखाई गई हैं।",
     kpHeading: "KP (कृष्णमूर्ति पद्धति) — नक्षत्र व उप स्वामी",
     kpNote:
-      "उप स्वामी हर नक्षत्र को 9 असमान भागों (विंशोत्तरी अनुपात में) में बांटता है। यहाँ केवल ग्रह व लग्न के उप स्वामी शामिल हैं।",
+      "उप स्वामी हर नक्षत्र को 9 असमान भागों (विंशोत्तरी अनुपात में) में बांटता है। राशि चार्ट जैसी ही ग्रह स्थितियाँ यहाँ भी हैं — KP में जो अलग है वह नीचे दिए भाव कस्प हैं, जो Placidus पद्धति से गणना किए गए हैं, न कि सम-राशि भावों से।",
     starLord: "नक्षत्र स्वामी",
     subLord: "उप स्वामी",
+    cuspHeading: "भाव कस्प (Placidus)",
+    cuspCol: "भाव",
+    cuspNote:
+      "Placidus हर बिंदु के अपने दिन/रात चाप को तीन भागों में बांटकर कस्प 11/12/2/3 तय करता है; कस्प 1, 4, 7, 10 (लग्न/IC/अस्त/MC) सटीक हैं। KP भाव उप स्वामी विश्लेषण हेतु उपयोगी।",
+    cuspUnavailable:
+      "इस जन्म अक्षांश के लिए भाव कस्प की गणना नहीं हो सकी — ध्रुवीय वृत्तों के बहुत निकट Placidus अपरिभाषित है।",
     jaiminiHeading: "जैमिनी — कारक व आरूढ़ लग्न",
     jaiminiNote:
       "चर कारक 7 शास्त्रीय ग्रहों को उनकी राशि में अंश के अनुसार क्रमबद्ध करते हैं। आरूढ़ लग्न (AL) भौतिक जीवन की अनुभूत राशि है। चर दशा अभी लागू नहीं है।",
@@ -1171,6 +1205,14 @@ const hi: Dictionary = {
     nodeType: "राहु/केतु गणना",
     nodeTrue: "सत्य नोड (तात्कालिक)",
     nodeMean: "माध्य नोड",
+    ayanamsa: "अयनांश",
+    ayanamsaLahiri: "लाहिड़ी (चित्रपक्ष) — भारत में सबसे सामान्य",
+    ayanamsaRaman: "बी.वी. रमन",
+    ayanamsaKrishnamurti: "कृष्णमूर्ति (KP)",
+    ayanamsaYukteshwar: "श्री युक्तेश्वर",
+    ayanamsaFaganBradley: "Fagan/Bradley (पश्चिमी sidereal)",
+    ayanamsaNote:
+      "यहाँ बदलाव मौजूदा चार्ट्स को पूर्वव्यापी रूप से नहीं बदलते — बदलने के बाद Clients पेज पर पुनर्गणना बटन का उपयोग करें।",
     languageNote: "भाषा ऊपर नेविगेशन बार के भाषा चयनकर्ता से सेट होती है।",
   },
   admin: {

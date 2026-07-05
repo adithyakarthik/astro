@@ -4,10 +4,10 @@
 // the nakshatra's own lord. The sub-lord a point falls into is used for
 // KP's signature "significator" style predictions.
 //
-// Note: full KP practice also uses Placidus house cusps (not the whole-sign
-// ascendant used elsewhere in this app) for cuspal sub-lords — that requires
-// iterative numeric house-division math not yet implemented here, so this
-// covers planet/ascendant sub-lords only, not cuspal sub-lords.
+// Cuspal sub-lords use Placidus house cusps (see ./houses.ts), which is the
+// one thing that actually differs between the KP tab and the whole-sign
+// Rasi chart shown elsewhere — planet positions in the zodiac are identical
+// across both, only which house each degree falls into changes.
 
 import { DASHA_SEQUENCE, DASHA_YEARS, PlanetKey, nakshatraLord } from "./constants";
 import type { ChartData } from "./engine";
@@ -58,4 +58,34 @@ export function computeKpTable(chart: ChartData): KpRow[] {
     });
   }
   return rows;
+}
+
+export interface KpCuspRow {
+  cusp: number; // 1-12
+  rasiIndex: number;
+  degreeInSign: number;
+  starLord: PlanetKey;
+  subLord: PlanetKey;
+}
+
+/**
+ * Placidus house cusp sub-lords — the piece of full KP practice that isn't
+ * covered by `computeKpTable`. Null when the chart's birth latitude makes
+ * Placidus circumpolar-undefined (see placidusCuspsTropicalDeg in ./houses).
+ */
+export function computeKpCuspTable(chart: ChartData): KpCuspRow[] | null {
+  const cusps = chart.placidusCuspsSidereal;
+  if (!cusps) return null;
+
+  return cusps.map((lon, i) => {
+    const rasiIndex = Math.floor(lon / 30);
+    const nakIndex = Math.floor(lon / NAK_WIDTH);
+    return {
+      cusp: i + 1,
+      rasiIndex,
+      degreeInSign: lon - rasiIndex * 30,
+      starLord: nakshatraLord(nakIndex),
+      subLord: kpSubLord(nakIndex, lon),
+    };
+  });
 }

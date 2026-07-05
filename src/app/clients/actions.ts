@@ -3,7 +3,7 @@
 import { redirect, notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
-import { computeKundli } from "@/lib/astro/engine";
+import { computeKundli, type AyanamsaKey } from "@/lib/astro/engine";
 import { localBirthToUtcAuto } from "@/lib/astro/birth-utils";
 import { requireModuleAccess, requireUser } from "@/lib/auth/session";
 import { TIER_KEYS, type TierKey } from "@/lib/auth/modules";
@@ -56,10 +56,11 @@ function buildChartData(
   birthDateLocal: string,
   latitude: number,
   longitude: number,
-  useTrueNodes: boolean
+  useTrueNodes: boolean,
+  ayanamsa: AyanamsaKey
 ) {
   const { utcDate, timezoneOffsetMinutes } = localBirthToUtcAuto(birthDateLocal, latitude, longitude);
-  const chart = computeKundli({ utcDate, latitude, longitude, useTrueNodes });
+  const chart = computeKundli({ utcDate, latitude, longitude, useTrueNodes, ayanamsa });
   return { utcDate, timezoneOffsetMinutes, chart };
 }
 
@@ -82,7 +83,13 @@ export async function createKundli(clientId: string, formData: FormData) {
 
   const notes = String(formData.get("notes") ?? "").trim() || null;
 
-  const { utcDate, timezoneOffsetMinutes, chart } = buildChartData(birthDateLocal, latitude, longitude, user.useTrueNodes);
+  const { utcDate, timezoneOffsetMinutes, chart } = buildChartData(
+    birthDateLocal,
+    latitude,
+    longitude,
+    user.useTrueNodes,
+    user.ayanamsa
+  );
 
   const kundli = await prisma.kundli.create({
     data: {
@@ -94,6 +101,7 @@ export async function createKundli(clientId: string, formData: FormData) {
       latitude,
       longitude,
       timezoneOffsetMinutes,
+      ayanamsa: chart.ayanamsaKey,
       chartData: JSON.stringify(chart),
       notes,
     },
@@ -122,7 +130,13 @@ export async function updateKundli(kundliId: string, formData: FormData) {
 
   const notes = String(formData.get("notes") ?? "").trim() || null;
 
-  const { utcDate, timezoneOffsetMinutes, chart } = buildChartData(birthDateLocal, latitude, longitude, user.useTrueNodes);
+  const { utcDate, timezoneOffsetMinutes, chart } = buildChartData(
+    birthDateLocal,
+    latitude,
+    longitude,
+    user.useTrueNodes,
+    user.ayanamsa
+  );
 
   await prisma.kundli.update({
     where: { id: kundliId },
@@ -134,6 +148,7 @@ export async function updateKundli(kundliId: string, formData: FormData) {
       latitude,
       longitude,
       timezoneOffsetMinutes,
+      ayanamsa: chart.ayanamsaKey,
       chartData: JSON.stringify(chart),
       notes,
     },
@@ -160,8 +175,12 @@ export async function recomputeMyKundlis() {
       latitude: k.latitude,
       longitude: k.longitude,
       useTrueNodes: user.useTrueNodes,
+      ayanamsa: user.ayanamsa,
     });
-    await prisma.kundli.update({ where: { id: k.id }, data: { chartData: JSON.stringify(chart) } });
+    await prisma.kundli.update({
+      where: { id: k.id },
+      data: { ayanamsa: chart.ayanamsaKey, chartData: JSON.stringify(chart) },
+    });
   }
 
   revalidatePath("/clients");

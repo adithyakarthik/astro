@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth/session";
 import { MODULE_KEYS, serializeEnabledModules, TIER_KEYS, type ModuleKey, type TierKey } from "@/lib/auth/modules";
-import { computeKundli } from "@/lib/astro/engine";
+import { computeKundli, AYANAMSA_KEYS, type AyanamsaKey } from "@/lib/astro/engine";
 
 async function requireAdmin() {
   const user = await requireUser();
@@ -77,8 +77,14 @@ export async function recomputeAllKundlisAdmin() {
       latitude: k.latitude,
       longitude: k.longitude,
       useTrueNodes: k.client.user.useTrueNodes,
+      ayanamsa: (AYANAMSA_KEYS as readonly string[]).includes(k.client.user.ayanamsa)
+        ? (k.client.user.ayanamsa as AyanamsaKey)
+        : "LAHIRI",
     });
-    await prisma.kundli.update({ where: { id: k.id }, data: { chartData: JSON.stringify(chart) } });
+    await prisma.kundli.update({
+      where: { id: k.id },
+      data: { ayanamsa: chart.ayanamsaKey, chartData: JSON.stringify(chart) },
+    });
   }
 
   revalidatePath("/admin/kundlis");

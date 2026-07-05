@@ -47,6 +47,12 @@ export const NAKSHATRA_NAMES = [
   "Revati",
 ] as const;
 
+// Ayanamsa (precession correction) systems. Kept here rather than in engine.ts
+// so lightweight consumers (e.g. auth/session.ts, used on every route) don't
+// have to pull in the full ephemeris engine just to validate/type this value.
+export const AYANAMSA_KEYS = ["LAHIRI", "RAMAN", "KRISHNAMURTI", "YUKTESHWAR", "FAGAN_BRADLEY"] as const;
+export type AyanamsaKey = (typeof AYANAMSA_KEYS)[number];
+
 export type PlanetKey =
   | "Sun"
   | "Moon"
