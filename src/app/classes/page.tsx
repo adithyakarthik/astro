@@ -38,54 +38,54 @@ export default async function ClassesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{t("classes.title")}</h1>
-          <p className="mt-1 text-zinc-600">{t("classes.subtitle")}</p>
+          <p className="mt-1 text-zinc-600 dark:text-zinc-400">{t("classes.subtitle")}</p>
         </div>
         <Link
           href="/classes/new"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+          className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
         >
           {t("classes.announce")}
         </Link>
       </div>
 
       {withPaymentInfo.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-500">
+        <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:text-zinc-400">
           {t("classes.empty")}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {withPaymentInfo.map((c) => (
-            <div key={c.id} className="flex gap-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+            <div key={c.id} className="flex gap-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:bg-zinc-900 dark:border-zinc-800">
               {/* eslint-disable-next-line @next/next/no-img-element -- data: URI, no benefit from next/image optimization */}
-              <img src={c.qrDataUrl} alt="UPI payment QR code" width={110} height={110} className="h-fit rounded-lg border border-zinc-100" />
+              <img src={c.qrDataUrl} alt="UPI payment QR code" width={110} height={110} className="h-fit rounded-lg border border-zinc-100 dark:border-zinc-800" />
               <div className="flex flex-1 flex-col gap-1">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-medium">{c.title}</h3>
                   <div className="flex shrink-0 gap-2 text-xs">
-                    <Link href={`/classes/${c.id}/payments`} className="text-zinc-500 hover:underline">
+                    <Link href={`/classes/${c.id}/payments`} className="text-zinc-500 hover:underline dark:text-zinc-400">
                       {t("classes.payments")} ({c._count.payments})
                     </Link>
-                    <Link href={`/classes/${c.id}/edit`} className="text-zinc-500 hover:underline">
+                    <Link href={`/classes/${c.id}/edit`} className="text-zinc-500 hover:underline dark:text-zinc-400">
                       {t("kundli.edit")}
                     </Link>
                     <ConfirmSubmitForm
                       action={deleteClass.bind(null, c.id)}
                       confirmMessage={t("kundli.confirmDelete")}
                       label={t("common.remove")}
-                      className="text-red-500 hover:underline"
+                      className="text-red-500 hover:underline dark:text-red-400"
                     />
                   </div>
                 </div>
-                <div className="text-sm text-zinc-600">
+                <div className="text-sm text-zinc-600 dark:text-zinc-400">
                   {new Date(c.startsAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
                   {c.endsAt
                     ? ` – ${new Date(c.endsAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}`
                     : ` · ${c.durationMins} mins`}
                 </div>
-                <div className="text-lg font-semibold text-zinc-900">₹{c.feeInRupees.toFixed(0)}</div>
-                {c.description && <p className="text-sm text-zinc-600">{c.description}</p>}
+                <div className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">₹{c.feeInRupees.toFixed(0)}</div>
+                {c.description && <p className="text-sm text-zinc-600 dark:text-zinc-400">{c.description}</p>}
                 {c.meetingLink && (
-                  <a href={c.meetingLink} className="text-sm text-blue-600 hover:underline">
+                  <a href={c.meetingLink} className="text-sm text-blue-600 hover:underline dark:text-blue-400">
                     Meeting link
                   </a>
                 )}
@@ -95,7 +95,7 @@ export default async function ClassesPage() {
                 >
                   {t("classes.payVia")}
                 </a>
-                <p className="mt-1 text-xs text-zinc-400">{t("classes.shareNote")}</p>
+                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">{t("classes.shareNote")}</p>
               </div>
             </div>
           ))}

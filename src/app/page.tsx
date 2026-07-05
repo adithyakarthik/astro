@@ -46,7 +46,7 @@ export default async function Home() {
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">{t("dashboard.title")}</h1>
-        <p className="mt-1 text-zinc-600">{t("dashboard.subtitle")}</p>
+        <p className="mt-1 text-zinc-600 dark:text-zinc-400">{t("dashboard.subtitle")}</p>
       </div>
 
       {cards.length > 0 && (
@@ -55,11 +55,11 @@ export default async function Home() {
             <Link
               key={card.label}
               href={card.href}
-              className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-zinc-300 hover:shadow"
+              className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-zinc-300 hover:shadow dark:bg-zinc-900 dark:border-zinc-800"
             >
               <div className="text-3xl font-semibold">{card.count}</div>
-              <div className="mt-1 font-medium text-zinc-800">{card.label}</div>
-              <div className="text-sm text-zinc-500">{card.blurb}</div>
+              <div className="mt-1 font-medium text-zinc-800 dark:text-zinc-200">{card.label}</div>
+              <div className="text-sm text-zinc-500 dark:text-zinc-400">{card.blurb}</div>
             </Link>
           ))}
         </div>
@@ -69,7 +69,7 @@ export default async function Home() {
         {hasModule(user, "clients") && (
           <Link
             href="/clients/new"
-            className="rounded-xl bg-zinc-900 px-5 py-4 text-center font-medium text-white hover:bg-zinc-800"
+            className="rounded-xl bg-amber-600 px-5 py-4 text-center font-medium text-white hover:bg-amber-700"
           >
             {t("dashboard.addClient")}
           </Link>
@@ -77,7 +77,7 @@ export default async function Home() {
         {hasModule(user, "videos") && (
           <Link
             href="/videos/new"
-            className="rounded-xl border border-zinc-300 bg-white px-5 py-4 text-center font-medium hover:bg-zinc-50"
+            className="rounded-xl border border-zinc-300 bg-white px-5 py-4 text-center font-medium hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-700"
           >
             {t("dashboard.publishVideo")}
           </Link>
@@ -85,7 +85,7 @@ export default async function Home() {
         {hasModule(user, "classes") && (
           <Link
             href="/classes/new"
-            className="rounded-xl border border-zinc-300 bg-white px-5 py-4 text-center font-medium hover:bg-zinc-50"
+            className="rounded-xl border border-zinc-300 bg-white px-5 py-4 text-center font-medium hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-700"
           >
             {t("dashboard.announceClass")}
           </Link>
@@ -95,16 +95,16 @@ export default async function Home() {
       {tools.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold">{t("dashboard.toolsHeading")}</h2>
-          <p className="mt-1 text-sm text-zinc-500">{t("dashboard.toolsSubtitle")}</p>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("dashboard.toolsSubtitle")}</p>
           <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {tools.map((tool) => (
               <Link
                 key={tool.label}
                 href={tool.href}
-                className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-zinc-300 hover:shadow"
+                className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-zinc-300 hover:shadow dark:bg-zinc-900 dark:border-zinc-800"
               >
-                <div className="font-medium text-zinc-800">{tool.label}</div>
-                <div className="text-sm text-zinc-500">{tool.blurb}</div>
+                <div className="font-medium text-zinc-800 dark:text-zinc-200">{tool.label}</div>
+                <div className="text-sm text-zinc-500 dark:text-zinc-400">{tool.blurb}</div>
               </Link>
             ))}
           </div>
@@ -114,7 +114,7 @@ export default async function Home() {
       {user.role === "ADMIN" && (
         <Link
           href="/admin/users"
-          className="rounded-xl border border-dashed border-zinc-300 bg-white px-5 py-4 text-center font-medium text-zinc-700 hover:bg-zinc-50"
+          className="rounded-xl border border-dashed border-zinc-300 bg-white px-5 py-4 text-center font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
         >
           {t("dashboard.adminLink")}
         </Link>

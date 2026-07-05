@@ -34,19 +34,19 @@ export default async function ClientDetailPage({
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <Link href="/clients" className="text-sm text-zinc-500 hover:underline">
+          <Link href="/clients" className="text-sm text-zinc-500 hover:underline dark:text-zinc-400">
             ← All clients
           </Link>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight">{client.name}</h1>
-          <p className="text-zinc-600">
+          <p className="text-zinc-600 dark:text-zinc-400">
             {client.phone ?? "No phone"} · {client.email ?? "No email"}
           </p>
-          {client.notes && <p className="mt-2 text-sm text-zinc-500">{client.notes}</p>}
+          {client.notes && <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{client.notes}</p>}
         </div>
         <div className="flex shrink-0 gap-2">
           <Link
             href={`/clients/${client.id}/edit`}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
           >
             {t("kundli.edit")}
           </Link>
@@ -54,16 +54,16 @@ export default async function ClientDetailPage({
             action={deleteThisClient}
             confirmMessage={t("kundli.confirmDelete")}
             label={t("kundli.delete")}
-            className="rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+            className="rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950 dark:text-red-400"
           />
         </div>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <h2 className="mb-1 text-lg font-semibold">{t("clients.portalAccess")}</h2>
         {client.email ? (
           <>
-            <p className="mb-3 text-sm text-zinc-500">
+            <p className="mb-3 text-sm text-zinc-500 dark:text-zinc-400">
               {portalActive ? t("clients.portalActive") : t("clients.portalInactive")}
             </p>
             <form action={updatePortalAccessForClient} className="flex flex-wrap items-end gap-4">
@@ -77,20 +77,20 @@ export default async function ClientDetailPage({
                   name="portalAccessExpiresAt"
                   type="date"
                   defaultValue={expiresAtValue}
-                  className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                  className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
                 />
               </label>
               <button
                 type="submit"
-                className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+                className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
               >
                 {t("kundli.save")}
               </button>
             </form>
-            <p className="mt-3 text-xs text-zinc-400">{t("clients.portalNote")}</p>
+            <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("clients.portalNote")}</p>
           </>
         ) : (
-          <p className="text-sm text-zinc-500">{t("clients.portalNeedsEmail")}</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("clients.portalNeedsEmail")}</p>
         )}
       </div>
 
@@ -98,14 +98,14 @@ export default async function ClientDetailPage({
         <h2 className="text-lg font-semibold">{t("clients.kundlisHeading")}</h2>
         <Link
           href={`/clients/${client.id}/kundli/new`}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+          className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
         >
           {t("clients.addKundli")}
         </Link>
       </div>
 
       {client.kundlis.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-500">
+        <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:text-zinc-400">
           {t("clients.noKundlis")}
         </p>
       ) : (
@@ -115,23 +115,23 @@ export default async function ClientDetailPage({
             return (
               <div
                 key={k.id}
-                className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm hover:border-zinc-300 hover:shadow"
+                className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm hover:border-zinc-300 hover:shadow dark:bg-zinc-900 dark:border-zinc-800"
               >
                 <Link href={`/kundli/${k.id}`}>
                   <div className="font-medium">{k.name}</div>
-                  <div className="text-sm text-zinc-500">
+                  <div className="text-sm text-zinc-500 dark:text-zinc-400">
                     {new Date(k.birthDate).toUTCString()} · {k.birthPlace}
                   </div>
                 </Link>
                 <div className="flex gap-2 text-sm">
-                  <Link href={`/kundli/${k.id}/edit`} className="text-zinc-600 hover:underline">
+                  <Link href={`/kundli/${k.id}/edit`} className="text-zinc-600 hover:underline dark:text-zinc-400">
                     {t("kundli.edit")}
                   </Link>
                   <ConfirmSubmitForm
                     action={deleteThisKundli}
                     confirmMessage={t("kundli.confirmDelete")}
                     label={t("kundli.delete")}
-                    className="text-red-600 hover:underline"
+                    className="text-red-600 hover:underline dark:text-red-400"
                   />
                 </div>
               </div>

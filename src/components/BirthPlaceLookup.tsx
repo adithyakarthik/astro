@@ -49,26 +49,26 @@ export function BirthPlaceLookup({
             value={place}
             onChange={(e) => setPlace(e.target.value)}
             placeholder="e.g. Chennai, India"
-            className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
           <button
             type="button"
             onClick={handleLookup}
             disabled={isPending}
-            className="whitespace-nowrap rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50"
+            className="whitespace-nowrap rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
           >
             {isPending ? "Finding…" : (labels?.find ?? "Find location")}
           </button>
         </div>
       </label>
       {status === "found" && (
-        <p className="-mt-2 text-xs text-emerald-600">Found it — coordinates filled in below. Double check they look right.</p>
+        <p className="-mt-2 text-xs text-emerald-600 dark:text-emerald-400">Found it — coordinates filled in below. Double check they look right.</p>
       )}
       {status === "notfound" && (
-        <p className="-mt-2 text-xs text-amber-600">Couldn&apos;t find that place automatically — enter latitude/longitude manually below.</p>
+        <p className="-mt-2 text-xs text-amber-600 dark:text-amber-500">Couldn&apos;t find that place automatically — enter latitude/longitude manually below.</p>
       )}
       {status === "error" && (
-        <p className="-mt-2 text-xs text-red-600">Lookup failed (network issue) — enter latitude/longitude manually below.</p>
+        <p className="-mt-2 text-xs text-red-600 dark:text-red-400">Lookup failed (network issue) — enter latitude/longitude manually below.</p>
       )}
 
       <div className="grid grid-cols-2 gap-4">
@@ -82,7 +82,7 @@ export function BirthPlaceLookup({
             value={latitude}
             onChange={(e) => setLatitude(e.target.value)}
             placeholder="13.0827"
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm font-medium">
@@ -95,11 +95,11 @@ export function BirthPlaceLookup({
             value={longitude}
             onChange={(e) => setLongitude(e.target.value)}
             placeholder="80.2707"
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
         </label>
       </div>
-      <p className="-mt-2 text-xs text-zinc-500">
+      <p className="-mt-2 text-xs text-zinc-500 dark:text-zinc-400">
         {labels?.tip ??
           'Click "Find location" to auto-fill coordinates, or search "[city name] latitude longitude" on any maps site. The correct timezone is detected automatically from these coordinates — no need to pick one manually.'}
       </p>

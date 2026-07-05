@@ -40,12 +40,12 @@ export default async function PrashnaPage({
     return (
       <div className="mx-auto max-w-lg">
         <h1 className="text-2xl font-semibold tracking-tight">{t("prashna.title")}</h1>
-        <p className="mt-1 text-zinc-600">{t("prashna.subtitle")}</p>
+        <p className="mt-1 text-zinc-600 dark:text-zinc-400">{t("prashna.subtitle")}</p>
 
-        <form method="GET" className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6">
+        <form method="GET" className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
           <label className="flex flex-col gap-1 text-sm font-medium">
             {t("prashna.question")}
-            <textarea name="question" rows={2} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+            <textarea name="question" rows={2} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
           </label>
 
           <BirthPlaceLookup
@@ -59,7 +59,7 @@ export default async function PrashnaPage({
 
           <button
             type="submit"
-            className="mt-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+            className="mt-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
           >
             {t("prashna.castButton")}
           </button>
@@ -78,18 +78,18 @@ export default async function PrashnaPage({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{t("prashna.resultHeading")}</h1>
-          <p className="text-zinc-600">
+          <p className="text-zinc-600 dark:text-zinc-400">
             {t("prashna.castAt")} {now.toISOString().replace("T", " ").slice(0, 19)} UTC
             {params.birthPlace ? ` · ${params.birthPlace}` : ""} ({latitude.toFixed(4)}, {longitude.toFixed(4)})
           </p>
-          {params.question && <p className="mt-2 text-sm italic text-zinc-500">&ldquo;{params.question}&rdquo;</p>}
+          {params.question && <p className="mt-2 text-sm italic text-zinc-500 dark:text-zinc-400">&ldquo;{params.question}&rdquo;</p>}
         </div>
-        <Link href="/prashna" className="shrink-0 rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50">
+        <Link href="/prashna" className="shrink-0 rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700">
           {t("prashna.newQuestion")}
         </Link>
       </div>
 
-      <div className="flex flex-wrap gap-8 rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="flex flex-wrap gap-8 rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <RasiChartGrid
           title={t("kundli.rasiChart")}
           ascendantRasiIndex={chart.ascendant.rasiIndex}
@@ -100,11 +100,11 @@ export default async function PrashnaPage({
         />
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <h2 className="mb-3 text-lg font-semibold">{t("kundli.planetaryPositions")}</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="text-zinc-500">
+            <thead className="text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.graha")}</th>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.rasi")}</th>
@@ -114,15 +114,15 @@ export default async function PrashnaPage({
               </tr>
             </thead>
             <tbody>
-              <tr className="border-t border-zinc-100">
-                <td className="py-1.5 pr-4 font-medium text-amber-700">{names.ascendantLabel}</td>
+              <tr className="border-t border-zinc-100 dark:border-zinc-800">
+                <td className="py-1.5 pr-4 font-medium text-amber-700 dark:text-amber-500">{names.ascendantLabel}</td>
                 <td className="py-1.5 pr-4">{names.rasi[chart.ascendant.rasiIndex]}</td>
                 <td className="py-1.5 pr-4">{fmtDeg(chart.ascendant.degreeInSign)}</td>
-                <td className="py-1.5 pr-4 text-zinc-400">—</td>
-                <td className="py-1.5 pr-4 text-zinc-400">—</td>
+                <td className="py-1.5 pr-4 text-zinc-400 dark:text-zinc-500">—</td>
+                <td className="py-1.5 pr-4 text-zinc-400 dark:text-zinc-500">—</td>
               </tr>
               {chart.planets.map((p) => (
-                <tr key={p.planet} className="border-t border-zinc-100">
+                <tr key={p.planet} className="border-t border-zinc-100 dark:border-zinc-800">
                   <td className="py-1.5 pr-4 font-medium">{names.planet[p.planet]}</td>
                   <td className="py-1.5 pr-4">{names.rasi[p.rasiIndex]}</td>
                   <td className="py-1.5 pr-4">{fmtDeg(p.degreeInSign)}</td>
@@ -133,13 +133,13 @@ export default async function PrashnaPage({
             </tbody>
           </table>
         </div>
-        <p className="mt-3 text-sm text-zinc-500">
+        <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
           {t("kundli.nakshatra")} ({t("kundli.graha")}: {names.planet.Moon}): {names.nakshatra[moonPlacement.nakshatraIndex]},{" "}
           {t("kundli.pada")} {moonPlacement.pada}
         </p>
       </div>
 
-      <p className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 text-sm text-zinc-600">
+      <p className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 text-sm text-zinc-600 dark:text-zinc-400 dark:bg-amber-950/20 dark:border-amber-900">
         {t("prashna.interpretiveNote")}
       </p>
     </div>

@@ -57,7 +57,7 @@ function DashaRow({
 }) {
   return (
     <>
-      <tr className="border-t border-zinc-100">
+      <tr className="border-t border-zinc-100 dark:border-zinc-800">
         <td className="py-1.5 pr-4 font-medium" style={{ paddingLeft: depth * 16 }}>
           {depth > 0 && <span className="text-zinc-300">↳ </span>}
           {planetNames[d.planet]}
@@ -115,11 +115,11 @@ export default async function KundliDetailPage({
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <Link href={`/clients/${kundli.clientId}`} className="text-sm text-zinc-500 hover:underline print:hidden">
+          <Link href={`/clients/${kundli.clientId}`} className="text-sm text-zinc-500 hover:underline print:hidden dark:text-zinc-400">
             ← {kundli.client.name}
           </Link>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight">{kundli.name}</h1>
-          <p className="text-zinc-600">
+          <p className="text-zinc-600 dark:text-zinc-400">
             Born {localStr} ({formatOffset(kundli.timezoneOffsetMinutes)}) · {kundli.birthPlace} (
             {kundli.latitude.toFixed(4)}, {kundli.longitude.toFixed(4)}) · Ayanamsa used:{" "}
             {fmtDeg(chart.ayanamsaUsed)} (Lahiri, approximate)
@@ -128,11 +128,11 @@ export default async function KundliDetailPage({
         <div className="flex shrink-0 gap-2 print:hidden">
           <PrintButton
             label={t("kundli.print")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
           />
           <Link
             href={`/kundli/${kundli.id}/edit`}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
           >
             {t("kundli.edit")}
           </Link>
@@ -140,17 +140,17 @@ export default async function KundliDetailPage({
             action={deleteThisKundli}
             confirmMessage={t("kundli.confirmDelete")}
             label={t("kundli.delete")}
-            className="rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+            className="rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950 dark:text-red-400"
           />
         </div>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <h2 className="mb-2 text-lg font-semibold">{t("kundli.notes")}</h2>
         {kundli.notes ? (
-          <p className="whitespace-pre-wrap text-sm text-zinc-700">{kundli.notes}</p>
+          <p className="whitespace-pre-wrap text-sm text-zinc-700 dark:text-zinc-300">{kundli.notes}</p>
         ) : (
-          <p className="text-sm text-zinc-400">{t("kundli.notesEmpty")}</p>
+          <p className="text-sm text-zinc-400 dark:text-zinc-500">{t("kundli.notesEmpty")}</p>
         )}
       </div>
 
@@ -173,11 +173,11 @@ export default async function KundliDetailPage({
         />
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <h2 className="mb-3 text-lg font-semibold">{t("kundli.planetaryPositions")}</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="text-zinc-500">
+            <thead className="text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.graha")}</th>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.rasi")}</th>
@@ -188,16 +188,16 @@ export default async function KundliDetailPage({
               </tr>
             </thead>
             <tbody>
-              <tr className="border-t border-zinc-100">
-                <td className="py-1.5 pr-4 font-medium text-amber-700">{names.ascendantLabel}</td>
+              <tr className="border-t border-zinc-100 dark:border-zinc-800">
+                <td className="py-1.5 pr-4 font-medium text-amber-700 dark:text-amber-500">{names.ascendantLabel}</td>
                 <td className="py-1.5 pr-4">{names.rasi[chart.ascendant.rasiIndex]}</td>
                 <td className="py-1.5 pr-4">{fmtDeg(chart.ascendant.degreeInSign)}</td>
-                <td className="py-1.5 pr-4 text-zinc-400">—</td>
-                <td className="py-1.5 pr-4 text-zinc-400">—</td>
-                <td className="py-1.5 pr-4 text-zinc-400">—</td>
+                <td className="py-1.5 pr-4 text-zinc-400 dark:text-zinc-500">—</td>
+                <td className="py-1.5 pr-4 text-zinc-400 dark:text-zinc-500">—</td>
+                <td className="py-1.5 pr-4 text-zinc-400 dark:text-zinc-500">—</td>
               </tr>
               {chart.planets.map((p) => (
-                <tr key={p.planet} className="border-t border-zinc-100">
+                <tr key={p.planet} className="border-t border-zinc-100 dark:border-zinc-800">
                   <td className="py-1.5 pr-4 font-medium">{names.planet[p.planet]}</td>
                   <td className="py-1.5 pr-4">{names.rasi[p.rasiIndex]}</td>
                   <td className="py-1.5 pr-4">{fmtDeg(p.degreeInSign)}</td>
@@ -211,15 +211,15 @@ export default async function KundliDetailPage({
         </div>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <h2 className="mb-1 text-lg font-semibold">{t("kundli.vimshottariDasha")}</h2>
-        <p className="mb-3 text-sm text-zinc-500">
+        <p className="mb-3 text-sm text-zinc-500 dark:text-zinc-400">
           {t("kundli.moonNakshatraAtBirth")}: {names.nakshatra[chart.planets.find((p) => p.planet === "Moon")!.nakshatraIndex]}
           , {t("kundli.pada")} {chart.moonNakshatra.pada}. {t("kundli.dashaHint")}
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="text-zinc-500">
+            <thead className="text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.mahadashaCol")}</th>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.start")}</th>
@@ -236,14 +236,14 @@ export default async function KundliDetailPage({
         </div>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold">{t("kundli.divisionalCharts")}</h2>
           <form method="GET" className="flex items-center gap-2 print:hidden">
             <select
               name="varga"
               defaultValue={selectedVarga}
-              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm"
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
             >
               {VARGA_KEYS.map((key) => (
                 <option key={key} value={key}>
@@ -253,13 +253,13 @@ export default async function KundliDetailPage({
             </select>
             <button
               type="submit"
-              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-50"
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
             >
               {t("kundli.selectChart")}
             </button>
           </form>
         </div>
-        <p className="mb-4 text-sm text-zinc-500">{VARGA_SIGNIFICANCE[selectedVarga]}</p>
+        <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">{VARGA_SIGNIFICANCE[selectedVarga]}</p>
         <ChartGrid
           title={VARGA_LABELS[selectedVarga]}
           ascendantRasiIndex={selectedVargaChart.ascendantRasiIndex}
@@ -268,14 +268,14 @@ export default async function KundliDetailPage({
           planetAbbr={names.planetShort}
           ascendantLabel={names.ascendantLabel}
         />
-        <p className="mt-3 text-xs text-zinc-400">{t("kundli.divisionalChartsNote")}</p>
+        <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.divisionalChartsNote")}</p>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <h2 className="mb-3 text-lg font-semibold">{t("kundli.kpHeading")}</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="text-zinc-500">
+            <thead className="text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.graha")}</th>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.rasi")}</th>
@@ -286,7 +286,7 @@ export default async function KundliDetailPage({
             </thead>
             <tbody>
               {kpRows.map((row) => (
-                <tr key={row.label} className="border-t border-zinc-100">
+                <tr key={row.label} className="border-t border-zinc-100 dark:border-zinc-800">
                   <td className="py-1.5 pr-4 font-medium">
                     {row.label === "Ascendant" ? names.ascendantLabel : names.planet[row.label as keyof typeof names.planet]}
                   </td>
@@ -299,14 +299,14 @@ export default async function KundliDetailPage({
             </tbody>
           </table>
         </div>
-        <p className="mt-3 text-xs text-zinc-400">{t("kundli.kpNote")}</p>
+        <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.kpNote")}</p>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <h2 className="mb-3 text-lg font-semibold">{t("kundli.jaiminiHeading")}</h2>
         <div className="overflow-x-auto">
           <table className="w-full max-w-md text-left text-sm">
-            <thead className="text-zinc-500">
+            <thead className="text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.karakaCol")}</th>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.graha")}</th>
@@ -315,7 +315,7 @@ export default async function KundliDetailPage({
             </thead>
             <tbody>
               {charaKarakas.map((k) => (
-                <tr key={k.label} className="border-t border-zinc-100">
+                <tr key={k.label} className="border-t border-zinc-100 dark:border-zinc-800">
                   <td className="py-1.5 pr-4 font-medium">{k.label}</td>
                   <td className="py-1.5 pr-4">{names.planet[k.planet]}</td>
                   <td className="py-1.5 pr-4">{fmtDeg(k.degreeInSign)}</td>
@@ -326,24 +326,24 @@ export default async function KundliDetailPage({
         </div>
         <table className="mt-4 w-full max-w-md text-left text-sm">
           <tbody>
-            <tr className="border-t border-zinc-200">
-              <td className="py-1.5 pr-4 font-medium text-zinc-500">{t("kundli.arudhaLagna")}</td>
+            <tr className="border-t border-zinc-200 dark:border-zinc-800">
+              <td className="py-1.5 pr-4 font-medium text-zinc-500 dark:text-zinc-400">{t("kundli.arudhaLagna")}</td>
               <td className="py-1.5 pr-4">{names.rasi[arudhaLagnaRasi]}</td>
             </tr>
-            <tr className="border-t border-zinc-200">
-              <td className="py-1.5 pr-4 font-medium text-zinc-500">{t("kundli.karakamsha")}</td>
+            <tr className="border-t border-zinc-200 dark:border-zinc-800">
+              <td className="py-1.5 pr-4 font-medium text-zinc-500 dark:text-zinc-400">{t("kundli.karakamsha")}</td>
               <td className="py-1.5 pr-4">{names.rasi[karakamshaRasi]}</td>
             </tr>
           </tbody>
         </table>
-        <p className="mt-3 text-xs text-zinc-400">{t("kundli.jaiminiNote")}</p>
+        <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.jaiminiNote")}</p>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
         <h2 className="mb-3 text-lg font-semibold">{t("kundli.nadiHeading")}</h2>
         <div className="overflow-x-auto">
           <table className="w-full max-w-md text-left text-sm">
-            <thead className="text-zinc-500">
+            <thead className="text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.graha")}</th>
                 <th className="py-1.5 pr-4 font-medium">{t("kundli.nakshatra")}</th>
@@ -352,7 +352,7 @@ export default async function KundliDetailPage({
             </thead>
             <tbody>
               {chart.planets.map((p) => (
-                <tr key={p.planet} className="border-t border-zinc-100">
+                <tr key={p.planet} className="border-t border-zinc-100 dark:border-zinc-800">
                   <td className="py-1.5 pr-4 font-medium">{names.planet[p.planet]}</td>
                   <td className="py-1.5 pr-4">{names.nakshatra[p.nakshatraIndex]}</td>
                   <td className="py-1.5 pr-4">{NADI_BY_NAKSHATRA[p.nakshatraIndex]}</td>
@@ -361,44 +361,44 @@ export default async function KundliDetailPage({
             </tbody>
           </table>
         </div>
-        <p className="mt-3 text-xs text-zinc-400">{t("kundli.nadiNote")}</p>
+        <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("kundli.nadiNote")}</p>
       </div>
 
-      <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-6">
+      <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-6 dark:bg-amber-950/20 dark:border-amber-900">
         <h2 className="mb-1 text-lg font-semibold">ஜாதகம் — Tamil Jathakam (Jamakkol style)</h2>
-        <p className="mb-4 text-sm text-zinc-500">
+        <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
           Same chart, presented with traditional Tamil terminology and the South Indian (Jamakkol) chart layout.
         </p>
 
         <table className="mb-4 w-full max-w-md text-left text-sm">
           <tbody>
-            <tr className="border-t border-zinc-200">
-              <td className="py-1 pr-4 font-medium text-zinc-500">பெயர் (Name)</td>
+            <tr className="border-t border-zinc-200 dark:border-zinc-800">
+              <td className="py-1 pr-4 font-medium text-zinc-500 dark:text-zinc-400">பெயர் (Name)</td>
               <td className="py-1">{kundli.name}</td>
             </tr>
-            <tr className="border-t border-zinc-200">
-              <td className="py-1 pr-4 font-medium text-zinc-500">ஊர் (Place)</td>
+            <tr className="border-t border-zinc-200 dark:border-zinc-800">
+              <td className="py-1 pr-4 font-medium text-zinc-500 dark:text-zinc-400">ஊர் (Place)</td>
               <td className="py-1">{kundli.birthPlace}</td>
             </tr>
-            <tr className="border-t border-zinc-200">
-              <td className="py-1 pr-4 font-medium text-zinc-500">நட்சத்திரம் (Nakshatra)</td>
+            <tr className="border-t border-zinc-200 dark:border-zinc-800">
+              <td className="py-1 pr-4 font-medium text-zinc-500 dark:text-zinc-400">நட்சத்திரம் (Nakshatra)</td>
               <td className="py-1">
                 {TAMIL_NAKSHATRA_NAMES[chart.planets.find((p) => p.planet === "Moon")!.nakshatraIndex]} — பாதம்{" "}
                 {chart.moonNakshatra.pada}
               </td>
             </tr>
-            <tr className="border-t border-zinc-200">
-              <td className="py-1 pr-4 font-medium text-zinc-500">ராசி (Moon rasi)</td>
+            <tr className="border-t border-zinc-200 dark:border-zinc-800">
+              <td className="py-1 pr-4 font-medium text-zinc-500 dark:text-zinc-400">ராசி (Moon rasi)</td>
               <td className="py-1">{TAMIL_RASI_NAMES[chart.planets.find((p) => p.planet === "Moon")!.rasiIndex]}</td>
             </tr>
-            <tr className="border-t border-zinc-200">
-              <td className="py-1 pr-4 font-medium text-zinc-500">லக்னம் (Lagna)</td>
+            <tr className="border-t border-zinc-200 dark:border-zinc-800">
+              <td className="py-1 pr-4 font-medium text-zinc-500 dark:text-zinc-400">லக்னம் (Lagna)</td>
               <td className="py-1">{TAMIL_RASI_NAMES[chart.ascendant.rasiIndex]}</td>
             </tr>
           </tbody>
         </table>
 
-        <div className="flex flex-wrap gap-8 rounded-xl border border-amber-200 bg-white p-6">
+        <div className="flex flex-wrap gap-8 rounded-xl border border-amber-200 bg-white p-6 dark:bg-zinc-900 dark:border-amber-900">
           <RasiChartGrid
             title="ராசி (D1)"
             ascendantRasiIndex={chart.ascendant.rasiIndex}
@@ -416,9 +416,9 @@ export default async function KundliDetailPage({
           />
         </div>
 
-        <div className="mt-4 overflow-x-auto rounded-xl border border-amber-200 bg-white p-6">
+        <div className="mt-4 overflow-x-auto rounded-xl border border-amber-200 bg-white p-6 dark:bg-zinc-900 dark:border-amber-900">
           <table className="w-full text-left text-sm">
-            <thead className="text-zinc-500">
+            <thead className="text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="py-1.5 pr-4 font-medium">கிரகம்</th>
                 <th className="py-1.5 pr-4 font-medium">ராசி</th>
@@ -427,14 +427,14 @@ export default async function KundliDetailPage({
               </tr>
             </thead>
             <tbody>
-              <tr className="border-t border-zinc-100">
-                <td className="py-1.5 pr-4 font-medium text-amber-700">லக்னம்</td>
+              <tr className="border-t border-zinc-100 dark:border-zinc-800">
+                <td className="py-1.5 pr-4 font-medium text-amber-700 dark:text-amber-500">லக்னம்</td>
                 <td className="py-1.5 pr-4">{TAMIL_RASI_NAMES[chart.ascendant.rasiIndex]}</td>
-                <td className="py-1.5 pr-4 text-zinc-400">—</td>
-                <td className="py-1.5 pr-4 text-zinc-400">—</td>
+                <td className="py-1.5 pr-4 text-zinc-400 dark:text-zinc-500">—</td>
+                <td className="py-1.5 pr-4 text-zinc-400 dark:text-zinc-500">—</td>
               </tr>
               {chart.planets.map((p) => (
-                <tr key={p.planet} className="border-t border-zinc-100">
+                <tr key={p.planet} className="border-t border-zinc-100 dark:border-zinc-800">
                   <td className="py-1.5 pr-4 font-medium">{TAMIL_PLANET_NAMES[p.planet]}</td>
                   <td className="py-1.5 pr-4">{TAMIL_RASI_NAMES[p.rasiIndex]}</td>
                   <td className="py-1.5 pr-4">{TAMIL_NAKSHATRA_NAMES[p.nakshatraIndex]}</td>
@@ -445,10 +445,10 @@ export default async function KundliDetailPage({
           </table>
         </div>
 
-        <div className="mt-4 overflow-x-auto rounded-xl border border-amber-200 bg-white p-6">
+        <div className="mt-4 overflow-x-auto rounded-xl border border-amber-200 bg-white p-6 dark:bg-zinc-900 dark:border-amber-900">
           <h3 className="mb-3 font-semibold">தசா புக்தி (Dasa-Bukthi)</h3>
           <table className="w-full text-left text-sm">
-            <thead className="text-zinc-500">
+            <thead className="text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="py-1.5 pr-4 font-medium">தசை / புக்தி</th>
                 <th className="py-1.5 pr-4 font-medium">தொடக்கம்</th>
@@ -458,13 +458,13 @@ export default async function KundliDetailPage({
             <tbody>
               {chart.vimshottariDasha.map((d, i) => (
                 <Fragment key={i}>
-                  <tr className="border-t border-zinc-100">
+                  <tr className="border-t border-zinc-100 dark:border-zinc-800">
                     <td className="py-1.5 pr-4 font-medium">{TAMIL_PLANET_NAMES[d.planet]}</td>
                     <td className="py-1.5 pr-4">{new Date(d.startDate).toISOString().slice(0, 10)}</td>
                     <td className="py-1.5 pr-4">{new Date(d.endDate).toISOString().slice(0, 10)}</td>
                   </tr>
                   {d.antardashas.map((a, j) => (
-                    <tr key={j} className="border-t border-zinc-50 text-zinc-500">
+                    <tr key={j} className="border-t border-zinc-50 text-zinc-500 dark:text-zinc-400">
                       <td className="py-1 pr-4 pl-4">↳ {TAMIL_PLANET_NAMES[a.planet]}</td>
                       <td className="py-1 pr-4">{new Date(a.startDate).toISOString().slice(0, 10)}</td>
                       <td className="py-1 pr-4">{new Date(a.endDate).toISOString().slice(0, 10)}</td>

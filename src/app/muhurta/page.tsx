@@ -34,7 +34,7 @@ export default async function MuhurtaPage({
   const tamilDate = computeTamilCalendarDate(dateAtNoonUtc);
 
   const windowRow = (label: string, w: { start: Date; end: Date }, tone: string) => (
-    <tr className="border-t border-zinc-100">
+    <tr className="border-t border-zinc-100 dark:border-zinc-800">
       <td className="py-1.5 pr-4 font-medium">{label}</td>
       <td className={`py-1.5 pr-4 ${tone}`}>
         {fmtTime(w.start, tzOffsetMinutes)} – {fmtTime(w.end, tzOffsetMinutes)}
@@ -46,25 +46,25 @@ export default async function MuhurtaPage({
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">{t("muhurta.title")}</h1>
-        <p className="mt-1 text-zinc-600">{t("muhurta.subtitle")}</p>
+        <p className="mt-1 text-zinc-600 dark:text-zinc-400">{t("muhurta.subtitle")}</p>
       </div>
 
-      <form method="GET" className="flex flex-wrap items-end gap-4 rounded-xl border border-zinc-200 bg-white p-5">
+      <form method="GET" className="flex flex-wrap items-end gap-4 rounded-xl border border-zinc-200 bg-white p-5 dark:bg-zinc-900 dark:border-zinc-800">
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("common.date")}
-          <input name="date" type="date" defaultValue={date} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+          <input name="date" type="date" defaultValue={date} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
         </label>
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("common.latitude")}
-          <input name="latitude" type="number" step="any" defaultValue={latitude} className="w-32 rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+          <input name="latitude" type="number" step="any" defaultValue={latitude} className="w-32 rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
         </label>
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("common.longitude")}
-          <input name="longitude" type="number" step="any" defaultValue={longitude} className="w-32 rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+          <input name="longitude" type="number" step="any" defaultValue={longitude} className="w-32 rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
         </label>
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("common.timezone")}
-          <select name="tz" defaultValue={tzOffsetMinutes} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm">
+          <select name="tz" defaultValue={tzOffsetMinutes} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
             {COMMON_TIMEZONES.map((tz) => (
               <option key={tz.label} value={tz.offsetMinutes}>
                 {tz.label}
@@ -72,101 +72,101 @@ export default async function MuhurtaPage({
             ))}
           </select>
         </label>
-        <button type="submit" className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+        <button type="submit" className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700">
           {t("muhurta.lookup")}
         </button>
       </form>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
           <h2 className="mb-3 text-lg font-semibold">
             {t("muhurta.panchangFor")} {date}
           </h2>
           <table className="w-full text-left text-sm">
             <tbody>
-              <tr className="border-t border-zinc-100">
+              <tr className="border-t border-zinc-100 dark:border-zinc-800">
                 <td className="py-1.5 pr-4 font-medium">{t("muhurta.weekday")}</td>
                 <td className="py-1.5 pr-4">{panchang.weekday}</td>
               </tr>
-              <tr className="border-t border-zinc-100">
+              <tr className="border-t border-zinc-100 dark:border-zinc-800">
                 <td className="py-1.5 pr-4 font-medium">{t("muhurta.sunriseSunset")}</td>
                 <td className="py-1.5 pr-4">
                   {fmtTime(panchang.sunrise, tzOffsetMinutes)} – {fmtTime(panchang.sunset, tzOffsetMinutes)}
                 </td>
               </tr>
-              <tr className="border-t border-zinc-100">
+              <tr className="border-t border-zinc-100 dark:border-zinc-800">
                 <td className="py-1.5 pr-4 font-medium">{t("muhurta.tithi")}</td>
                 <td className="py-1.5 pr-4">
                   {panchang.tithi.name} ({panchang.tithi.paksha} Paksha)
                 </td>
               </tr>
-              <tr className="border-t border-zinc-100">
+              <tr className="border-t border-zinc-100 dark:border-zinc-800">
                 <td className="py-1.5 pr-4 font-medium">{t("muhurta.nakshatra")}</td>
                 <td className="py-1.5 pr-4">{panchang.nakshatra.name}</td>
               </tr>
-              <tr className="border-t border-zinc-100">
+              <tr className="border-t border-zinc-100 dark:border-zinc-800">
                 <td className="py-1.5 pr-4 font-medium">{t("muhurta.yoga")}</td>
                 <td className="py-1.5 pr-4">{panchang.yoga.name}</td>
               </tr>
-              <tr className="border-t border-zinc-100">
+              <tr className="border-t border-zinc-100 dark:border-zinc-800">
                 <td className="py-1.5 pr-4 font-medium">{t("muhurta.karana")}</td>
                 <td className="py-1.5 pr-4">{panchang.karana.name}</td>
               </tr>
             </tbody>
           </table>
-          <p className="mt-3 text-xs text-zinc-400">{t("muhurta.computedNote")}</p>
+          <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("muhurta.computedNote")}</p>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
           <h2 className="mb-3 text-lg font-semibold">{t("muhurta.timeWindows")}</h2>
           <table className="w-full text-left text-sm">
             <tbody>
-              {windowRow(t("muhurta.rahuKalam"), panchang.rahuKalam, "text-red-600")}
-              {windowRow(t("muhurta.yamagandam"), panchang.yamagandam, "text-red-600")}
-              {windowRow(t("muhurta.gulikaKalam"), panchang.gulikaKalam, "text-red-600")}
-              {windowRow(t("muhurta.abhijitMuhurta"), panchang.abhijitMuhurta, "text-emerald-600")}
+              {windowRow(t("muhurta.rahuKalam"), panchang.rahuKalam, "text-red-600 dark:text-red-400")}
+              {windowRow(t("muhurta.yamagandam"), panchang.yamagandam, "text-red-600 dark:text-red-400")}
+              {windowRow(t("muhurta.gulikaKalam"), panchang.gulikaKalam, "text-red-600 dark:text-red-400")}
+              {windowRow(t("muhurta.abhijitMuhurta"), panchang.abhijitMuhurta, "text-emerald-600 dark:text-emerald-400")}
             </tbody>
           </table>
-          <p className="mt-3 text-xs text-zinc-400">{t("muhurta.windowsNote")}</p>
+          <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("muhurta.windowsNote")}</p>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-6 lg:col-span-2">
+        <div className="rounded-xl border border-zinc-200 bg-white p-6 lg:col-span-2 dark:bg-zinc-900 dark:border-zinc-800">
           <h2 className="mb-3 text-lg font-semibold">{t("muhurta.horaHeading")}</h2>
           <div className="grid grid-cols-2 gap-x-8 sm:grid-cols-4">
             {panchang.horas.map((h, i) => (
               <div
                 key={i}
-                className={`flex items-center justify-between border-t border-zinc-100 py-1.5 text-sm ${
+                className={`flex items-center justify-between border-t border-zinc-100 py-1.5 text-sm dark:border-zinc-800 ${
                   i === 0 || i === 12 ? "mt-0" : ""
                 }`}
               >
-                <span className="text-zinc-500">{fmtTime(h.start, tzOffsetMinutes)}</span>
+                <span className="text-zinc-500 dark:text-zinc-400">{fmtTime(h.start, tzOffsetMinutes)}</span>
                 <span className="font-medium">{h.lord}</span>
               </div>
             ))}
           </div>
-          <p className="mt-3 text-xs text-zinc-400">{t("muhurta.horaNote")}</p>
+          <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">{t("muhurta.horaNote")}</p>
         </div>
 
-        <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-6 lg:col-span-2">
+        <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-6 lg:col-span-2 dark:bg-amber-950/20 dark:border-amber-900">
           <h2 className="mb-3 text-lg font-semibold">{t("muhurta.tamilCalendarHeading")}</h2>
           <table className="w-full max-w-md text-left text-sm">
             <tbody>
-              <tr className="border-t border-zinc-200">
+              <tr className="border-t border-zinc-200 dark:border-zinc-800">
                 <td className="py-1.5 pr-4 font-medium">{t("muhurta.tamilMonth")}</td>
                 <td className="py-1.5 pr-4">{tamilDate.monthName}</td>
               </tr>
-              <tr className="border-t border-zinc-200">
+              <tr className="border-t border-zinc-200 dark:border-zinc-800">
                 <td className="py-1.5 pr-4 font-medium">{t("muhurta.tamilDay")}</td>
                 <td className="py-1.5 pr-4">{tamilDate.day}</td>
               </tr>
-              <tr className="border-t border-zinc-200">
+              <tr className="border-t border-zinc-200 dark:border-zinc-800">
                 <td className="py-1.5 pr-4 font-medium">{t("muhurta.tamilWeekday")}</td>
                 <td className="py-1.5 pr-4">{tamilDate.weekdayName}</td>
               </tr>
             </tbody>
           </table>
-          <p className="mt-3 text-xs text-zinc-500">{t("muhurta.tamilNote")}</p>
+          <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">{t("muhurta.tamilNote")}</p>
         </div>
       </div>
     </div>

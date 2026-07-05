@@ -44,30 +44,30 @@ export function RasiChartGrid({
 }) {
   return (
     <div className="w-full max-w-sm">
-      <div className="mb-2 text-sm font-medium text-zinc-600">{title}</div>
-      <div className="grid grid-cols-4 grid-rows-4 gap-px overflow-hidden rounded-lg border border-zinc-300 bg-zinc-300">
+      <div className="mb-2 text-sm font-medium text-zinc-600 dark:text-zinc-400">{title}</div>
+      <div className="grid grid-cols-4 grid-rows-4 gap-px overflow-hidden rounded-lg border border-zinc-300 bg-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
         {GRID_LAYOUT.flat().map((rasiIndex, i) => {
           if (rasiIndex === null) {
-            return <div key={`empty-${i}`} className="bg-zinc-50" />;
+            return <div key={`empty-${i}`} className="bg-zinc-50 dark:bg-zinc-800" />;
           }
           const planets = planetsBySign[rasiIndex] ?? [];
           const isAsc = rasiIndex === ascendantRasiIndex;
           return (
             <div
               key={rasiIndex}
-              className={`flex min-h-20 flex-col justify-between bg-white p-1.5 text-xs ${
+              className={`flex min-h-20 flex-col justify-between bg-white p-1.5 text-xs dark:bg-zinc-900 ${
                 isAsc ? "ring-2 ring-inset ring-amber-500" : ""
               }`}
             >
-              <span className="text-[10px] text-zinc-400">{rasiNames[rasiIndex]}</span>
+              <span className="text-[10px] text-zinc-400 dark:text-zinc-500">{rasiNames[rasiIndex]}</span>
               <div className="flex flex-wrap gap-1">
                 {isAsc && (
-                  <span className="rounded bg-amber-100 px-1 font-semibold text-amber-700">
+                  <span className="rounded bg-amber-100 px-1 font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-500">
                     {ascendantLabel}
                   </span>
                 )}
                 {planets.map((p) => (
-                  <span key={p} className="rounded bg-zinc-100 px-1 font-medium text-zinc-700">
+                  <span key={p} className="rounded bg-zinc-100 px-1 font-medium text-zinc-700 dark:text-zinc-300 dark:bg-zinc-800">
                     {planetAbbr[p] ?? p}
                   </span>
                 ))}

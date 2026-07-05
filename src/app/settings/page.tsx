@@ -9,7 +9,7 @@ export default async function SettingsPage() {
   return (
     <div className="mx-auto max-w-lg">
       <h1 className="text-2xl font-semibold tracking-tight">{t("settings.title")}</h1>
-      <p className="mt-1 text-zinc-600">{t("settings.subtitle")}</p>
+      <p className="mt-1 text-zinc-600 dark:text-zinc-400">{t("settings.subtitle")}</p>
 
       <div className="mt-6">
         <SettingsForm
@@ -30,7 +30,7 @@ export default async function SettingsPage() {
           }}
         />
       </div>
-      <p className="mt-4 text-xs text-zinc-400">{t("settings.languageNote")}</p>
+      <p className="mt-4 text-xs text-zinc-400 dark:text-zinc-500">{t("settings.languageNote")}</p>
     </div>
   );
 }

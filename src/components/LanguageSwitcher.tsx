@@ -26,7 +26,7 @@ export function LanguageSwitcher({ currentLang }: { currentLang: Language }) {
       defaultValue={currentLang}
       disabled={isPending}
       onChange={handleChange}
-      className="rounded-lg border border-zinc-300 bg-white px-2 py-1 text-xs disabled:opacity-50"
+      className="rounded-lg border border-zinc-300 bg-white px-2 py-1 text-xs disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
     >
       {LANGUAGES.map((lang) => (
         <option key={lang} value={lang}>

@@ -7,6 +7,7 @@ import { logoutAction } from "@/lib/auth/actions";
 import type { ModuleKey } from "@/lib/auth/modules";
 import { getTranslations } from "@/lib/i18n/server";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { MobileNav, MobileNavLink } from "@/components/MobileNav";
 import type { TranslationKey } from "@/lib/i18n/server";
 
 const geistSans = Geist({
@@ -51,12 +52,12 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         {user && (
-          <header className="border-b border-zinc-200 bg-white print:hidden dark:border-zinc-800 dark:bg-zinc-900">
+          <header className="relative border-b border-zinc-200 bg-white print:hidden dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
               <Link href="/" className="text-lg font-semibold tracking-tight">
                 🕉️ JK Vedansh Astro
               </Link>
-              <nav className="flex flex-wrap items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+              <nav className="hidden flex-wrap items-center gap-6 text-sm font-medium text-zinc-600 sm:flex dark:text-zinc-400">
                 {NAV_LINKS.filter((link) => !link.module || hasModule(user, link.module)).map((link) => (
                   <Link key={link.href} href={link.href} className="hover:text-zinc-950 dark:hover:text-zinc-100">
                     {t(link.key)}
@@ -79,6 +80,26 @@ export default async function RootLayout({
                   </button>
                 </form>
               </nav>
+              <div className="flex items-center gap-3 sm:hidden">
+                <LanguageSwitcher currentLang={lang} />
+                <MobileNav>
+                  {NAV_LINKS.filter((link) => !link.module || hasModule(user, link.module)).map((link) => (
+                    <MobileNavLink key={link.href} href={link.href}>
+                      {t(link.key)}
+                    </MobileNavLink>
+                  ))}
+                  {user.role === "ADMIN" && <MobileNavLink href="/admin/users">{t("nav.admin")}</MobileNavLink>}
+                  <MobileNavLink href="/settings">{t("nav.settings")}</MobileNavLink>
+                  <div className="mt-2 flex items-center justify-between border-t border-zinc-100 pt-2 dark:border-zinc-800">
+                    <span className="text-xs text-zinc-400 dark:text-zinc-500">{user.email}</span>
+                    <form action={logoutAction}>
+                      <button type="submit" className="text-sm font-medium hover:text-zinc-950 dark:hover:text-zinc-100">
+                        {t("nav.signOut")}
+                      </button>
+                    </form>
+                  </div>
+                </MobileNav>
+              </div>
             </div>
           </header>
         )}

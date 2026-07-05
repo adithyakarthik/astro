@@ -40,10 +40,10 @@ export function SettingsForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
       <label className="flex flex-col gap-1 text-sm font-medium">
         {labels.theme}
-        <select name="theme" defaultValue={defaultTheme} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm">
+        <select name="theme" defaultValue={defaultTheme} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
           <option value="light">{labels.themeLight}</option>
           <option value="dark">{labels.themeDark}</option>
         </select>
@@ -54,7 +54,7 @@ export function SettingsForm({
         <select
           name="chartStyle"
           defaultValue={defaultChartStyle}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
         >
           <option value="south">{labels.chartStyleSouth}</option>
           <option value="north">{labels.chartStyleNorth}</option>
@@ -66,7 +66,7 @@ export function SettingsForm({
         <select
           name="useTrueNodes"
           defaultValue={defaultUseTrueNodes ? "on" : "off"}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
         >
           <option value="on">{labels.nodeTrue}</option>
           <option value="off">{labels.nodeMean}</option>
@@ -76,7 +76,7 @@ export function SettingsForm({
       <button
         type="submit"
         disabled={isPending}
-        className="mt-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
+        className="mt-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50"
       >
         {labels.save}
       </button>

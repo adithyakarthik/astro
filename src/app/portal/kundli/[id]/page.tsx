@@ -87,7 +87,7 @@ export default async function PortalKundliPage({
         <div className="print:hidden">
           <PrintButton
             label={t("kundli.print")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
           />
         </div>
       </div>
@@ -128,8 +128,8 @@ export default async function PortalKundliPage({
                 <td className="py-1.5 pr-4 font-medium text-amber-700 dark:text-amber-500">{names.ascendantLabel}</td>
                 <td className="py-1.5 pr-4">{names.rasi[chart.ascendant.rasiIndex]}</td>
                 <td className="py-1.5 pr-4">{fmtDeg(chart.ascendant.degreeInSign)}</td>
-                <td className="py-1.5 pr-4 text-zinc-400">—</td>
-                <td className="py-1.5 pr-4 text-zinc-400">—</td>
+                <td className="py-1.5 pr-4 text-zinc-400 dark:text-zinc-500">—</td>
+                <td className="py-1.5 pr-4 text-zinc-400 dark:text-zinc-500">—</td>
               </tr>
               {chart.planets.map((p) => (
                 <tr key={p.planet} className="border-t border-zinc-100 dark:border-zinc-800">

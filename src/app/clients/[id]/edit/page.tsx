@@ -27,7 +27,7 @@ export default async function EditClientPage({
 
       <ActionForm
         action={updateThisClient}
-        className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6"
+        className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800"
       >
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("clients.fullName")} *
@@ -35,7 +35,7 @@ export default async function EditClientPage({
             name="name"
             required
             defaultValue={client.name}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm font-medium">
@@ -43,7 +43,7 @@ export default async function EditClientPage({
           <input
             name="phone"
             defaultValue={client.phone ?? ""}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm font-medium">
@@ -52,7 +52,7 @@ export default async function EditClientPage({
             name="email"
             type="email"
             defaultValue={client.email ?? ""}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm font-medium">
@@ -61,12 +61,12 @@ export default async function EditClientPage({
             name="notes"
             rows={3}
             defaultValue={client.notes ?? ""}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
         </label>
         <button
           type="submit"
-          className="mt-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+          className="mt-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
         >
           {t("kundli.save")}
         </button>

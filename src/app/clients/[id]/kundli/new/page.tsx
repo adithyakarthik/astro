@@ -26,11 +26,11 @@ export default async function NewKundliPage({
       <h1 className="text-2xl font-semibold tracking-tight">
         {t("kundli.newTitleFor")} {client.name}
       </h1>
-      <p className="mt-1 text-zinc-600">{t("kundli.newSubtitle")}</p>
+      <p className="mt-1 text-zinc-600 dark:text-zinc-400">{t("kundli.newSubtitle")}</p>
 
       <form
         action={createKundliForClient}
-        className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6"
+        className="mt-6 flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800"
       >
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("kundli.chartName")} *
@@ -39,13 +39,13 @@ export default async function NewKundliPage({
             required
             placeholder={client.name}
             defaultValue={client.name}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
         </label>
 
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("kundli.gender")}
-          <select name="gender" className="rounded-lg border border-zinc-300 px-3 py-2 text-sm">
+          <select name="gender" className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
             <option value="">{t("kundli.genderPreferNot")}</option>
             <option value="male">{t("kundli.male")}</option>
             <option value="female">{t("kundli.female")}</option>
@@ -59,7 +59,7 @@ export default async function NewKundliPage({
             name="birthDateLocal"
             type="datetime-local"
             required
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
           />
         </label>
 
@@ -75,12 +75,12 @@ export default async function NewKundliPage({
 
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("kundli.notes")}
-          <textarea name="notes" rows={4} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm" />
+          <textarea name="notes" rows={4} className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
         </label>
 
         <button
           type="submit"
-          className="mt-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+          className="mt-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
         >
           {t("kundli.generate")}
         </button>
