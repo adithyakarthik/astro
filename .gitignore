@@ -46,3 +46,6 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# locally-stored Finds photos (dev fallback when Vercel Blob isn't configured)
+/public/uploads

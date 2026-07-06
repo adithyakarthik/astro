@@ -34,6 +34,7 @@ const NAV_LINKS: { href: string; key: TranslationKey; module?: ModuleKey }[] = [
   { href: "/prashna", key: "nav.prashna", module: "prashna" },
   { href: "/videos", key: "nav.videos", module: "videos" },
   { href: "/classes", key: "nav.classes", module: "classes" },
+  { href: "/finds", key: "nav.finds", module: "finds" },
 ];
 
 export default async function RootLayout({

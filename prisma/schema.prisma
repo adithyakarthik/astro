@@ -11,17 +11,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  role      String   @default("USER") // "USER" | "ADMIN"
+  id             String   @id @default(cuid())
+  email          String   @unique
+  role           String   @default("USER") // "USER" | "ADMIN"
   // Subscription tier, orthogonal to role — drives the default module bundle
   // an admin quick-selects for a user, but enabledModules remains the actual
   // source of truth for access (a tier change doesn't retroactively revoke).
-  tier      String   @default("SILVER") // "SILVER" | "GOLD" | "PLATINUM"
+  tier           String   @default("SILVER") // "SILVER" | "GOLD" | "PLATINUM"
   // JSON-encoded array of module keys this user's subscription has access
   // to, e.g. ["clients","matchmaking","muhurta","transits","videos","classes"].
-  enabledModules String @default("[\"clients\",\"matchmaking\",\"muhurta\",\"transits\",\"videos\",\"classes\"]")
-  createdAt DateTime @default(now())
+  enabledModules String   @default("[\"clients\",\"matchmaking\",\"muhurta\",\"transits\",\"videos\",\"classes\",\"finds\"]")
+  createdAt      DateTime @default(now())
 
   // Display/calculation preferences (Settings page).
   theme        String  @default("light") // "light" | "dark"
@@ -34,6 +34,7 @@ model User {
   videoFolders VideoFolder[]
   classes      ClassAnnouncement[]
   sessions     Session[]
+  finds        Find[]
 }
 
 // One-time passcodes for email login. Not tied to a User row via foreign
@@ -102,13 +103,13 @@ model Kundli {
   clientId String
   client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  name        String
-  gender      String?
+  name                  String
+  gender                String?
   // Birth details (source of truth for every recalculation)
-  birthDate   DateTime // stored as UTC instant of birth
-  birthPlace  String
-  latitude    Float
-  longitude   Float
+  birthDate             DateTime // stored as UTC instant of birth
+  birthPlace            String
+  latitude              Float
+  longitude             Float
   timezoneOffsetMinutes Int // minutes east of UTC at birth, e.g. IST = 330
 
   // Which ayanamsa the cached chartData below was last computed with (the
@@ -138,12 +139,12 @@ model VideoContent {
   // NO direct per-video grants, AND NO tier restriction below — assigning any of
   // these restricts it to whichever clients qualify, via folder access, a
   // matching subscription tier, a direct per-client grant, or any combination.
-  folderId String?
-  folder   VideoFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
-  access   VideoAccess[]
+  folderId     String?
+  folder       VideoFolder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  access       VideoAccess[]
   // Subscription tiers ("SILVER"/"GOLD"/"PLATINUM") automatically granted
   // access to this video, independent of (and additive with) folder/direct access.
-  allowedTiers String[] @default([])
+  allowedTiers String[]      @default([])
 
   title       String
   description String?
@@ -176,8 +177,8 @@ model VideoFolder {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  name      String
-  createdAt DateTime @default(now())
+  name         String
+  createdAt    DateTime @default(now())
   // Subscription tiers ("SILVER"/"GOLD"/"PLATINUM") automatically granted
   // access to every video in this folder, additive with per-client grants.
   allowedTiers String[] @default([])
@@ -203,18 +204,18 @@ model ClassAnnouncement {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  title       String
-  description String?
-  startsAt    DateTime
+  title        String
+  description  String?
+  startsAt     DateTime
   // Optional explicit end (date + time) for multi-day courses or sessions
   // that don't fit a single duration. When absent, durationMins is used.
-  endsAt      DateTime?
-  durationMins Int     @default(60)
-  feeInRupees Float
-  upiId       String
-  payeeName   String
-  meetingLink String?
-  createdAt   DateTime @default(now())
+  endsAt       DateTime?
+  durationMins Int       @default(60)
+  feeInRupees  Float
+  upiId        String
+  payeeName    String
+  meetingLink  String?
+  createdAt    DateTime  @default(now())
 
   payments ClassPayment[]
 }
@@ -230,4 +231,38 @@ model ClassPayment {
   paidAt      DateTime
   notes       String?
   createdAt   DateTime @default(now())
+}
+
+// A shop/item spotted while out and about, geo-tagged so it can be found
+// again later (e.g. a piece of furniture on Commercial Street, Bengaluru,
+// filed under "Furniture" for whenever the user is ready to go buy it).
+model Find {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  heading     String // primary category, e.g. "Furniture" (free text, autocompleted from past entries)
+  tags        String[] @default([]) // free-form extra tags, e.g. ["wood","handmade"]
+
+  shopName  String?
+  address   String? // human-readable, from geocoding (editable)
+  latitude  Float
+  longitude Float
+
+  photos    FindPhoto[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([userId, heading])
+}
+
+model FindPhoto {
+  id        String   @id @default(cuid())
+  findId    String
+  find      Find     @relation(fields: [findId], references: [id], onDelete: Cascade)
+  url       String // Vercel Blob URL, or local /uploads/finds/... path in dev
+  createdAt DateTime @default(now())
 }

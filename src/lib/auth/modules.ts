@@ -9,6 +9,7 @@ export const MODULE_KEYS = [
   "prashna",
   "videos",
   "classes",
+  "finds",
 ] as const;
 
 export type ModuleKey = (typeof MODULE_KEYS)[number];
@@ -21,6 +22,7 @@ export const MODULE_LABELS: Record<ModuleKey, string> = {
   prashna: "Prashna (Horary)",
   videos: "Videos",
   classes: "Classes & Payments",
+  finds: "Finds",
 };
 
 export const ALL_MODULES: ModuleKey[] = [...MODULE_KEYS];
@@ -52,7 +54,7 @@ export const TIER_LABELS: Record<TierKey, string> = {
 };
 
 export const TIER_MODULE_PRESETS: Record<TierKey, ModuleKey[]> = {
-  SILVER: ["clients", "muhurta"],
-  GOLD: ["clients", "matchmaking", "muhurta", "transits", "videos"],
+  SILVER: ["clients", "muhurta", "finds"],
+  GOLD: ["clients", "matchmaking", "muhurta", "transits", "videos", "finds"],
   PLATINUM: [...MODULE_KEYS],
 };

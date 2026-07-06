@@ -29,3 +29,16 @@ export async function geocodePlace(query: string): Promise<GeocodeResult | null>
 
   return { latitude, longitude, displayName: first.display_name };
 }
+
+export async function reverseGeocodePlace(latitude: number, longitude: number): Promise<string | null> {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": "JKVedanshAstro/1.0 (Vedic astrology practice management app)",
+    },
+  });
+  if (!response.ok) return null;
+
+  const result = (await response.json()) as { display_name?: string };
+  return result.display_name ?? null;
+}
