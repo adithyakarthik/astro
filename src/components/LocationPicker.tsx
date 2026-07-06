@@ -64,9 +64,14 @@ export function LocationPicker({
         setLatitude(lat.toFixed(6));
         setLongitude(lon.toFixed(6));
         startTransition(async () => {
-          const displayName = await reverseGeocodeAction(lat, lon);
-          if (displayName) setAddress(displayName);
-          setStatus("found");
+          try {
+            const displayName = await reverseGeocodeAction(lat, lon);
+            if (displayName) setAddress(displayName);
+          } finally {
+            // Coordinates are already filled in; even if reverse geocoding
+            // fails we must clear the "locating" state so the button re-enables.
+            setStatus("found");
+          }
         });
       },
       () => setStatus("error"),

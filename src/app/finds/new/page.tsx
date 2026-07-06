@@ -1,8 +1,8 @@
-import { prisma } from "@/lib/db";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
 import { createFind } from "@/app/finds/actions";
+import { listFindHeadings } from "@/app/finds/queries";
 import { FindForm } from "@/app/finds/FindForm";
 
 export default async function NewFindPage() {
@@ -10,12 +10,7 @@ export default async function NewFindPage() {
   if (!hasModule(user, "finds")) return <ModuleLocked moduleKey="finds" />;
   const { t } = await getTranslations();
 
-  const distinctHeadings = await prisma.find.findMany({
-    where: { userId: user.id },
-    select: { heading: true },
-    distinct: ["heading"],
-    orderBy: { heading: "asc" },
-  });
+  const headingOptions = await listFindHeadings(user.id);
 
   return (
     <div className="mx-auto max-w-lg">
@@ -25,7 +20,7 @@ export default async function NewFindPage() {
       <div className="mt-6">
         <FindForm
           action={createFind}
-          headingOptions={distinctHeadings.map((h) => h.heading)}
+          headingOptions={headingOptions}
           labels={{
             title: t("finds.formTitle"),
             description: t("finds.formDescription"),

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
+import { listFindHeadings } from "@/app/finds/queries";
 
 export default async function FindsPage({
   searchParams,
@@ -14,34 +15,30 @@ export default async function FindsPage({
   const { t } = await getTranslations();
   const { q, heading } = await searchParams;
 
-  const allHeadings = await prisma.find.findMany({
-    where: { userId: user.id },
-    select: { heading: true },
-    distinct: ["heading"],
-    orderBy: { heading: "asc" },
-  });
-
   const query = (q ?? "").trim();
-  const finds = await prisma.find.findMany({
-    where: {
-      userId: user.id,
-      ...(heading ? { heading } : {}),
-      ...(query
-        ? {
-            OR: [
-              { title: { contains: query, mode: "insensitive" } },
-              { description: { contains: query, mode: "insensitive" } },
-              { heading: { contains: query, mode: "insensitive" } },
-              { shopName: { contains: query, mode: "insensitive" } },
-              { address: { contains: query, mode: "insensitive" } },
-              { tags: { hasSome: [query] } },
-            ],
-          }
-        : {}),
-    },
-    orderBy: { createdAt: "desc" },
-    include: { photos: { take: 1, orderBy: { createdAt: "asc" } } },
-  });
+  const [allHeadings, finds] = await Promise.all([
+    listFindHeadings(user.id),
+    prisma.find.findMany({
+      where: {
+        userId: user.id,
+        ...(heading ? { heading } : {}),
+        ...(query
+          ? {
+              OR: [
+                { title: { contains: query, mode: "insensitive" } },
+                { description: { contains: query, mode: "insensitive" } },
+                { heading: { contains: query, mode: "insensitive" } },
+                { shopName: { contains: query, mode: "insensitive" } },
+                { address: { contains: query, mode: "insensitive" } },
+                { tags: { has: query } },
+              ],
+            }
+          : {}),
+      },
+      orderBy: { createdAt: "desc" },
+      include: { photos: { take: 1, orderBy: { createdAt: "asc" } } },
+    }),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -69,8 +66,8 @@ export default async function FindsPage({
         >
           <option value="">{t("finds.allHeadings")}</option>
           {allHeadings.map((h) => (
-            <option key={h.heading} value={h.heading}>
-              {h.heading}
+            <option key={h} value={h}>
+              {h}
             </option>
           ))}
         </select>

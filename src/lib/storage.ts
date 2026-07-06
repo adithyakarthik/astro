@@ -7,7 +7,12 @@ import path from "path";
 // "real service in prod, dev-friendly fallback locally" pattern as OTP email
 // delivery (Resend vs. on-screen codes).
 export async function saveUploadedPhoto(file: File): Promise<string> {
-  const ext = (file.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+  // Derive a clean extension from the MIME subtype. Strip suffixes like the
+  // "+xml" in "image/svg+xml" and any stray non-alphanumerics so we never
+  // produce a bogus extension (e.g. ".svg+xml") that breaks Content-Type
+  // inference when the file is served back.
+  const subtype = file.type.split("/")[1] ?? "";
+  const ext = (subtype.split("+")[0].replace(/[^a-z0-9]/gi, "") || "jpg").replace("jpeg", "jpg");
   const filename = `${crypto.randomUUID()}.${ext}`;
 
   if (process.env.BLOB_READ_WRITE_TOKEN) {

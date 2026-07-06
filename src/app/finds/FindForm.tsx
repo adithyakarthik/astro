@@ -63,14 +63,23 @@ export function FindForm({
       return;
     }
     setIsProcessing(true);
-    const resized = await Promise.all(files.map((file) => resizeImage(file)));
-    setIsProcessing(false);
+    try {
+      // resizeImage falls back to the original File on any decode failure, so a
+      // rejection here is unexpected — but guard anyway so a stuck isProcessing
+      // can never leave the Save button permanently disabled.
+      const resized = await Promise.all(files.map((file) => resizeImage(file)));
 
-    const dataTransfer = new DataTransfer();
-    resized.forEach((file) => dataTransfer.items.add(file));
-    if (fileInputRef.current) fileInputRef.current.files = dataTransfer.files;
+      // The form submits the raw <input type="file"> via a server action, so the
+      // resized Files have to be written back onto the input's FileList (which is
+      // only assignable from a DataTransfer) for the action to receive them.
+      const dataTransfer = new DataTransfer();
+      resized.forEach((file) => dataTransfer.items.add(file));
+      if (fileInputRef.current) fileInputRef.current.files = dataTransfer.files;
 
-    setPreviews(resized.map((file) => URL.createObjectURL(file)));
+      setPreviews(resized.map((file) => URL.createObjectURL(file)));
+    } finally {
+      setIsProcessing(false);
+    }
   }
 
   function toggleRemove(id: string) {

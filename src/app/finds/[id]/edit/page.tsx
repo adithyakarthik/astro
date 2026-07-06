@@ -4,6 +4,7 @@ import { hasModule, requireUser } from "@/lib/auth/session";
 import { ModuleLocked } from "@/components/ModuleLocked";
 import { getTranslations } from "@/lib/i18n/server";
 import { updateFind } from "@/app/finds/actions";
+import { listFindHeadings } from "@/app/finds/queries";
 import { FindForm } from "@/app/finds/FindForm";
 
 export default async function EditFindPage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,18 +13,14 @@ export default async function EditFindPage({ params }: { params: Promise<{ id: s
   const { t } = await getTranslations();
   const { id } = await params;
 
-  const find = await prisma.find.findUnique({
-    where: { id },
-    include: { photos: { orderBy: { createdAt: "asc" } } },
-  });
+  const [find, headingOptions] = await Promise.all([
+    prisma.find.findUnique({
+      where: { id },
+      include: { photos: { orderBy: { createdAt: "asc" } } },
+    }),
+    listFindHeadings(user.id),
+  ]);
   if (!find || find.userId !== user.id) notFound();
-
-  const distinctHeadings = await prisma.find.findMany({
-    where: { userId: user.id },
-    select: { heading: true },
-    distinct: ["heading"],
-    orderBy: { heading: "asc" },
-  });
 
   const updateThisFind = updateFind.bind(null, find.id);
 
@@ -34,7 +31,7 @@ export default async function EditFindPage({ params }: { params: Promise<{ id: s
       <div className="mt-6">
         <FindForm
           action={updateThisFind}
-          headingOptions={distinctHeadings.map((h) => h.heading)}
+          headingOptions={headingOptions}
           defaultValues={{
             title: find.title,
             description: find.description ?? undefined,
