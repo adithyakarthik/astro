@@ -112,8 +112,7 @@ function divideDaylight(sunrise: Date, sunset: Date, parts: number): TimeWindow[
   return windows;
 }
 
-export function computePanchang(input: PanchangInput): PanchangResult {
-  const cal = new julian.Calendar().fromDate(input.dateUtcNoon);
+export function computePanchang(input: PanchangInput): PanchangResult {  const cal = new julian.Calendar().fromDate(input.dateUtcNoon);
   // astronomia's Sunrise takes longitude measured positive WESTwards, the
   // opposite convention from the rest of this app (east positive).
   const sunrise = new Sunrise(cal, input.latitude, -input.longitude);
@@ -179,4 +178,17 @@ export function computePanchang(input: PanchangInput): PanchangResult {
     gulikaKalam,
     abhijitMuhurta,
   };
+}
+
+/**
+ * Whether `moment` falls between sunrise and sunset at the given place (vs.
+ * sunset-to-next-sunrise night) — used by the Jamakkol sensitive-point
+ * tools, which have separate day/night degree-offset tables.
+ */
+export function isDaytimeAt(moment: Date, latitude: number, longitude: number): boolean {
+  const cal = new julian.Calendar().fromDate(moment);
+  const sunrise = new Sunrise(cal, latitude, -longitude);
+  const sunriseDate: Date = sunrise.rise().toDate();
+  const sunsetDate: Date = sunrise.set().toDate();
+  return moment >= sunriseDate && moment < sunsetDate;
 }

@@ -359,6 +359,27 @@ const en = {
       "Traditional guidance: examine the Ascendant and its lord for the general trend, the Moon's nakshatra and its lord for the undercurrent, and the significators of the house relevant to the question. This tool casts the chart only — interpretation is left to you.",
     newQuestion: "Ask another question",
   },
+  jamakkolSensitive: {
+    heading: "Jamakkol sensitive points",
+    subtitle:
+      "Each point is the Sun's sidereal longitude plus a fixed degree offset for the weekday and time of day (day/night split at sunrise/sunset) — a Jamakkol horary technique distinct from the sunrise-to-sunset Rahu Kalam/Yamagandam windows on the Muhurta page.",
+    dayNightLabel: "Computed for",
+    dayTime: "Day time",
+    nightTime: "Night time",
+    point: "Point",
+    rahuKaalam: "Rahu Kaalam",
+    rahuKaalamNote:
+      "Used for questions about danger, death, accident, black magic, or poison. When the Maraka or Bhataka lord sits in this rasi and its Dasa/Bhukti is running, expect malefic effects on the house/planet significators it influences.",
+    yamaGandam: "Yama Gandam",
+    yamaGandamNote:
+      "Used for questions about death. Avoid surgery when the Moon, or the Dasa/Bhukti/Antara lord, is transiting this point as per the natal chart.",
+    mrithyu: "Mrithyu",
+    mrithyuNote: "A second death-related indicator, traditionally read alongside Rahu Kaalam and Yama Gandam.",
+    maandhi: "Maandhi",
+    maandhiNote: "A supporting Jamakkol horary point, read alongside the other three above.",
+    nightUncertaintyNote:
+      "Night-time Mrithyu/Maandhi follow the source's written rule (add the night offset directly, no extra step) — unlike Rahu Kaalam/Yama Gandam, the source didn't include a worked night example for these two to cross-check against, so treat night results for these two with a little more caution.",
+  },
   settings: {
     title: "Settings",
     subtitle: "Display and calculation preferences for your account.",
@@ -778,6 +799,27 @@ const ta: Dictionary = {
       "பாரம்பரிய வழிகாட்டல்: பொது போக்கிற்கு லக்னம் மற்றும் அதன் அதிபதியை, உள்ளடி போக்கிற்கு சந்திரனின் நட்சத்திரத்தையும் அதன் அதிபதியையும், கேள்விக்குரிய பாவத்தின் காரகர்களையும் ஆராயவும். இந்த கருவி சார்ட்டை மட்டுமே உருவாக்குகிறது — விளக்கம் உங்களுக்கே.",
     newQuestion: "மற்றொரு கேள்வி கேளுங்கள்",
   },
+  jamakkolSensitive: {
+    heading: "ஜாமக்கோல் உணர்திறன் புள்ளிகள்",
+    subtitle:
+      "ஒவ்வொரு புள்ளியும் சூரியனின் நிரயண தேசாந்தரம் + அந்த வார நாள்/பகல்-இரவுக்கான நிலையான பாகை (உதயம்-அஸ்தமனத்தின்படி பகல்/இரவு பிரிவு) — Muhurta பக்கத்தில் உள்ள சூரிய உதய-அஸ்தமன ராகு காலம்/எமகண்டம் காலத்திலிருந்து வேறுபட்ட ஜாமக்கோல் பிரச்ன முறை.",
+    dayNightLabel: "கணக்கிடப்பட்டது",
+    dayTime: "பகல் நேரம்",
+    nightTime: "இரவு நேரம்",
+    point: "புள்ளி",
+    rahuKaalam: "ராகு காலம்",
+    rahuKaalamNote:
+      "ஆபத்து, மரணம், விபத்து, மாந்திரீகம், விஷம் தொடர்பான கேள்விகளுக்குப் பயன்படுகிறது. மாரக அல்லது பாதக அதிபதி இந்த ராசியில் இருந்து அதன் தசா/புக்தி நடக்கும்போது, அது பாதிக்கும் பாவ/கிரக காரகர்களுக்கு தீய பலன்களைத் தரும்.",
+    yamaGandam: "யம கண்டம்",
+    yamaGandamNote:
+      "மரணம் தொடர்பான கேள்விகளுக்குப் பயன்படுகிறது. ஜாதகப்படி சந்திரன் அல்லது தசா/புக்தி/அந்தர அதிபதி இந்த புள்ளியில் செல்லும்போது அறுவை சிகிச்சை தவிர்க்கவும்.",
+    mrithyu: "மிருத்யு",
+    mrithyuNote: "ராகு காலம் மற்றும் யம கண்டத்துடன் இணைந்து பார்க்கப்படும் இரண்டாவது மரண-தொடர்பான சுட்டி.",
+    maandhi: "மாந்தி",
+    maandhiNote: "மேலுள்ள மூன்றுடன் இணைந்து பார்க்கப்படும் துணை ஜாமக்கோல் பிரச்ன புள்ளி.",
+    nightUncertaintyNote:
+      "இரவு நேர மிருத்யு/மாந்தி மூல நூலின் எழுதப்பட்ட விதியைப் பின்பற்றுகின்றன (கூடுதல் படி இல்லாமல் இரவு பாகையை நேரடியாகச் சேர்த்தல்) — ராகு காலம்/யம கண்டத்தைப் போலல்லாமல், இவை இரண்டிற்கும் சரிபார்க்க இரவு-நேர எடுத்துக்காட்டு மூலத்தில் இல்லை, எனவே இவற்றின் இரவு முடிவுகளை சற்று எச்சரிக்கையுடன் பயன்படுத்தவும்.",
+  },
   settings: {
     title: "அமைப்புகள்",
     subtitle: "உங்கள் கணக்கிற்கான காட்சி மற்றும் கணக்கீட்டு விருப்பங்கள்.",
@@ -1192,6 +1234,27 @@ const hi: Dictionary = {
     interpretiveNote:
       "पारंपरिक मार्गदर्शन: सामान्य रुझान के लिए लग्न व उसके स्वामी को, अंतर्धारा के लिए चंद्र नक्षत्र व उसके स्वामी को, और प्रश्न से संबंधित भाव के कारकों को देखें। यह उपकरण केवल चार्ट बनाता है — व्याख्या आप पर निर्भर है।",
     newQuestion: "एक और प्रश्न पूछें",
+  },
+  jamakkolSensitive: {
+    heading: "जामक्कोल संवेदनशील बिंदु",
+    subtitle:
+      "हर बिंदु = सूर्य का सायन-रहित (निरयण) रेखांश + उस वार/दिन-रात के लिए तय अंश (उदय-अस्त के अनुसार दिन/रात विभाजन) — यह Muhurta पृष्ठ के सूर्योदय-सूर्यास्त आधारित राहु काल/यमगंडम समय से अलग एक जामक्कोल प्रश्न-शास्त्र पद्धति है।",
+    dayNightLabel: "गणना का आधार",
+    dayTime: "दिन का समय",
+    nightTime: "रात का समय",
+    point: "बिंदु",
+    rahuKaalam: "राहु कालम्",
+    rahuKaalamNote:
+      "खतरे, मृत्यु, दुर्घटना, तंत्र-मंत्र या विष संबंधी प्रश्नों के लिए उपयोगी। जब मारक या बाधक स्वामी इस राशि में हो और उसकी दशा/भुक्ति चल रही हो, तो इससे प्रभावित भाव/ग्रह कारकों पर अशुभ प्रभाव की संभावना रहती है।",
+    yamaGandam: "यम गंडम्",
+    yamaGandamNote:
+      "मृत्यु संबंधी प्रश्नों के लिए उपयोगी। जब चंद्र, या दशा/भुक्ति/अंतर स्वामी जन्मकुंडली के अनुसार इस बिंदु से गोचर कर रहे हों, तब शल्य चिकित्सा टालनी चाहिए।",
+    mrithyu: "मृत्यु",
+    mrithyuNote: "राहु कालम् और यम गंडम् के साथ देखा जाने वाला एक और मृत्यु-संबंधी संकेतक।",
+    maandhi: "मांधि",
+    maandhiNote: "ऊपर के तीनों के साथ देखा जाने वाला सहायक जामक्कोल प्रश्न बिंदु।",
+    nightUncertaintyNote:
+      "रात्रि-समय के मृत्यु/मांधि मूल स्रोत के लिखित नियम का पालन करते हैं (कोई अतिरिक्त कदम नहीं, सीधे रात्रि अंश जोड़ें) — राहु कालम्/यम गंडम् के विपरीत, इन दोनों के लिए स्रोत में जाँचने हेतु कोई रात्रि-समय उदाहरण नहीं दिया गया, इसलिए इनके रात्रि परिणामों को थोड़ी अधिक सावधानी से लें।",
   },
   settings: {
     title: "सेटिंग्स",

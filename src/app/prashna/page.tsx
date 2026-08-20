@@ -9,6 +9,8 @@ import { BirthPlaceLookup } from "@/components/BirthPlaceLookup";
 import { PredictionPanel } from "@/components/PredictionPanel";
 import { generatePredictionAction } from "@/app/predictions/actions";
 import { PREDICTION_TOPICS, type PredictionTopic } from "@/lib/ai/predictions";
+import { isDaytimeAt } from "@/lib/astro/panchang";
+import { computeJamakkolSensitivePoints, type SensitivePointResult } from "@/lib/astro/jamakkol-sensitive-points";
 import type { TranslationKey } from "@/lib/i18n/server";
 
 const PREDICTION_TOPIC_KEYS: Record<PredictionTopic, TranslationKey> = {
@@ -88,6 +90,10 @@ export default async function PrashnaPage({
   const chart = computeKundli({ utcDate: now, latitude, longitude });
   const rasiGroups = groupBySign(chart.planets);
   const moonPlacement = chart.planets.find((p) => p.planet === "Moon")!;
+  const sunPlacement = chart.planets.find((p) => p.planet === "Sun")!;
+
+  const isDaytime = isDaytimeAt(now, latitude, longitude);
+  const jamakkolPoints = computeJamakkolSensitivePoints(sunPlacement.siderealLongitude, now.getUTCDay(), isDaytime);
 
   const predictionTopics = PREDICTION_TOPICS.map((topic) => ({
     value: topic,
@@ -160,6 +166,60 @@ export default async function PrashnaPage({
           {t("kundli.nakshatra")} ({t("kundli.graha")}: {names.planet.Moon}): {names.nakshatra[moonPlacement.nakshatraIndex]},{" "}
           {t("kundli.pada")} {moonPlacement.pada}
         </p>
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:bg-zinc-900 dark:border-zinc-800">
+        <h2 className="text-lg font-semibold">{t("jamakkolSensitive.heading")}</h2>
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{t("jamakkolSensitive.subtitle")}</p>
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          {t("jamakkolSensitive.dayNightLabel")}: <span className="font-medium">{isDaytime ? t("jamakkolSensitive.dayTime") : t("jamakkolSensitive.nightTime")}</span>
+        </p>
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="text-zinc-500 dark:text-zinc-400">
+              <tr>
+                <th className="py-1.5 pr-4 font-medium">{t("jamakkolSensitive.point")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.rasi")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.degree")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.nakshatra")}</th>
+                <th className="py-1.5 pr-4 font-medium">{t("kundli.pada")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(
+                [
+                  ["rahuKaalam", jamakkolPoints.rahuKaalam],
+                  ["yamaGandam", jamakkolPoints.yamaGandam],
+                  ["mrithyu", jamakkolPoints.mrithyu],
+                  ["maandhi", jamakkolPoints.maandhi],
+                ] as [keyof typeof jamakkolPoints, SensitivePointResult][]
+              ).map(([key, r]) => (
+                <tr key={key} className="border-t border-zinc-100 dark:border-zinc-800">
+                  <td className="py-1.5 pr-4 font-medium">{t(`jamakkolSensitive.${key}`)}</td>
+                  <td className="py-1.5 pr-4">{names.rasi[r.rasiIndex]}</td>
+                  <td className="py-1.5 pr-4">{fmtDeg(r.degreeInSign)}</td>
+                  <td className="py-1.5 pr-4">{names.nakshatra[r.nakshatraIndex]}</td>
+                  <td className="py-1.5 pr-4">{r.pada}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ul className="mt-3 flex flex-col gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <li>
+            <span className="font-medium text-zinc-600 dark:text-zinc-300">{t("jamakkolSensitive.rahuKaalam")}:</span> {t("jamakkolSensitive.rahuKaalamNote")}
+          </li>
+          <li>
+            <span className="font-medium text-zinc-600 dark:text-zinc-300">{t("jamakkolSensitive.yamaGandam")}:</span> {t("jamakkolSensitive.yamaGandamNote")}
+          </li>
+          <li>
+            <span className="font-medium text-zinc-600 dark:text-zinc-300">{t("jamakkolSensitive.mrithyu")}:</span> {t("jamakkolSensitive.mrithyuNote")}
+          </li>
+          <li>
+            <span className="font-medium text-zinc-600 dark:text-zinc-300">{t("jamakkolSensitive.maandhi")}:</span> {t("jamakkolSensitive.maandhiNote")}
+          </li>
+          {!isDaytime && <li className="italic">{t("jamakkolSensitive.nightUncertaintyNote")}</li>}
+        </ul>
       </div>
 
       <PredictionPanel
